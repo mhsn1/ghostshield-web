@@ -30,7 +30,7 @@ function toScanResult(scan: any) {
 
 const PLAN_LIMITS: Record<string, { label: string; limit: number; probes: number; price: string }> = {
   starter: { label: 'Starter', limit: 1, probes: 10, price: '$1' },
-  pro:     { label: 'Pro',     limit: 1000, probes: 200, price: '$99/mo' },
+  pro: { label: 'Pro', limit: 1000, probes: 200, price: '$99/mo' },
 }
 
 function getScansThisMonth(scans: any[]) {
@@ -704,25 +704,25 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 600 }}>Scan Complete</h1>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <span style={{
-                padding: '3px 10px', background: `${SEVERITY_C[result.severity] || '#888'}15`,
-                color: SEVERITY_C[result.severity] || '#888',
-                border: `1px solid ${SEVERITY_C[result.severity] || '#888'}30`,
-                borderRadius: '20px', fontSize: '12px', textTransform: 'uppercase'
-              }}>{result.severity}</span>
-              <button
-                onClick={() => downloadReport(result, { prompt: scannedPrompt, model: model, provider: provider })}
-                style={{
-                  background: '#ff4444', border: 'none',
-                  borderRadius: '6px', color: 'white', fontSize: '12px', fontWeight: 600,
-                  padding: '6px 14px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-                  display: 'flex', alignItems: 'center', gap: '6px'
-                }}
-              >
-                <span style={{ fontSize: '14px' }}>↓</span> Download PDF Report
-              </button>
-            </div>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <span style={{
+              padding: '3px 10px', background: `${SEVERITY_C[result.severity] || '#888'}15`,
+              color: SEVERITY_C[result.severity] || '#888',
+              border: `1px solid ${SEVERITY_C[result.severity] || '#888'}30`,
+              borderRadius: '20px', fontSize: '12px', textTransform: 'uppercase'
+            }}>{result.severity}</span>
+            <button
+              onClick={() => downloadReport(result, { prompt: scannedPrompt, model: model, provider: provider })}
+              style={{
+                background: '#ff4444', border: 'none',
+                borderRadius: '6px', color: 'white', fontSize: '12px', fontWeight: 600,
+                padding: '6px 14px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                display: 'flex', alignItems: 'center', gap: '6px'
+              }}
+            >
+              <span style={{ fontSize: '14px' }}>↓</span> Download PDF Report
+            </button>
+          </div>
         </div>
 
         <div style={{
@@ -1009,16 +1009,16 @@ function ScanHistory({ scans, onNewScan }: { scans: any[], onNewScan: () => void
 }
 
 const BENCH_DATA = [
-  { rank: 1,  model: 'claude-3-5-sonnet',        provider: 'Anthropic',  score: 94, vulns: 5,  severity: 'low',      scanned: '2025-03-24' },
-  { rank: 2,  model: 'gpt-4o',                   provider: 'OpenAI',     score: 91, vulns: 8,  severity: 'low',      scanned: '2025-03-24' },
-  { rank: 3,  model: 'gemini-1.5-pro',           provider: 'Google',     score: 88, vulns: 11, severity: 'medium',   scanned: '2025-03-23' },
-  { rank: 4,  model: 'llama-3.1-70b-versatile',  provider: 'Meta / Groq',score: 84, vulns: 17, severity: 'medium',   scanned: '2025-03-23' },
-  { rank: 5,  model: 'mistral-large-2',          provider: 'Mistral',    score: 81, vulns: 21, severity: 'medium',   scanned: '2025-03-23' },
-  { rank: 6,  model: 'grok-1.5',                 provider: 'xAI',        score: 78, vulns: 26, severity: 'high',     scanned: '2025-03-22' },
-  { rank: 7,  model: 'mixtral-8x7b',             provider: 'Mistral',    score: 74, vulns: 30, severity: 'high',     scanned: '2025-03-22' },
-  { rank: 8,  model: 'llama-3.1-8b-instant',     provider: 'Meta / Groq',score: 68, vulns: 37, severity: 'high',     scanned: '2025-03-22' },
-  { rank: 9,  model: 'deepseek-r1',              provider: 'DeepSeek',   score: 61, vulns: 43, severity: 'high',     scanned: '2025-03-21' },
-  { rank: 10, model: 'gemma-2-9b',               provider: 'Google',     score: 52, vulns: 51, severity: 'critical', scanned: '2025-03-21' },
+  { rank: 1, model: 'claude-3-5-sonnet', provider: 'Anthropic', score: 94, vulns: 5, severity: 'low', scanned: '2025-03-24' },
+  { rank: 2, model: 'gpt-4o', provider: 'OpenAI', score: 91, vulns: 8, severity: 'low', scanned: '2025-03-24' },
+  { rank: 3, model: 'gemini-1.5-pro', provider: 'Google', score: 88, vulns: 11, severity: 'medium', scanned: '2025-03-23' },
+  { rank: 4, model: 'llama-3.1-70b-versatile', provider: 'Meta / Groq', score: 84, vulns: 17, severity: 'medium', scanned: '2025-03-23' },
+  { rank: 5, model: 'mistral-large-2', provider: 'Mistral', score: 81, vulns: 21, severity: 'medium', scanned: '2025-03-23' },
+  { rank: 6, model: 'grok-1.5', provider: 'xAI', score: 78, vulns: 26, severity: 'high', scanned: '2025-03-22' },
+  { rank: 7, model: 'mixtral-8x7b', provider: 'Mistral', score: 74, vulns: 30, severity: 'high', scanned: '2025-03-22' },
+  { rank: 8, model: 'llama-3.1-8b-instant', provider: 'Meta / Groq', score: 68, vulns: 37, severity: 'high', scanned: '2025-03-22' },
+  { rank: 9, model: 'deepseek-r1', provider: 'DeepSeek', score: 61, vulns: 43, severity: 'high', scanned: '2025-03-21' },
+  { rank: 10, model: 'gemma-2-9b', provider: 'Google', score: 52, vulns: 51, severity: 'critical', scanned: '2025-03-21' },
 ]
 
 const RANK_MEDAL: Record<number, string> = { 1: '#1', 2: '#2', 3: '#3' }
@@ -1153,9 +1153,9 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
   const [groqKey, setGroqKey] = useState('')
   const [saved, setSaved] = useState(false)
 
-  const plan = subscription?.plan || 'free'
-  const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.free
-  const isPaid = plan === 'paid'
+  const plan = subscription?.plan || 'starter'
+  const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.starter
+  const isPaid = plan === 'pro'
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -1297,12 +1297,12 @@ export default function Dashboard() {
     setActive('overview')
   }
 
-  const plan = subscription?.plan || 'free'
-  const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.free
+  const plan = subscription?.plan || 'starter'
+  const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.starter
   const scanLimit = subscription?.scan_limit ?? planInfo.limit
   const probeLimit = planInfo.probes
   const scansUsed = getScansThisMonth(scans)
-  const isPaid = plan === 'paid'
+  const isPaid = plan === 'pro'
 
   if (loading) {
     return (
