@@ -1299,7 +1299,7 @@ export default function Dashboard() {
 
   const plan = subscription?.plan || 'starter'
   const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.starter
-  const scanLimit = subscription?.scan_limit ?? planInfo.limit
+  const scanLimit = planInfo.limit
   const probeLimit = planInfo.probes
   const scansUsed = getScansThisMonth(scans)
   const isPaid = plan === 'pro'
