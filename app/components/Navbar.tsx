@@ -64,7 +64,7 @@ export default function Navbar() {
         }}
           onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
           onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-        >Start Free Trial</Link>
+        >Get Started</Link>
       </div>
     </nav>
   )

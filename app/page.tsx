@@ -701,7 +701,7 @@ export default function Home() {
               }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-              >Start Free Trial</a>
+              >Get Started</a>
               <a href="https://github.com/mhsn1/ghostshield" target="_blank" style={{
                 color: '#888', padding: '12px 20px', textDecoration: 'none',
                 fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px',

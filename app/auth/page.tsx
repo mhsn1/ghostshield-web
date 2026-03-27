@@ -81,7 +81,7 @@ export default function Auth() {
             {mode === 'login' ? 'Welcome back' : 'Create your account'}
           </h1>
           <p style={{ fontSize: '14px', color: '#555', marginBottom: '24px' }}>
-            {mode === 'login' ? 'Sign in to your GhostShield account' : 'Start testing your AI systems for free'}
+            {mode === 'login' ? 'Sign in to your GhostShield account' : 'Create your account to start scanning'}
           </p>
 
           {/* OAuth buttons */}
