@@ -1223,7 +1223,7 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
             <div>
               <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px' }}>{planInfo.label} Plan</div>
               <div style={{ fontSize: '13px', color: '#555' }}>
-                {isPaid ? '1000 scans · 200+ probes' : `${planInfo.limit} scan / month · ${planInfo.probes} probes`}
+                {isPaid ? '1000 scans / month · 200+ probes' : '1 USDC per scan · 10 probes'}
               </div>
             </div>
             {!isPaid && (
@@ -1299,8 +1299,8 @@ export default function Dashboard() {
     setActive('overview')
   }
 
-  const hasPlan = !!subscription?.plan
-  const plan = subscription?.plan || 'none'
+  const hasPlan = !!subscription?.plan && subscription?.status === 'active'
+  const plan = hasPlan ? subscription.plan : 'none'
   const planInfo = PLAN_LIMITS[plan] || { label: 'No Plan', limit: 0, probes: 0, price: '$0' }
   const scanLimit = planInfo.limit
   const probeLimit = planInfo.probes
