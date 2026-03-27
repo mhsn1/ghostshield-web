@@ -30,8 +30,8 @@ function toScanResult(scan: any) {
 
 const PLAN_LIMITS: Record<string, { label: string; limit: number; probes: number; price: string }> = {
   starter: { label: 'Starter', limit: 1, probes: 10, price: '$1' },
-  pro: { label: 'Pro', limit: 1000, probes: 200, price: '$99/mo' },
-  paid: { label: 'Pro', limit: 1000, probes: 200, price: '$99/mo' },
+  pro: { label: 'Pro', limit: 1000, probes: 88, price: '$99/mo' },
+  paid: { label: 'Pro', limit: 1000, probes: 88, price: '$99/mo' },
 }
 
 function getScansThisMonth(scans: any[]) {
@@ -925,7 +925,7 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
             border: '1px solid rgba(255,68,68,0.1)', borderRadius: '8px', marginBottom: '20px'
           }}>
             <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.6 }}>
-              {probeLimit} probes{probeLimit < 200 ? ` (free tier — upgrade for all 200+)` : ' · 25 attack categories'} · Your prompt is never stored on our servers
+              {probeLimit} probes{probeLimit < 88 ? ` (starter tier — upgrade for all 88)` : ' · 15 attack categories'} · Your prompt is never stored on our servers
             </div>
           </div>
 
@@ -1145,7 +1145,7 @@ function ShieldBench() {
         background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
         borderRadius: '8px', fontSize: '12px', color: '#333', fontFamily: 'DM Mono',
       }}>
-        ⟳ Results updated weekly · 200+ probes per model · Default system prompt: <em style={{ color: '#555' }}>"You are a helpful assistant."</em>
+        ⟳ Results updated weekly · 88 probes per model · Default system prompt: <em style={{ color: '#555' }}>"You are a helpful assistant."</em>
       </div>
     </div>
   )
@@ -1224,7 +1224,7 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
             <div>
               <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px' }}>{planInfo.label} Plan</div>
               <div style={{ fontSize: '13px', color: '#555' }}>
-                {isPaid ? '1000 scans / month · 200+ probes' : '1 USDC per scan · 10 probes'}
+                {isPaid ? '1000 scans / month · 88 probes' : '1 USDC per scan · 10 probes'}
               </div>
             </div>
             {!isPaid && (
@@ -1346,10 +1346,14 @@ function ChoosePlan({ userId, onPlanActivated }: { userId?: string; onPlanActiva
   }
 
   const plans = [
-    { name: 'Starter', price: 1, sub: 'USDC / scan', desc: 'Pay per scan', highlight: false,
-      features: ['1 professional scan', '10 essential probes', 'PDF security report', '24/7 support'] },
-    { name: 'Pro', price: 99, sub: 'USDC / month', desc: 'Full access', highlight: true,
-      features: ['1000 scans per month', 'All 200+ attack probes', 'Full detailed reports', 'Scan history & analytics', '25 attack categories', 'Priority support'] },
+    {
+      name: 'Starter', price: 1, sub: 'USDC / scan', desc: 'Pay per scan', highlight: false,
+      features: ['1 professional scan', '10 essential probes', 'PDF security report', '24/7 support']
+    },
+    {
+      name: 'Pro', price: 99, sub: 'USDC / month', desc: 'Full access', highlight: true,
+      features: ['1000 scans per month', 'All 88 attack probes', 'Full detailed reports', 'Scan history & analytics', '15 attack categories', 'Priority support']
+    },
   ]
 
   return (

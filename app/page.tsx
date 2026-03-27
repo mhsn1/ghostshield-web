@@ -15,25 +15,28 @@ const USDC_CONTRACT_ETH = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 const USDC_CONTRACT_BASE = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 
 const STATS = [
-  { value: '200+', label: 'Attack Probes' },
-  { value: '25', label: 'Attack Categories' },
+  { value: '88', label: 'Attack Probes' },
+  { value: '15', label: 'Attack Categories' },
   { value: 'Varies', label: 'Leak Rate by Model' },
   { value: '< 5min', label: 'Scan Time' },
 ]
 
 const CATEGORIES = [
-  { id: 'direct', name: 'Direct Extraction', count: 14, severity: 'critical' },
+  { id: 'direct', name: 'Direct Extraction', count: 12, severity: 'critical' },
   { id: 'persona', name: 'Persona Jailbreak', count: 8, severity: 'critical' },
   { id: 'encoding', name: 'Encoding Bypass', count: 8, severity: 'high' },
   { id: 'social', name: 'Social Engineering', count: 6, severity: 'high' },
   { id: 'technical', name: 'Technical Injection', count: 6, severity: 'high' },
-  { id: 'crescendo', name: 'Crescendo Multi-turn', count: 4, severity: 'medium' },
-  { id: 'cot_hijack', name: 'Chain-of-Thought Hijack', count: 4, severity: 'high' },
-  { id: 'roleplay', name: 'Roleplay / Fiction', count: 4, severity: 'high' },
-  { id: 'multilingual', name: 'Multilingual Bypass', count: 5, severity: 'medium' },
-  { id: 'indirect', name: 'Indirect Injection', count: 3, severity: 'high' },
-  { id: 'skeleton_key', name: 'Skeleton Key', count: 3, severity: 'high' },
-  { id: 'memory', name: 'Memory / Persistence', count: 3, severity: 'medium' },
+  { id: 'crescendo', name: 'Crescendo Multi-turn', count: 5, severity: 'medium' },
+  { id: 'cot_hijack', name: 'Chain-of-Thought Hijack', count: 5, severity: 'high' },
+  { id: 'roleplay', name: 'Roleplay / Fiction', count: 5, severity: 'high' },
+  { id: 'multilingual', name: 'Multilingual Bypass', count: 6, severity: 'medium' },
+  { id: 'indirect', name: 'Indirect Injection', count: 4, severity: 'high' },
+  { id: 'skeleton_key', name: 'Skeleton Key', count: 4, severity: 'high' },
+  { id: 'memory', name: 'Memory / Persistence', count: 4, severity: 'medium' },
+  { id: 'obfuscation', name: 'Obfuscation Attacks', count: 5, severity: 'high' },
+  { id: 'context_overflow', name: 'Context Overflow', count: 5, severity: 'medium' },
+  { id: 'payload_splitting', name: 'Payload Splitting', count: 5, severity: 'high' },
 ]
 
 const SEVERITY_COLOR: Record<string, string> = {
@@ -60,7 +63,7 @@ const PRICING = [
     name: 'Starter',
     price: '1',
     sub: '/ scan',
-    features: ['1 professional scan', '10 essential probes', 'PDF report', '24/7 support'],
+    features: ['1 professional scan', '10 attack probes', 'PDF security report', '24/7 support'],
     highlight: false,
     usdc: true,
     amount: 1,
@@ -71,7 +74,7 @@ const PRICING = [
     name: 'Pro',
     price: '99',
     sub: '/ month',
-    features: ['1000 scans per month', 'All 200+ probes', 'Full detailed reports', 'Scan history', '25 attack categories', 'Priority support'],
+    features: ['1000 scans per month', 'All 88 attack probes', 'Full detailed reports', 'Scan history', '15 attack categories', 'Priority support'],
     highlight: true,
     usdc: true,
     amount: 99,
