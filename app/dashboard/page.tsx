@@ -1299,8 +1299,9 @@ export default function Dashboard() {
     setActive('overview')
   }
 
-  const plan = subscription?.plan || 'starter'
-  const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.starter
+  const hasPlan = !!subscription?.plan
+  const plan = subscription?.plan || 'none'
+  const planInfo = PLAN_LIMITS[plan] || { label: 'No Plan', limit: 0, probes: 0, price: '$0' }
   const scanLimit = planInfo.limit
   const probeLimit = planInfo.probes
   const scansUsed = getScansThisMonth(scans)
@@ -1314,6 +1315,101 @@ export default function Dashboard() {
         fontFamily: 'DM Sans, sans-serif', color: '#555', fontSize: '14px',
       }}>
         Loading…
+      </div>
+    )
+  }
+
+  if (!hasPlan) {
+    return (
+      <div style={{
+        minHeight: '100vh', background: '#000', display: 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5',
+        flexDirection: 'column', padding: '40px 24px',
+      }}>
+        <a href="/" style={{ textDecoration: 'none', marginBottom: '48px' }}>
+          <span style={{ fontSize: '22px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
+        </a>
+
+        <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
+          Choose a Plan to Start Scanning
+        </h1>
+        <p style={{ fontSize: '15px', color: '#555', marginBottom: '48px', textAlign: 'center', maxWidth: '460px' }}>
+          Select a plan below to unlock AI security scanning. No free tier — every scan is backed by 200+ attack probes.
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', maxWidth: '640px', width: '100%' }}>
+          {/* Starter Plan */}
+          <div style={{
+            padding: '32px 28px', background: '#0a0a0a',
+            border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px',
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ fontSize: '14px', color: '#888', marginBottom: '16px', fontWeight: 500 }}>Starter</div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
+              <span style={{ fontSize: '40px', fontWeight: 700 }}>$1</span>
+              <span style={{ fontSize: '14px', color: '#555' }}>USDC / scan</span>
+            </div>
+            <div style={{ fontSize: '13px', color: '#444', marginBottom: '24px' }}>Pay per scan</div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', flex: 1 }}>
+              {['1 professional scan', '10 essential probes', 'PDF security report', '24/7 support'].map((f, i) => (
+                <div key={i} style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#00c853', fontSize: '12px' }}>✓</span> {f}
+                </div>
+              ))}
+            </div>
+
+            <a href="/#pricing" style={{
+              display: 'block', textAlign: 'center', padding: '12px',
+              background: 'transparent', border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '8px', color: '#f5f5f5', fontSize: '14px', fontWeight: 600,
+              textDecoration: 'none', transition: 'all 0.2s',
+            }}>Get Started</a>
+          </div>
+
+          {/* Pro Plan */}
+          <div style={{
+            padding: '32px 28px', background: '#0a0a0a',
+            border: '1px solid rgba(255,68,68,0.3)', borderRadius: '14px',
+            display: 'flex', flexDirection: 'column',
+            position: 'relative', overflow: 'hidden',
+          }}>
+            <div style={{
+              position: 'absolute', top: '14px', right: '14px',
+              padding: '3px 10px', background: 'rgba(255,68,68,0.1)',
+              border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px',
+              fontSize: '11px', color: '#ff6666', fontWeight: 600,
+            }}>RECOMMENDED</div>
+
+            <div style={{ fontSize: '14px', color: '#ff6666', marginBottom: '16px', fontWeight: 500 }}>Pro</div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
+              <span style={{ fontSize: '40px', fontWeight: 700 }}>$99</span>
+              <span style={{ fontSize: '14px', color: '#555' }}>USDC / month</span>
+            </div>
+            <div style={{ fontSize: '13px', color: '#444', marginBottom: '24px' }}>Full access</div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', flex: 1 }}>
+              {['1000 scans per month', 'All 200+ attack probes', 'Full detailed reports', 'Scan history & analytics', '25 attack categories', 'Priority support'].map((f, i) => (
+                <div key={i} style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#ff4444', fontSize: '12px' }}>✓</span> {f}
+                </div>
+              ))}
+            </div>
+
+            <a href="/#pricing" style={{
+              display: 'block', textAlign: 'center', padding: '12px',
+              background: '#ff4444', border: 'none',
+              borderRadius: '8px', color: 'white', fontSize: '14px', fontWeight: 600,
+              textDecoration: 'none', transition: 'all 0.2s',
+            }}>Upgrade Now</a>
+          </div>
+        </div>
+
+        <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/auth' }} style={{
+          marginTop: '32px', background: 'none', border: 'none',
+          color: '#444', fontSize: '13px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+        }}>Sign out</button>
       </div>
     )
   }
