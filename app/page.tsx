@@ -474,6 +474,33 @@ function ScoreRing({ score, size = 140 }: { score: number; size?: number }) {
   )
 }
 
+function ScrollReveal({ children, delay = 0, direction = 'up', threshold = 0.15, style = {} }: {
+  children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'right' | 'scale'; threshold?: number; style?: React.CSSProperties
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [vis, setVis] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVis(true); obs.disconnect() }
+    }, { threshold })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  const transforms: Record<string, string> = {
+    up: 'translateY(40px)', left: 'translateX(-40px)', right: 'translateX(40px)', scale: 'scale(0.95)',
+  }
+  return (
+    <div ref={ref} style={{
+      opacity: vis ? 1 : 0,
+      transform: vis ? 'none' : transforms[direction],
+      transition: `opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+      ...style,
+    }}>{children}</div>
+  )
+}
+
 function useCountUp(target: number, isVisible: boolean, duration = 1500) {
   const [value, setValue] = useState(0)
   useEffect(() => {
@@ -849,7 +876,7 @@ export default function Home() {
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center',
         }}>
           <div>
-            <div style={{
+            <div className="hero-badge" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)',
               borderRadius: '20px', padding: '4px 12px', marginBottom: '32px',
@@ -860,7 +887,7 @@ export default function Home() {
               </span>
             </div>
 
-            <h1 style={{
+            <h1 className="hero-title" style={{
               fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 300,
               lineHeight: 1.1, letterSpacing: '-2px', marginBottom: '24px',
             }}>
@@ -869,19 +896,19 @@ export default function Home() {
               <span style={{ color: '#444' }}>you can&apos;t see.</span>
             </h1>
 
-            <p style={{ fontSize: '17px', color: '#888', lineHeight: 1.7, marginBottom: '40px', maxWidth: '440px' }}>
+            <p className="hero-sub" style={{ fontSize: '17px', color: '#888', lineHeight: 1.7, marginBottom: '40px', maxWidth: '440px' }}>
               GhostShield runs 88 real attack probes against your system prompts.
               Not simulations — actual LLM attacks, evaluated by a second AI for accuracy.
             </p>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div className="hero-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <a href="#pricing" style={{
                 background: '#ff4444', color: 'white', padding: '12px 28px',
                 borderRadius: '8px', textDecoration: 'none', fontWeight: 500,
-                fontSize: '15px', transition: 'opacity 0.2s',
+                fontSize: '15px', transition: 'all 0.3s',
               }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
               >Get Started</a>
               <a href="https://github.com/mhsn1/ghostshield" target="_blank" style={{
                 color: '#888', padding: '12px 20px', textDecoration: 'none',
@@ -893,12 +920,12 @@ export default function Home() {
               >View on GitHub →</a>
             </div>
 
-            <div style={{
+            <div className="hero-stats" style={{
               display: 'flex', gap: '32px', marginTop: '56px', paddingTop: '40px',
               borderTop: '1px solid rgba(255,255,255,0.06)',
             }}>
-              {STATS.map(s => (
-                <div key={s.label}>
+              {STATS.map((s, i) => (
+                <div key={s.label} style={{ animationDelay: `${1.2 + i * 0.1}s` }} className="hero-stat-item">
                   <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5', marginBottom: '4px' }}>{s.value}</div>
                   <div style={{ fontSize: '12px', color: '#555' }}>{s.label}</div>
                 </div>
@@ -906,34 +933,42 @@ export default function Home() {
             </div>
           </div>
 
-          <Terminal />
+          <div className="hero-terminal">
+            <Terminal />
+          </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
       <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '64px' }}>
-            <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>HOW IT WORKS</div>
-            <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Two AIs. One finds the holes.</h2>
-          </div>
+          <ScrollReveal>
+            <div style={{ marginBottom: '64px' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>HOW IT WORKS</div>
+              <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Two AIs. One finds the holes.</h2>
+            </div>
+          </ScrollReveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
             {[
               { n: '01', title: 'Attacker LLM', desc: 'Sends 88 real attack probes across 15 categories — persona jailbreaks, encoding tricks, social engineering, technical injection, and more.' },
               { n: '02', title: 'Your System', desc: 'Your system prompt is tested against every attack vector. Responses are captured verbatim — nothing is filtered or sanitized.' },
               { n: '03', title: 'Evaluator LLM', desc: 'A separate LLM independently judges each response for leakage depth: none → hint → fragment → substantial → complete extraction.' },
-            ].map(s => (
-              <div key={s.n} style={{
-                padding: '40px', background: '#0a0a0a',
-                border: '1px solid rgba(255,255,255,0.04)', transition: 'border-color 0.2s',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)')}
-              >
-                <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#333', marginBottom: '20px' }}>{s.n}</div>
-                <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px' }}>{s.title}</h3>
-                <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.7 }}>{s.desc}</p>
-              </div>
+            ].map((s, i) => (
+              <ScrollReveal key={s.n} delay={i * 150} direction="up">
+                <div style={{
+                  padding: '40px', background: '#0a0a0a',
+                  border: '1px solid rgba(255,255,255,0.04)',
+                  transition: 'all 0.3s',
+                  height: '100%',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,68,68,0.2)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'translateY(0)' }}
+                >
+                  <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', marginBottom: '20px' }}>{s.n}</div>
+                  <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px' }}>{s.title}</h3>
+                  <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.7 }}>{s.desc}</p>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -942,38 +977,46 @@ export default function Home() {
       {/* ATTACK CATEGORIES */}
       <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>ATTACK COVERAGE</div>
-            <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '16px' }}>15 categories.<br />88 real attacks.</h2>
-            <p style={{ fontSize: '16px', color: '#666', lineHeight: 1.7, marginBottom: '32px' }}>
-              Every probe is a real attack technique documented in security research.
-              No synthetic or made-up attacks — each one has been observed in the wild against production LLM systems.
-            </p>
-            <div style={{ display: 'flex', gap: '24px' }}>
-              {Object.entries(SEVERITY_COLOR).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: v }} />
-                  <span style={{ fontSize: '12px', color: '#555', textTransform: 'capitalize' }}>{k}</span>
-                </div>
-              ))}
+          <ScrollReveal direction="left">
+            <div>
+              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>ATTACK COVERAGE</div>
+              <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '16px' }}>15 categories.<br />88 real attacks.</h2>
+              <p style={{ fontSize: '16px', color: '#666', lineHeight: 1.7, marginBottom: '32px' }}>
+                Every probe is a real attack technique documented in security research.
+                No synthetic or made-up attacks — each one has been observed in the wild against production LLM systems.
+              </p>
+              <div style={{ display: 'flex', gap: '24px' }}>
+                {Object.entries(SEVERITY_COLOR).map(([k, v]) => (
+                  <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: v }} />
+                    <span style={{ fontSize: '12px', color: '#555', textTransform: 'capitalize' }}>{k}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {CATEGORIES.map((cat, i) => (
-              <div key={cat.id} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '12px 16px',
-                background: activeProbe === i ? '#111' : 'transparent',
-                border: `1px solid ${activeProbe === i ? 'rgba(255,255,255,0.08)' : 'transparent'}`,
-                borderRadius: '6px', transition: 'all 0.3s',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: SEVERITY_COLOR[cat.severity] }} />
-                  <span style={{ fontSize: '14px', color: activeProbe === i ? '#f5f5f5' : '#666', transition: 'color 0.3s' }}>{cat.name}</span>
+              <ScrollReveal key={cat.id} delay={i * 60} direction="right">
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '12px 16px',
+                  background: activeProbe === i ? '#111' : 'transparent',
+                  border: `1px solid ${activeProbe === i ? 'rgba(255,255,255,0.08)' : 'transparent'}`,
+                  borderRadius: '6px', transition: 'all 0.3s',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: 6, height: 6, borderRadius: '50%', background: SEVERITY_COLOR[cat.severity],
+                      boxShadow: activeProbe === i ? `0 0 8px ${SEVERITY_COLOR[cat.severity]}` : 'none',
+                      transition: 'box-shadow 0.3s',
+                    }} />
+                    <span style={{ fontSize: '14px', color: activeProbe === i ? '#f5f5f5' : '#666', transition: 'color 0.3s' }}>{cat.name}</span>
+                  </div>
+                  <span style={{ fontSize: '12px', fontFamily: 'DM Mono', color: activeProbe === i ? '#888' : '#333', transition: 'color 0.3s' }}>{cat.count} probes</span>
                 </div>
-                <span style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#333' }}>{cat.count} probes</span>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -985,111 +1028,123 @@ export default function Home() {
       {/* PRICING */}
       <section id="pricing" style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>PRICING</div>
-            <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Simple, honest pricing.</h2>
-          </div>
+          <ScrollReveal>
+            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>PRICING</div>
+              <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Simple, honest pricing.</h2>
+            </div>
+          </ScrollReveal>
 
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)',
-              borderRadius: '20px', padding: '6px 16px',
-              fontSize: '13px', color: '#818cf8', fontFamily: 'DM Mono',
-            }}>
-              ◎ Payments accepted in USDC · Ethereum via MetaMask
-            </span>
-          </div>
+          <ScrollReveal delay={100}>
+            <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)',
+                borderRadius: '20px', padding: '6px 16px',
+                fontSize: '13px', color: '#818cf8', fontFamily: 'DM Mono',
+              }}>
+                ◎ Payments accepted in USDC · Ethereum via MetaMask
+              </span>
+            </div>
+          </ScrollReveal>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2px', maxWidth: '800px', margin: '0 auto' }}>
-            {PRICING.map(plan => (
-              <div key={plan.name} style={{
-                padding: '40px',
-                background: plan.highlight ? '#0e0e0e' : '#080808',
-                border: plan.highlight ? '1px solid rgba(255,68,68,0.25)' : '1px solid rgba(255,255,255,0.04)',
-                borderRadius: '2px', position: 'relative',
-              }}>
-                {plan.highlight && (
-                  <div style={{
-                    position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
-                    background: '#ff4444', color: 'white', fontSize: '10px',
-                    fontFamily: 'DM Mono', letterSpacing: '1px', padding: '3px 12px',
-                  }}>MOST POPULAR</div>
-                )}
+            {PRICING.map((plan, i) => (
+              <ScrollReveal key={plan.name} delay={i * 200} direction="scale">
+                <div style={{
+                  padding: '40px',
+                  background: plan.highlight ? '#0e0e0e' : '#080808',
+                  border: plan.highlight ? '1px solid rgba(255,68,68,0.25)' : '1px solid rgba(255,255,255,0.04)',
+                  borderRadius: '2px', position: 'relative',
+                  transition: 'all 0.3s',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)' }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+                >
+                  {plan.highlight && (
+                    <div style={{
+                      position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
+                      background: '#ff4444', color: 'white', fontSize: '10px',
+                      fontFamily: 'DM Mono', letterSpacing: '1px', padding: '3px 12px',
+                    }}>MOST POPULAR</div>
+                  )}
 
-                <div style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>{plan.name}</div>
+                  <div style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>{plan.name}</div>
 
-                <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                  {plan.usdc ? (
-                    <>
+                  <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                    {plan.usdc ? (
+                      <>
+                        <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>{plan.price}</span>
+                        <span style={{ fontSize: '14px', color: '#555' }}>USDC {plan.sub}</span>
+                      </>
+                    ) : (
                       <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>{plan.price}</span>
-                      <span style={{ fontSize: '14px', color: '#555' }}>USDC {plan.sub}</span>
-                    </>
+                    )}
+                  </div>
+
+                  {plan.usdc && (
+                    <div style={{ marginBottom: '24px' }}>
+                      <USDCBadge />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+                    {plan.features.map(f => (
+                      <div key={f} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#00c853', fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✓</span>
+                        <span style={{ fontSize: '14px', color: '#888' }}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {plan.usdc ? (
+                    <PayButton amount={plan.amount} highlight={plan.highlight} />
                   ) : (
-                    <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>{plan.price}</span>
+                    <a href={plan.href} target="_blank" style={{
+                      display: 'block', textAlign: 'center', padding: '11px',
+                      background: 'transparent', color: '#888',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '6px', textDecoration: 'none', fontSize: '14px',
+                      fontWeight: 500, transition: 'all 0.2s',
+                    }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'
+                        e.currentTarget.style.color = '#f5f5f5'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+                        e.currentTarget.style.color = '#888'
+                      }}
+                    >{plan.cta}</a>
                   )}
                 </div>
-
-                {plan.usdc && (
-                  <div style={{ marginBottom: '24px' }}>
-                    <USDCBadge />
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-                  {plan.features.map(f => (
-                    <div key={f} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                      <span style={{ color: '#00c853', fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✓</span>
-                      <span style={{ fontSize: '14px', color: '#888' }}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {plan.usdc ? (
-                  <PayButton amount={plan.amount} highlight={plan.highlight} />
-                ) : (
-                  <a href={plan.href} target="_blank" style={{
-                    display: 'block', textAlign: 'center', padding: '11px',
-                    background: 'transparent', color: '#888',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '6px', textDecoration: 'none', fontSize: '14px',
-                    fontWeight: 500, transition: 'all 0.2s',
-                  }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'
-                      e.currentTarget.style.color = '#f5f5f5'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
-                      e.currentTarget.style.color = '#888'
-                    }}
-                  >{plan.cta}</a>
-                )}
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
           {/* Enterprise CTA */}
-          <div style={{
-            marginTop: '48px', textAlign: 'center',
-            padding: '24px', background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px',
-          }}>
-            <span style={{ fontSize: '14px', color: '#666' }}>
-              Need custom quotas, SSO, or on-premise deployment?{' '}
-            </span>
-            <a
-              href="/contact"
-              style={{
-                fontSize: '14px', color: '#ff4444', textDecoration: 'none',
-                fontWeight: 500, transition: 'opacity 0.2s',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-            >
-              Contact Sales →
-            </a>
-          </div>
+          <ScrollReveal delay={500}>
+            <div style={{
+              marginTop: '48px', textAlign: 'center',
+              padding: '24px', background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px',
+            }}>
+              <span style={{ fontSize: '14px', color: '#666' }}>
+                Need custom quotas, SSO, or on-premise deployment?{' '}
+              </span>
+              <a
+                href="/contact"
+                style={{
+                  fontSize: '14px', color: '#ff4444', textDecoration: 'none',
+                  fontWeight: 500, transition: 'opacity 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                Contact Sales →
+              </a>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -1167,6 +1222,25 @@ export default function Home() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.3; }
         }
+        @keyframes heroFadeUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes heroSlideRight {
+          from { opacity: 0; transform: translateX(40px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        .hero-badge  { animation: heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
+        .hero-title  { animation: heroFadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.4s both; }
+        .hero-sub    { animation: heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
+        .hero-cta    { animation: heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s both; }
+        .hero-stats  { animation: heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 1.0s both; }
+        .hero-stat-item { animation: heroFadeIn 0.6s ease both; }
+        .hero-terminal { animation: heroSlideRight 1s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
       `}</style>
     </div>
   )
