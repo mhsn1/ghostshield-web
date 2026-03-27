@@ -1262,6 +1262,208 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
   )
 }
 
+const WALLET_ADDRESS_ETH = '0xf6df0842bc8983029181f822d25ac2ca9ddd0487'
+const USDC_ETH = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+const USDC_BASE = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+
+function ChoosePlan({ userId, onPlanActivated }: { userId?: string; onPlanActivated: () => void }) {
+  const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [realUserId, setRealUserId] = useState(userId || '')
+
+  useEffect(() => {
+    if (!realUserId) {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) setRealUserId(data.user.id)
+      })
+    }
+  }, [realUserId])
+
+  const payWithMetaMask = async (amountUSDC: number, network: 'eth' | 'base') => {
+    setError(''); setSuccess(''); setLoading(`${network}-${amountUSDC}`)
+    try {
+      const eth = (window as any).ethereum
+      if (!eth) { setError('MetaMask install karein: https://metamask.io'); setLoading(null); return }
+
+      await eth.request({ method: 'eth_requestAccounts' })
+      const targetChain = network === 'eth' ? '0x1' : '0x2105'
+      const chainId = await eth.request({ method: 'eth_chainId' })
+
+      if (chainId !== targetChain) {
+        try {
+          await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChain }] })
+        } catch {
+          setError(`MetaMask ko ${network === 'eth' ? 'Ethereum Mainnet' : 'Base Network'} par switch karein`)
+          setLoading(null); return
+        }
+      }
+
+      const accounts = await eth.request({ method: 'eth_accounts' })
+      const from = accounts[0]
+      const amount = BigInt(amountUSDC * 1_000_000)
+      const contract = network === 'eth' ? USDC_ETH : USDC_BASE
+      const data = '0xa9059cbb' +
+        WALLET_ADDRESS_ETH.slice(2).padStart(64, '0') +
+        amount.toString(16).padStart(64, '0')
+
+      const txHash = await eth.request({
+        method: 'eth_sendTransaction',
+        params: [{ from, to: contract, data, gas: '0x186A0' }],
+      })
+
+      setSuccess('Payment sent! Verifying on-chain... (30-60 seconds)')
+
+      // Wait for confirmation then verify
+      let verified = false
+      for (let i = 0; i < 12; i++) {
+        await new Promise(r => setTimeout(r, 10000)) // wait 10s
+        try {
+          const res = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ txHash, network, userId: realUserId })
+          })
+          const result = await res.json()
+          if (result.success) {
+            setSuccess(`${result.plan === 'pro' ? 'Pro' : 'Starter'} plan activated! Redirecting...`)
+            verified = true
+            setTimeout(() => onPlanActivated(), 2000)
+            break
+          }
+        } catch { /* retry */ }
+      }
+
+      if (!verified) {
+        setSuccess('')
+        setError('Transaction sent but verification timed out. Wait a few minutes then refresh the page.')
+      }
+    } catch (err: any) {
+      if (err.code === 4001) setError('Payment cancelled.')
+      else setError('Error: ' + err.message)
+    }
+    setLoading(null)
+  }
+
+  const plans = [
+    { name: 'Starter', price: 1, sub: 'USDC / scan', desc: 'Pay per scan', highlight: false,
+      features: ['1 professional scan', '10 essential probes', 'PDF security report', '24/7 support'] },
+    { name: 'Pro', price: 99, sub: 'USDC / month', desc: 'Full access', highlight: true,
+      features: ['1000 scans per month', 'All 200+ attack probes', 'Full detailed reports', 'Scan history & analytics', '25 attack categories', 'Priority support'] },
+  ]
+
+  return (
+    <div style={{
+      minHeight: '100vh', background: '#000', display: 'flex',
+      alignItems: 'center', justifyContent: 'center',
+      fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5',
+      flexDirection: 'column', padding: '40px 24px',
+    }}>
+      <a href="/" style={{ textDecoration: 'none', marginBottom: '48px' }}>
+        <span style={{ fontSize: '22px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
+      </a>
+
+      <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
+        Choose a Plan to Start Scanning
+      </h1>
+      <p style={{ fontSize: '15px', color: '#555', marginBottom: '40px', textAlign: 'center', maxWidth: '460px' }}>
+        Pay with USDC via MetaMask. Your plan activates automatically after on-chain confirmation.
+      </p>
+
+      {error && (
+        <div style={{
+          maxWidth: '640px', width: '100%', marginBottom: '20px', padding: '14px 18px',
+          background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)',
+          borderRadius: '8px', fontSize: '13px', color: '#ff6666', textAlign: 'center',
+        }}>{error}</div>
+      )}
+
+      {success && (
+        <div style={{
+          maxWidth: '640px', width: '100%', marginBottom: '20px', padding: '14px 18px',
+          background: 'rgba(0,200,83,0.08)', border: '1px solid rgba(0,200,83,0.2)',
+          borderRadius: '8px', fontSize: '13px', color: '#00c853', textAlign: 'center',
+        }}>{success}</div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', maxWidth: '640px', width: '100%' }}>
+        {plans.map(plan => (
+          <div key={plan.name} style={{
+            padding: '32px 28px', background: '#0a0a0a',
+            border: `1px solid ${plan.highlight ? 'rgba(255,68,68,0.3)' : 'rgba(255,255,255,0.08)'}`,
+            borderRadius: '14px', display: 'flex', flexDirection: 'column',
+            position: 'relative', overflow: 'hidden',
+          }}>
+            {plan.highlight && (
+              <div style={{
+                position: 'absolute', top: '14px', right: '14px',
+                padding: '3px 10px', background: 'rgba(255,68,68,0.1)',
+                border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px',
+                fontSize: '11px', color: '#ff6666', fontWeight: 600,
+              }}>RECOMMENDED</div>
+            )}
+
+            <div style={{ fontSize: '14px', color: plan.highlight ? '#ff6666' : '#888', marginBottom: '16px', fontWeight: 500 }}>{plan.name}</div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
+              <span style={{ fontSize: '40px', fontWeight: 700 }}>${plan.price}</span>
+              <span style={{ fontSize: '14px', color: '#555' }}>{plan.sub}</span>
+            </div>
+            <div style={{ fontSize: '13px', color: '#444', marginBottom: '24px' }}>{plan.desc}</div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', flex: 1 }}>
+              {plan.features.map((f, i) => (
+                <div key={i} style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: plan.highlight ? '#ff4444' : '#00c853', fontSize: '12px' }}>✓</span> {f}
+                </div>
+              ))}
+            </div>
+
+            {/* Payment buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                onClick={() => payWithMetaMask(plan.price, 'eth')}
+                disabled={!!loading}
+                style={{
+                  width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
+                  background: plan.highlight ? '#ff4444' : 'rgba(255,255,255,0.08)',
+                  color: plan.highlight ? 'white' : '#f5f5f5',
+                  fontSize: '13px', fontWeight: 600, cursor: loading ? 'wait' : 'pointer',
+                  fontFamily: 'DM Sans, sans-serif', opacity: loading ? 0.5 : 1,
+                  transition: 'all 0.2s',
+                }}
+              >
+                {loading === `eth-${plan.price}` ? 'Processing...' : `Pay $${plan.price} USDC · Ethereum`}
+              </button>
+              <button
+                onClick={() => payWithMetaMask(plan.price, 'base')}
+                disabled={!!loading}
+                style={{
+                  width: '100%', padding: '11px', borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.1)', background: 'transparent',
+                  color: '#aaa', fontSize: '13px', fontWeight: 500, cursor: loading ? 'wait' : 'pointer',
+                  fontFamily: 'DM Sans, sans-serif', opacity: loading ? 0.5 : 1,
+                  transition: 'all 0.2s',
+                }}
+              >
+                {loading === `base-${plan.price}` ? 'Processing...' : `Pay $${plan.price} USDC · Base`}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ fontSize: '12px', color: '#333', marginTop: '24px', textAlign: 'center' }}>
+        Powered by USDC · Payments verified on-chain · Non-refundable
+      </div>
+
+      <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/auth' }} style={{
+        marginTop: '16px', background: 'none', border: 'none',
+        color: '#444', fontSize: '13px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+      }}>Sign out</button>
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const [active, setActive] = useState('overview')
   const [scans, setScans] = useState<any[]>([])
@@ -1322,96 +1524,10 @@ export default function Dashboard() {
 
   if (!hasPlan) {
     return (
-      <div style={{
-        minHeight: '100vh', background: '#000', display: 'flex',
-        alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5',
-        flexDirection: 'column', padding: '40px 24px',
-      }}>
-        <a href="/" style={{ textDecoration: 'none', marginBottom: '48px' }}>
-          <span style={{ fontSize: '22px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
-        </a>
-
-        <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
-          Choose a Plan to Start Scanning
-        </h1>
-        <p style={{ fontSize: '15px', color: '#555', marginBottom: '48px', textAlign: 'center', maxWidth: '460px' }}>
-          Select a plan below to unlock AI security scanning. No free tier — every scan is backed by 200+ attack probes.
-        </p>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', maxWidth: '640px', width: '100%' }}>
-          {/* Starter Plan */}
-          <div style={{
-            padding: '32px 28px', background: '#0a0a0a',
-            border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px',
-            display: 'flex', flexDirection: 'column',
-          }}>
-            <div style={{ fontSize: '14px', color: '#888', marginBottom: '16px', fontWeight: 500 }}>Starter</div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
-              <span style={{ fontSize: '40px', fontWeight: 700 }}>$1</span>
-              <span style={{ fontSize: '14px', color: '#555' }}>USDC / scan</span>
-            </div>
-            <div style={{ fontSize: '13px', color: '#444', marginBottom: '24px' }}>Pay per scan</div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', flex: 1 }}>
-              {['1 professional scan', '10 essential probes', 'PDF security report', '24/7 support'].map((f, i) => (
-                <div key={i} style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#00c853', fontSize: '12px' }}>✓</span> {f}
-                </div>
-              ))}
-            </div>
-
-            <a href="/#pricing" style={{
-              display: 'block', textAlign: 'center', padding: '12px',
-              background: 'transparent', border: '1px solid rgba(255,255,255,0.15)',
-              borderRadius: '8px', color: '#f5f5f5', fontSize: '14px', fontWeight: 600,
-              textDecoration: 'none', transition: 'all 0.2s',
-            }}>Get Started</a>
-          </div>
-
-          {/* Pro Plan */}
-          <div style={{
-            padding: '32px 28px', background: '#0a0a0a',
-            border: '1px solid rgba(255,68,68,0.3)', borderRadius: '14px',
-            display: 'flex', flexDirection: 'column',
-            position: 'relative', overflow: 'hidden',
-          }}>
-            <div style={{
-              position: 'absolute', top: '14px', right: '14px',
-              padding: '3px 10px', background: 'rgba(255,68,68,0.1)',
-              border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px',
-              fontSize: '11px', color: '#ff6666', fontWeight: 600,
-            }}>RECOMMENDED</div>
-
-            <div style={{ fontSize: '14px', color: '#ff6666', marginBottom: '16px', fontWeight: 500 }}>Pro</div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
-              <span style={{ fontSize: '40px', fontWeight: 700 }}>$99</span>
-              <span style={{ fontSize: '14px', color: '#555' }}>USDC / month</span>
-            </div>
-            <div style={{ fontSize: '13px', color: '#444', marginBottom: '24px' }}>Full access</div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', flex: 1 }}>
-              {['1000 scans per month', 'All 200+ attack probes', 'Full detailed reports', 'Scan history & analytics', '25 attack categories', 'Priority support'].map((f, i) => (
-                <div key={i} style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#ff4444', fontSize: '12px' }}>✓</span> {f}
-                </div>
-              ))}
-            </div>
-
-            <a href="/#pricing" style={{
-              display: 'block', textAlign: 'center', padding: '12px',
-              background: '#ff4444', border: 'none',
-              borderRadius: '8px', color: 'white', fontSize: '14px', fontWeight: 600,
-              textDecoration: 'none', transition: 'all 0.2s',
-            }}>Upgrade Now</a>
-          </div>
-        </div>
-
-        <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/auth' }} style={{
-          marginTop: '32px', background: 'none', border: 'none',
-          color: '#444', fontSize: '13px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
-        }}>Sign out</button>
-      </div>
+      <ChoosePlan
+        userId={subscription?.user_id}
+        onPlanActivated={() => { loadSubscription(); setActive('overview') }}
+      />
     )
   }
 
