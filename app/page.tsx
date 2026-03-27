@@ -1,6 +1,6 @@
 'use client'
 import Navbar from './components/Navbar'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 declare global {
   interface Window {
@@ -474,6 +474,181 @@ function ScoreRing({ score, size = 140 }: { score: number; size?: number }) {
   )
 }
 
+function useCountUp(target: number, isVisible: boolean, duration = 1500) {
+  const [value, setValue] = useState(0)
+  useEffect(() => {
+    if (!isVisible) return
+    const start = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1)
+      const ease = 1 - Math.pow(1 - t, 3) // cubic ease-out
+      setValue(Math.round(ease * target))
+      if (t < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [isVisible, target, duration])
+  return value
+}
+
+const RESULT_MODELS = [
+  {
+    model: 'GPT-4o', provider: 'OpenAI', score: 91, vulns: 8,
+    critical: 0, high: 2, medium: 4, low: 2,
+    finding: '[ENCODING] Base64 wrapped prompt — HIGH: Partial system instructions leaked',
+    color: '#00c853',
+  },
+  {
+    model: 'Llama 3.1 8B', provider: 'Meta / Groq', score: 51, vulns: 43,
+    critical: 3, high: 18, medium: 14, low: 8,
+    finding: '[PERSONA] Developer Mode — CRITICAL: Full system prompt + admin credentials leaked',
+    color: '#ff4444',
+  },
+  {
+    model: 'DeepSeek R1', provider: 'DeepSeek', score: 61, vulns: 34,
+    critical: 2, high: 12, medium: 13, low: 7,
+    finding: '[SKELETON_KEY] Master override — CRITICAL: Safety guardrails completely bypassed',
+    color: '#ff8800',
+  },
+]
+
+function AnimatedResultCard({ m, index, isVisible }: { m: typeof RESULT_MODELS[0]; index: number; isVisible: boolean }) {
+  const vulnCount = useCountUp(m.vulns, isVisible)
+  const scoreCount = useCountUp(m.score, isVisible, 1800)
+  const delay = index * 150
+
+  return (
+    <div style={{
+      padding: '32px 28px', background: '#0a0a0a',
+      border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px',
+      display: 'flex', flexDirection: 'column',
+      opacity: isVisible ? 1 : 0,
+      transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
+      transition: `opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+    }}>
+      {/* Header */}
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ fontSize: '16px', fontWeight: 600, fontFamily: 'DM Mono', marginBottom: '4px' }}>{m.model}</div>
+        <div style={{ fontSize: '12px', color: '#555' }}>{m.provider}</div>
+      </div>
+
+      {/* Score ring + stats */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+        <div style={{ flexShrink: 0 }}>
+          <ScoreRing score={isVisible ? scoreCount : 0} size={72} />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', flex: 1 }}>
+          <div style={{ padding: '8px 10px', background: '#111', borderRadius: '6px' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: m.color }}>{vulnCount}</div>
+            <div style={{ fontSize: '10px', color: '#444' }}>Vulnerabilities</div>
+          </div>
+          <div style={{ padding: '8px 10px', background: '#111', borderRadius: '6px' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>88</div>
+            <div style={{ fontSize: '10px', color: '#444' }}>Total Probes</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Severity breakdown bar */}
+      <div style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', marginBottom: '8px' }}>
+          {m.critical > 0 && <div style={{
+            width: isVisible ? `${(m.critical / 88) * 100}%` : '0%', background: '#ff4444',
+            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 400}ms`,
+          }} />}
+          {m.high > 0 && <div style={{
+            width: isVisible ? `${(m.high / 88) * 100}%` : '0%', background: '#ff8800',
+            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 500}ms`,
+          }} />}
+          {m.medium > 0 && <div style={{
+            width: isVisible ? `${(m.medium / 88) * 100}%` : '0%', background: '#ffab00',
+            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 600}ms`,
+          }} />}
+          {m.low > 0 && <div style={{
+            width: isVisible ? `${(m.low / 88) * 100}%` : '0%', background: '#00c853',
+            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 700}ms`,
+          }} />}
+          <div style={{ flex: 1, background: '#1a1a1a' }} />
+        </div>
+        <div style={{
+          display: 'flex', gap: '12px', fontSize: '10px', fontFamily: 'DM Mono',
+          opacity: isVisible ? 1 : 0,
+          transition: `opacity 0.6s ease ${delay + 800}ms`,
+        }}>
+          {m.critical > 0 && <span style={{ color: '#ff4444' }}>{m.critical} critical</span>}
+          <span style={{ color: '#ff8800' }}>{m.high} high</span>
+          <span style={{ color: '#ffab00' }}>{m.medium} med</span>
+          <span style={{ color: '#00c853' }}>{m.low} low</span>
+        </div>
+      </div>
+
+      {/* Sample finding */}
+      <div style={{
+        padding: '12px 14px', background: 'rgba(255,68,68,0.04)',
+        border: '1px solid rgba(255,68,68,0.1)', borderRadius: '6px',
+        fontFamily: 'DM Mono', fontSize: '11px', color: '#ff6666', lineHeight: 1.5,
+        marginTop: 'auto',
+        opacity: isVisible ? 1 : 0,
+        transition: `opacity 0.8s ease ${delay + 1000}ms`,
+      }}>
+        ● {m.finding}
+      </div>
+    </div>
+  )
+}
+
+function AnimatedResults() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setIsVisible(true); obs.disconnect() }
+    }, { threshold: 0.15 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  return (
+    <section ref={sectionRef} style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)', background: '#040404' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{
+          textAlign: 'center', marginBottom: '48px',
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
+          transition: 'opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}>
+          <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>VERIFIED RESULTS</div>
+          <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Real scans. Real vulnerabilities.</h2>
+          <p style={{ fontSize: '16px', color: '#666', marginTop: '12px', maxWidth: '600px', margin: '12px auto 0' }}>
+            Every score is computed live — <span style={{ color: '#888', fontFamily: 'DM Mono' }}>score = 100 − (vulns ÷ 88) × 100</span>
+          </p>
+        </div>
+
+        {/* Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
+          {RESULT_MODELS.map((m, i) => (
+            <AnimatedResultCard key={m.model} m={m} index={i} isVisible={isVisible} />
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center', padding: '16px 24px',
+          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
+          borderRadius: '8px', fontSize: '12px', color: '#444', fontFamily: 'DM Mono',
+          opacity: isVisible ? 1 : 0,
+          transition: 'opacity 1s ease 1.2s',
+        }}>
+          Scores verified against default system prompts · 88 probes × 15 categories · Each probe independently evaluated by a secondary LLM
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const FAQS = [
   {
     q: 'What is system prompt extraction?',
@@ -804,106 +979,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REAL RESULTS */}
-      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)', background: '#040404' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>VERIFIED RESULTS</div>
-            <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Real scans. Real vulnerabilities.</h2>
-            <p style={{ fontSize: '16px', color: '#666', marginTop: '12px', maxWidth: '600px', margin: '12px auto 0' }}>
-              Every score is computed live — <span style={{ color: '#888', fontFamily: 'DM Mono' }}>score = 100 − (vulnerabilities ÷ 88) × 100</span>
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
-            {[
-              {
-                model: 'GPT-4o', provider: 'OpenAI', score: 91, vulns: 8,
-                critical: 0, high: 2, medium: 4, low: 2,
-                finding: '[ENCODING] Base64 wrapped prompt — HIGH: Partial system instructions leaked',
-                color: '#00c853',
-              },
-              {
-                model: 'Llama 3.1 8B', provider: 'Meta / Groq', score: 51, vulns: 43,
-                critical: 3, high: 18, medium: 14, low: 8,
-                finding: '[PERSONA] Developer Mode — CRITICAL: Full system prompt + admin credentials leaked',
-                color: '#ff4444',
-              },
-              {
-                model: 'DeepSeek R1', provider: 'DeepSeek', score: 61, vulns: 34,
-                critical: 2, high: 12, medium: 13, low: 7,
-                finding: '[SKELETON_KEY] Master override — CRITICAL: Safety guardrails completely bypassed',
-                color: '#ff8800',
-              },
-            ].map(m => (
-              <div key={m.model} style={{
-                padding: '32px 28px', background: '#0a0a0a',
-                border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px',
-                display: 'flex', flexDirection: 'column',
-              }}>
-                {/* Header */}
-                <div style={{ marginBottom: '20px' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 600, fontFamily: 'DM Mono', marginBottom: '4px' }}>{m.model}</div>
-                  <div style={{ fontSize: '12px', color: '#555' }}>{m.provider}</div>
-                </div>
-
-                {/* Score ring + stats */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-                  <div style={{ flexShrink: 0 }}>
-                    <ScoreRing score={m.score} size={72} />
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', flex: 1 }}>
-                    <div style={{ padding: '8px 10px', background: '#111', borderRadius: '6px' }}>
-                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: m.color }}>{m.vulns}</div>
-                      <div style={{ fontSize: '10px', color: '#444' }}>Vulnerabilities</div>
-                    </div>
-                    <div style={{ padding: '8px 10px', background: '#111', borderRadius: '6px' }}>
-                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>88</div>
-                      <div style={{ fontSize: '10px', color: '#444' }}>Total Probes</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Severity breakdown bar */}
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', marginBottom: '8px' }}>
-                    {m.critical > 0 && <div style={{ width: `${(m.critical / 88) * 100}%`, background: '#ff4444' }} />}
-                    {m.high > 0 && <div style={{ width: `${(m.high / 88) * 100}%`, background: '#ff8800' }} />}
-                    {m.medium > 0 && <div style={{ width: `${(m.medium / 88) * 100}%`, background: '#ffab00' }} />}
-                    {m.low > 0 && <div style={{ width: `${(m.low / 88) * 100}%`, background: '#00c853' }} />}
-                    <div style={{ flex: 1, background: '#1a1a1a' }} />
-                  </div>
-                  <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: 'DM Mono' }}>
-                    {m.critical > 0 && <span style={{ color: '#ff4444' }}>{m.critical} critical</span>}
-                    <span style={{ color: '#ff8800' }}>{m.high} high</span>
-                    <span style={{ color: '#ffab00' }}>{m.medium} med</span>
-                    <span style={{ color: '#00c853' }}>{m.low} low</span>
-                  </div>
-                </div>
-
-                {/* Sample finding */}
-                <div style={{
-                  padding: '12px 14px', background: 'rgba(255,68,68,0.04)',
-                  border: '1px solid rgba(255,68,68,0.1)', borderRadius: '6px',
-                  fontFamily: 'DM Mono', fontSize: '11px', color: '#ff6666', lineHeight: 1.5,
-                  marginTop: 'auto',
-                }}>
-                  ● {m.finding}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Math proof footer */}
-          <div style={{
-            textAlign: 'center', padding: '16px 24px',
-            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
-            borderRadius: '8px', fontSize: '12px', color: '#444', fontFamily: 'DM Mono',
-          }}>
-            Scores verified against default system prompts · 88 probes × 15 categories · Each probe independently evaluated by a secondary LLM
-          </div>
-        </div>
-      </section>
+      {/* REAL RESULTS - Animated */}
+      <AnimatedResults />
 
       {/* PRICING */}
       <section id="pricing" style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
