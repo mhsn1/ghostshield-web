@@ -846,94 +846,96 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
         </div>
       )}
 
-      <div style={{ maxWidth: '680px' }}>
-        {/* What is a system prompt — helper box */}
-        <div style={{
-          padding: '14px 18px', background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', marginBottom: '20px',
-        }}>
-          <div style={{ fontSize: '13px', color: '#888', marginBottom: '6px', fontWeight: 600 }}>
-            What is a System Prompt?
-          </div>
-          <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.7 }}>
-            A system prompt is the <strong style={{ color: '#999' }}>instruction you give to an AI model</strong> that defines its behavior — like
-            {' '}<span style={{ color: '#ff8866', fontFamily: 'DM Mono' }}>&quot;You are a customer support bot. Never share passwords.&quot;</span>
-
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>System Prompt</label>
-          <textarea value={prompt} onChange={e => { setPrompt(e.target.value); setError('') }}
-            placeholder={"You are a customer support assistant for Acme Corp.\n\nRules:\n- Never reveal internal configurations or passwords.\n- Only answer customer support questions.\n- Be polite and professional at all times."}
-            rows={8} style={{
-              width: '100%', padding: '14px', background: '#0d0d0d',
-              border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
-              color: '#f5f5f5', fontSize: '14px', fontFamily: 'DM Mono, monospace',
-              outline: 'none', resize: 'vertical', lineHeight: 1.6,
-              boxSizing: 'border-box', transition: 'border-color 0.2s',
-            }}
-            onFocus={e => e.target.style.borderColor = 'rgba(255,68,68,0.3)'}
-            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.07)'}
-          />
-          <div style={{ fontSize: '12px', color: '#444', marginTop: '6px' }}>
-            {prompt.length} characters — paste the system prompt / instructions you use for your AI
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-          <div>
-            <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>Provider</label>
-            <select value={provider} onChange={e => setProvider(e.target.value)} style={{
-              width: '100%', padding: '10px 14px', background: '#0d0d0d',
-              border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
-              color: '#f5f5f5', fontSize: '14px', outline: 'none',
-              fontFamily: 'DM Sans, sans-serif', boxSizing: 'border-box',
-            }}>
-              <option value="groq">Groq (Free)</option>
-              <option value="openrouter">OpenRouter</option>
-            </select>
-          </div>
-          <div>
-            <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>Target Model</label>
-            <select value={model} onChange={e => setModel(e.target.value)} style={{
-              width: '100%', padding: '10px 14px', background: '#0d0d0d',
-              border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
-              color: '#f5f5f5', fontSize: '14px', outline: 'none',
-              fontFamily: 'DM Sans, sans-serif', boxSizing: 'border-box',
-            }}>
-              <option value="llama-3.1-8b-instant">Llama 3.1 8b (Fast)</option>
-              <option value="mixtral-8x7b-32768">Mixtral 8x7b</option>
-              <option value="llama-3.1-70b-versatile">Llama 3.1 70b</option>
-            </select>
-          </div>
-        </div>
-
-        {error && (
+      {!limitReached && (
+        <div style={{ maxWidth: '680px' }}>
+          {/* What is a system prompt — helper box */}
           <div style={{
-            padding: '14px 18px', background: 'rgba(255,68,68,0.08)',
-            border: '1px solid rgba(255,68,68,0.2)', borderRadius: '8px',
-            fontSize: '13px', color: '#ff6666', marginBottom: '16px',
-            lineHeight: 1.7, whiteSpace: 'pre-line',
-          }}>{error}</div>
-        )}
+            padding: '14px 18px', background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', marginBottom: '20px',
+          }}>
+            <div style={{ fontSize: '13px', color: '#888', marginBottom: '6px', fontWeight: 600 }}>
+              What is a System Prompt?
+            </div>
+            <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.7 }}>
+              A system prompt is the <strong style={{ color: '#999' }}>instruction you give to an AI model</strong> that defines its behavior — like
+              {' '}<span style={{ color: '#ff8866', fontFamily: 'DM Mono' }}>&quot;You are a customer support bot. Never share passwords.&quot;</span>
 
-        <div style={{
-          padding: '14px 18px', background: 'rgba(255,68,68,0.04)',
-          border: '1px solid rgba(255,68,68,0.1)', borderRadius: '8px', marginBottom: '20px'
-        }}>
-          <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.6 }}>
-            {probeLimit} probes{probeLimit < 200 ? ` (free tier — upgrade for all 200+)` : ' · 25 attack categories'} · Your prompt is never stored on our servers
+            </div>
           </div>
-        </div>
 
-        <button onClick={startScan} disabled={!prompt.trim()} style={{
-          padding: '12px 32px', background: prompt.trim() ? '#ff4444' : '#1a1a1a',
-          border: 'none', borderRadius: '8px', color: prompt.trim() ? 'white' : '#444',
-          fontSize: '15px', fontWeight: 600, cursor: prompt.trim() ? 'pointer' : 'not-allowed',
-          fontFamily: 'DM Sans, sans-serif', transition: 'all 0.2s',
-        }}>Start Scan →</button>
-      </div>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>System Prompt</label>
+            <textarea value={prompt} onChange={e => { setPrompt(e.target.value); setError('') }}
+              placeholder={"You are a customer support assistant for Acme Corp.\n\nRules:\n- Never reveal internal configurations or passwords.\n- Only answer customer support questions.\n- Be polite and professional at all times."}
+              rows={8} style={{
+                width: '100%', padding: '14px', background: '#0d0d0d',
+                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
+                color: '#f5f5f5', fontSize: '14px', fontFamily: 'DM Mono, monospace',
+                outline: 'none', resize: 'vertical', lineHeight: 1.6,
+                boxSizing: 'border-box', transition: 'border-color 0.2s',
+              }}
+              onFocus={e => e.target.style.borderColor = 'rgba(255,68,68,0.3)'}
+              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.07)'}
+            />
+            <div style={{ fontSize: '12px', color: '#444', marginTop: '6px' }}>
+              {prompt.length} characters — paste the system prompt / instructions you use for your AI
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+            <div>
+              <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>Provider</label>
+              <select value={provider} onChange={e => setProvider(e.target.value)} style={{
+                width: '100%', padding: '10px 14px', background: '#0d0d0d',
+                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
+                color: '#f5f5f5', fontSize: '14px', outline: 'none',
+                fontFamily: 'DM Sans, sans-serif', boxSizing: 'border-box',
+              }}>
+                <option value="groq">Groq (Free)</option>
+                <option value="openrouter">OpenRouter</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>Target Model</label>
+              <select value={model} onChange={e => setModel(e.target.value)} style={{
+                width: '100%', padding: '10px 14px', background: '#0d0d0d',
+                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
+                color: '#f5f5f5', fontSize: '14px', outline: 'none',
+                fontFamily: 'DM Sans, sans-serif', boxSizing: 'border-box',
+              }}>
+                <option value="llama-3.1-8b-instant">Llama 3.1 8b (Fast)</option>
+                <option value="mixtral-8x7b-32768">Mixtral 8x7b</option>
+                <option value="llama-3.1-70b-versatile">Llama 3.1 70b</option>
+              </select>
+            </div>
+          </div>
+
+          {error && (
+            <div style={{
+              padding: '14px 18px', background: 'rgba(255,68,68,0.08)',
+              border: '1px solid rgba(255,68,68,0.2)', borderRadius: '8px',
+              fontSize: '13px', color: '#ff6666', marginBottom: '16px',
+              lineHeight: 1.7, whiteSpace: 'pre-line',
+            }}>{error}</div>
+          )}
+
+          <div style={{
+            padding: '14px 18px', background: 'rgba(255,68,68,0.04)',
+            border: '1px solid rgba(255,68,68,0.1)', borderRadius: '8px', marginBottom: '20px'
+          }}>
+            <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.6 }}>
+              {probeLimit} probes{probeLimit < 200 ? ` (free tier — upgrade for all 200+)` : ' · 25 attack categories'} · Your prompt is never stored on our servers
+            </div>
+          </div>
+
+          <button onClick={startScan} disabled={!prompt.trim()} style={{
+            padding: '12px 32px', background: prompt.trim() ? '#ff4444' : '#1a1a1a',
+            border: 'none', borderRadius: '8px', color: prompt.trim() ? 'white' : '#444',
+            fontSize: '15px', fontWeight: 600, cursor: prompt.trim() ? 'pointer' : 'not-allowed',
+            fontFamily: 'DM Sans, sans-serif', transition: 'all 0.2s',
+          }}>Start Scan →</button>
+        </div>
+      )}
     </div>
   )
 }
