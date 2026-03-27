@@ -31,6 +31,7 @@ function toScanResult(scan: any) {
 const PLAN_LIMITS: Record<string, { label: string; limit: number; probes: number; price: string }> = {
   starter: { label: 'Starter', limit: 1, probes: 10, price: '$1' },
   pro: { label: 'Pro', limit: 1000, probes: 200, price: '$99/mo' },
+  paid: { label: 'Pro', limit: 1000, probes: 200, price: '$99/mo' },
 }
 
 function getScansThisMonth(scans: any[]) {
@@ -1157,7 +1158,7 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
 
   const plan = subscription?.plan || 'starter'
   const planInfo = PLAN_LIMITS[plan] || PLAN_LIMITS.starter
-  const isPaid = plan === 'pro'
+  const isPaid = plan === 'pro' || plan === 'paid'
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -1299,13 +1300,13 @@ export default function Dashboard() {
     setActive('overview')
   }
 
-  const hasPlan = !!subscription?.plan && subscription?.status === 'active'
+  const hasPlan = !!subscription?.plan && subscription.plan !== 'free'
   const plan = hasPlan ? subscription.plan : 'none'
   const planInfo = PLAN_LIMITS[plan] || { label: 'No Plan', limit: 0, probes: 0, price: '$0' }
   const scanLimit = planInfo.limit
   const probeLimit = planInfo.probes
   const scansUsed = getScansThisMonth(scans)
-  const isPaid = plan === 'pro'
+  const isPaid = plan === 'pro' || plan === 'paid'
 
   if (loading) {
     return (
