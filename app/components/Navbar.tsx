@@ -3,15 +3,333 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
+// Types
+interface Drop {
+  id: number
+  x: number
+  y: number
+  speed: number
+  char: string
+  opacity: number
+}
+
+interface Bolt {
+  id: number
+  clipPath: string
+  opacity: number
+}
+
+interface MatrixPreloaderProps {
+  onComplete: () => void
+}
+
+// Preloader Component - Only renders on client
+function MatrixPreloader({ onComplete }: MatrixPreloaderProps) {
+  const [mounted, setMounted] = useState<boolean>(false)
+  const [text, setText] = useState<string>('')
+  const [showLightning, setShowLightning] = useState<boolean>(false)
+  const [glitch, setGlitch] = useState<boolean>(false)
+  const targetText = 'GhostShield'
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'
+    let iteration = 0
+    const interval = setInterval(() => {
+      setText(
+        targetText
+          .split('')
+          .map((letter, index) => {
+            if (index < iteration) {
+              return targetText[index]
+            }
+            return chars[Math.floor(Math.random() * chars.length)]
+          })
+          .join('')
+      )
+
+      if (iteration >= targetText.length) {
+        clearInterval(interval)
+        setTimeout(() => {
+          setShowLightning(true)
+          setTimeout(() => {
+            setGlitch(true)
+            setTimeout(onComplete, 800)
+          }, 600)
+        }, 400)
+      }
+
+      iteration += 1 / 3
+    }, 50)
+
+    return () => clearInterval(interval)
+  }, [mounted, onComplete])
+
+  if (!mounted) {
+    return <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }} />
+  }
+
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: '#000',
+      zIndex: 9999,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    }}>
+      <MatrixRain />
+
+      {showLightning && <LightningEffect />}
+
+      <div style={{
+        position: 'relative',
+        zIndex: 10,
+        fontSize: 'clamp(40px, 10vw, 120px)',
+        fontWeight: 900,
+        letterSpacing: '-2px',
+        color: glitch ? '#ff4444' : '#f5f5f5',
+        textShadow: glitch
+          ? '2px 0 #00ff00, -2px 0 #0000ff, 0 0 30px #ff4444'
+          : '0 0 20px rgba(255,68,68,0.5), 0 0 40px rgba(255,68,68,0.3)',
+        fontFamily: 'monospace',
+        animation: glitch ? 'glitch 0.3s infinite' : 'pulse 2s ease-in-out',
+        transform: glitch ? 'translateX(2px)' : 'none',
+      }}>
+        {text || ' '}
+
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '140%',
+          height: '140%',
+          border: `2px solid ${glitch ? '#ff4444' : 'rgba(255,68,68,0.3)'}`,
+          borderRadius: '20px',
+          opacity: glitch ? 1 : 0.5,
+          animation: glitch ? 'shieldPulse 0.5s ease-out' : 'none',
+        }} />
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        bottom: '20%',
+        width: '200px',
+        height: '2px',
+        background: 'rgba(255,255,255,0.1)',
+        borderRadius: '2px',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          height: '100%',
+          width: text.length === targetText.length ? '100%' : `${(text.length / targetText.length) * 100}%`,
+          background: 'linear-gradient(90deg, #ff4444, #ff6666)',
+          transition: 'width 0.1s',
+          boxShadow: '0 0 10px #ff4444',
+        }} />
+      </div>
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.8; }
+        }
+        @keyframes glitch {
+          0% { transform: translate(0); }
+          20% { transform: translate(-2px, 2px); }
+          40% { transform: translate(-2px, -2px); }
+          60% { transform: translate(2px, 2px); }
+          80% { transform: translate(2px, -2px); }
+          100% { transform: translate(0); }
+        }
+        @keyframes shieldPulse {
+          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+          50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+// Matrix Rain Component - Client only
+function MatrixRain() {
+  const [mounted, setMounted] = useState<boolean>(false)
+  const [drops, setDrops] = useState<Drop[]>([])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const createDrop = (): Drop => ({
+      id: Math.random(),
+      x: Math.random() * 100,
+      y: -10,
+      speed: 2 + Math.random() * 3,
+      char: String.fromCharCode(0x30A0 + Math.random() * 96),
+      opacity: 0.1 + Math.random() * 0.4,
+    })
+
+    const interval = setInterval(() => {
+      setDrops((prev: Drop[]) => {
+        const newDrops = prev.map((d: Drop) => ({
+          ...d,
+          y: d.y + d.speed,
+          char: Math.random() > 0.95 ? String.fromCharCode(0x30A0 + Math.random() * 96) : d.char
+        })).filter((d: Drop) => d.y < 110)
+
+        if (newDrops.length < 50) {
+          newDrops.push(createDrop())
+        }
+
+        return newDrops
+      })
+    }, 50)
+
+    setDrops(Array.from({ length: 30 }, createDrop))
+
+    return () => clearInterval(interval)
+  }, [mounted])
+
+  if (!mounted) return null
+
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      overflow: 'hidden',
+      opacity: 0.6,
+    }}>
+      {drops.map((drop: Drop) => (
+        <div
+          key={drop.id}
+          style={{
+            position: 'absolute',
+            left: `${drop.x}%`,
+            top: `${drop.y}%`,
+            color: '#ff4444',
+            fontSize: '14px',
+            fontFamily: 'monospace',
+            opacity: drop.opacity,
+            textShadow: '0 0 5px #ff4444',
+            transition: 'none',
+          }}
+        >
+          {drop.char}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Lightning Effect Component - Client only
+function LightningEffect() {
+  const [mounted, setMounted] = useState<boolean>(false)
+  const [bolts, setBolts] = useState<Bolt[]>([])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const createBolt = (): Bolt => {
+      const points: string[] = []
+      let x = 50
+      let y = 0
+      while (y < 100) {
+        x += (Math.random() - 0.5) * 20
+        y += 5 + Math.random() * 10
+        points.push(`${x}% ${y}%`)
+      }
+      return {
+        id: Math.random(),
+        clipPath: `polygon(${points.join(', ')})`,
+        opacity: Math.random(),
+      }
+    }
+
+    const interval = setInterval(() => {
+      setBolts(Array.from({ length: 3 }, createBolt))
+      setTimeout(() => setBolts([]), 100)
+    }, 200)
+
+    setTimeout(() => clearInterval(interval), 600)
+
+    return () => clearInterval(interval)
+  }, [mounted])
+
+  if (!mounted) return null
+
+  return (
+    <>
+      {bolts.map((bolt: Bolt) => (
+        <div
+          key={bolt.id}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, transparent, #ff4444, #ffffff, #ff4444, transparent)',
+            clipPath: bolt.clipPath,
+            opacity: bolt.opacity * 0.8,
+            filter: 'blur(1px)',
+            zIndex: 5,
+          }}
+        />
+      ))}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(255,68,68,0.1)',
+        animation: 'flash 0.1s ease-out',
+        pointerEvents: 'none',
+      }} />
+      <style jsx>{`
+        @keyframes flash {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
+    </>
+  )
+}
+
+// Main Navbar Component
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [logoAnimated, setLogoAnimated] = useState<boolean>(false)
+  const [mounted, setMounted] = useState<boolean>(false)
   const pathname = usePathname()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!loading && mounted) {
+      setTimeout(() => setLogoAnimated(true), 100)
+    }
+  }, [loading, mounted])
 
   const links = [
     { href: '/dashboard', label: 'Product' },
@@ -20,48 +338,210 @@ export default function Navbar() {
     { href: '/shieldbench', label: 'ShieldBench' },
   ]
 
+  if (!mounted) {
+    return (
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: 'transparent',
+        padding: '0 48px',
+        height: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <span style={{ fontSize: '18px', fontWeight: 700, color: '#f5f5f5' }}>GhostShield</span>
+      </nav>
+    )
+  }
+
   return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
-      background: scrolled ? 'rgba(0,0,0,0.92)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(20px)' : 'none',
-      transition: 'all 0.3s',
-      padding: '0 48px', height: '60px',
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    }}>
-      <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.5px', color: '#f5f5f5' }}>GhostShield</span>
+    <>
+      {loading && <MatrixPreloader onComplete={() => setLoading(false)} />}
 
-      </Link>
-
-      <div style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-        {links.map(l => (
-          <Link key={l.href} href={l.href} style={{
-            color: pathname === l.href ? '#f5f5f5' : '#666',
-            fontSize: '14px', textDecoration: 'none', transition: 'color 0.2s',
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+        background: scrolled ? 'rgba(0,0,0,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        transition: 'all 0.3s',
+        padding: '0 48px',
+        height: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <Link
+          href="/"
+          style={{
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            opacity: logoAnimated ? 1 : 0,
+            transform: logoAnimated ? 'translateX(0)' : 'translateX(-20px)',
+            transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#f5f5f5')}
-            onMouseLeave={e => (e.currentTarget.style.color = pathname === l.href ? '#f5f5f5' : '#666')}
-          >{l.label}</Link>
-        ))}
-        <Link href="https://github.com/mhsn1/ghostshield" target="_blank" style={{
-          color: '#f5f5f5', fontSize: '13px', textDecoration: 'none',
-          border: '1px solid rgba(255,255,255,0.12)', borderRadius: '6px',
-          padding: '6px 14px', transition: 'border-color 0.2s',
-        }}
-          onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)')}
-          onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
-        >GitHub</Link>
-        <Link href="/auth" style={{
-          background: '#ff4444', color: 'white', fontSize: '13px',
-          textDecoration: 'none', borderRadius: '6px', padding: '6px 16px',
-          fontWeight: 500, transition: 'opacity 0.2s',
-        }}
-          onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-          onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-        >Get Started</Link>
-      </div>
-    </nav>
+        >
+          <div style={{
+            width: '28px',
+            height: '28px',
+            position: 'relative',
+            animation: logoAnimated ? 'shieldGlow 3s ease-in-out infinite' : 'none',
+          }}>
+            <svg viewBox="0 0 24 24" fill="none" style={{ width: '100%', height: '100%' }}>
+              <path
+                d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"
+                fill="none"
+                stroke="#ff4444"
+                strokeWidth="2"
+                style={{
+                  filter: 'drop-shadow(0 0 8px rgba(255,68,68,0.6))',
+                  animation: logoAnimated ? 'draw 1s ease-out forwards' : 'none',
+                  strokeDasharray: 100,
+                  strokeDashoffset: logoAnimated ? 0 : 100,
+                }}
+              />
+              <path
+                d="M9 12l2 2 4-4"
+                stroke="#f5f5f5"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  opacity: logoAnimated ? 1 : 0,
+                  transition: 'opacity 0.3s 0.5s',
+                }}
+              />
+            </svg>
+          </div>
+
+          <span style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            letterSpacing: '-0.5px',
+            color: '#f5f5f5',
+            position: 'relative',
+          }}>
+            {'GhostShield'.split('').map((char, i) => (
+              <span
+                key={i}
+                style={{
+                  display: 'inline-block',
+                  opacity: logoAnimated ? 1 : 0,
+                  transform: logoAnimated ? 'translateY(0)' : 'translateY(10px)',
+                  transition: `all 0.4s ${0.1 + i * 0.03}s`,
+                }}
+              >
+                {char}
+              </span>
+            ))}
+          </span>
+        </Link>
+
+        <div style={{
+          display: 'flex',
+          gap: '28px',
+          alignItems: 'center',
+          opacity: logoAnimated ? 1 : 0,
+          transform: logoAnimated ? 'translateY(0)' : 'translateY(-10px)',
+          transition: 'all 0.5s 0.3s',
+        }}>
+          {links.map((l, i) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              style={{
+                color: pathname === l.href ? '#f5f5f5' : '#666',
+                fontSize: '14px',
+                textDecoration: 'none',
+                transition: 'color 0.2s',
+                opacity: logoAnimated ? 1 : 0,
+                transform: logoAnimated ? 'translateY(0)' : 'translateY(-10px)',
+                transitionDelay: `${0.4 + i * 0.05}s`,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#f5f5f5' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = pathname === l.href ? '#f5f5f5' : '#666' }}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <Link
+            href="https://github.com/mhsn1/ghostshield"
+            target="_blank"
+            style={{
+              color: '#f5f5f5',
+              fontSize: '13px',
+              textDecoration: 'none',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '6px',
+              padding: '6px 14px',
+              transition: 'all 0.2s',
+              opacity: logoAnimated ? 1 : 0,
+              transform: logoAnimated ? 'scale(1)' : 'scale(0.9)',
+              transitionDelay: '0.6s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+              e.currentTarget.style.transform = 'scale(1.05)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
+              e.currentTarget.style.transform = 'scale(1)'
+            }}
+          >
+            GitHub
+          </Link>
+
+          <Link
+            href="/auth"
+            style={{
+              background: '#ff4444',
+              color: 'white',
+              fontSize: '13px',
+              textDecoration: 'none',
+              borderRadius: '6px',
+              padding: '6px 16px',
+              fontWeight: 500,
+              transition: 'all 0.2s',
+              opacity: logoAnimated ? 1 : 0,
+              transform: logoAnimated ? 'scale(1)' : 'scale(0.9)',
+              transitionDelay: '0.65s',
+              boxShadow: '0 0 20px rgba(255,68,68,0.3)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.85'
+              e.currentTarget.style.transform = 'scale(1.05)'
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(255,68,68,0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1'
+              e.currentTarget.style.transform = 'scale(1)'
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(255,68,68,0.3)'
+            }}
+          >
+            Get Started
+          </Link>
+        </div>
+      </nav>
+
+      <style jsx global>{`
+        @keyframes shieldGlow {
+          0%, 100% { filter: drop-shadow(0 0 5px rgba(255,68,68,0.4)); }
+          50% { filter: drop-shadow(0 0 15px rgba(255,68,68,0.8)); }
+        }
+        @keyframes draw {
+          to { stroke-dashoffset: 0; }
+        }
+      `}</style>
+    </>
   )
 }
