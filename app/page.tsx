@@ -425,7 +425,7 @@ function Terminal() {
 
   return (
     <div style={{
-      background: '#0a0a0a',
+      background: 'rgba(0,0,0,0.6)',
       border: '1px solid rgba(255,255,255,0.08)',
       borderRadius: '12px', padding: '24px',
       fontFamily: 'DM Mono, monospace', fontSize: '13px',
@@ -450,29 +450,7 @@ function Terminal() {
   )
 }
 
-function ScoreRing({ score, size = 140 }: { score: number; size?: number }) {
-  const r = size * 0.385
-  const cx = size / 2
-  const circ = 2 * Math.PI * r
-  const dash = (score / 100) * circ
-  const color = score >= 80 ? '#00c853' : score >= 60 ? '#ffab00' : '#ff4444'
-  const fontSize = size * 0.17
-  const subSize = size * 0.07
-  return (
-    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx={cx} cy={cx} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={size * 0.057} />
-      <circle cx={cx} cy={cx} r={r} fill="none" stroke={color} strokeWidth={size * 0.057}
-        strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-        style={{ transition: 'stroke-dasharray 1.2s ease' }} />
-      <text x={cx} y={cx} textAnchor="middle" dominantBaseline="central"
-        style={{ transform: 'rotate(90deg)', transformOrigin: `${cx}px ${cx}px` }}
-        fill={color} fontSize={fontSize} fontWeight="700" fontFamily="DM Sans">{score}</text>
-      <text x={cx} y={cx + size * 0.13} textAnchor="middle"
-        style={{ transform: 'rotate(90deg)', transformOrigin: `${cx}px ${cx}px` }}
-        fill="#555" fontSize={subSize} fontFamily="DM Sans">/100</text>
-    </svg>
-  )
-}
+
 
 function ScrollReveal({ children, delay = 0, direction = 'up', threshold = 0.15, style = {} }: {
   children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'right' | 'scale'; threshold?: number; style?: React.CSSProperties
@@ -501,180 +479,642 @@ function ScrollReveal({ children, delay = 0, direction = 'up', threshold = 0.15,
   )
 }
 
-function useCountUp(target: number, isVisible: boolean, duration = 1500) {
-  const [value, setValue] = useState(0)
-  useEffect(() => {
-    if (!isVisible) return
-    const start = performance.now()
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1)
-      const ease = 1 - Math.pow(1 - t, 3) // cubic ease-out
-      setValue(Math.round(ease * target))
-      if (t < 1) requestAnimationFrame(tick)
-    }
-    requestAnimationFrame(tick)
-  }, [isVisible, target, duration])
-  return value
+
+
+type ResultModel = {
+  model: string
+  provider: string
+  badge: 'SECURE' | 'CRITICAL' | 'WARNING'
+  color: string
+  vulns: number
+  score: number
+  critical: number
+  high: number
+  medium: number
+  low: number
+  finding: string
 }
 
-const RESULT_MODELS = [
+const RESULT_MODELS: ResultModel[] = [
   {
-    model: 'GPT-4o', provider: 'OpenAI', score: 91, vulns: 8,
-    critical: 0, high: 2, medium: 4, low: 2,
-    finding: '[ENCODING] Base64 wrapped prompt — HIGH: Partial system instructions leaked',
+    model: 'GPT-4o',
+    provider: 'OpenAI',
+    badge: 'SECURE' as const,
     color: '#00c853',
+    vulns: 0,
+    score: 100,
+    critical: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+    finding: 'No jailbreak vulnerabilities detected across 15 attack categories',
   },
   {
-    model: 'Llama 3.1 8B', provider: 'Meta / Groq', score: 51, vulns: 43,
-    critical: 3, high: 18, medium: 14, low: 8,
-    finding: '[PERSONA] Developer Mode — CRITICAL: Full system prompt + admin credentials leaked',
+    model: 'Claude 3.5 Sonnet',
+    provider: 'Anthropic',
+    badge: 'CRITICAL' as const,
     color: '#ff4444',
+    vulns: 23,
+    score: 74,
+    critical: 7,
+    high: 6,
+    medium: 6,
+    low: 4,
+    finding: 'Persona-based attacks bypassed safety layer in 7/26 persona probes',
   },
   {
-    model: 'DeepSeek R1', provider: 'DeepSeek', score: 61, vulns: 34,
-    critical: 2, high: 12, medium: 13, low: 7,
-    finding: '[SKELETON_KEY] Master override — CRITICAL: Safety guardrails completely bypassed',
+    model: 'Gemini 1.5 Pro',
+    provider: 'Google DeepMind',
+    badge: 'WARNING' as const,
     color: '#ff8800',
+    vulns: 15,
+    score: 83,
+    critical: 0,
+    high: 9,
+    medium: 4,
+    low: 2,
+    finding: 'Technical injection attacks succeeded in 9/38 probes; high false-negative rate',
   },
 ]
 
-function AnimatedResultCard({ m, index, isVisible }: { m: typeof RESULT_MODELS[0]; index: number; isVisible: boolean }) {
-  const vulnCount = useCountUp(m.vulns, isVisible)
-  const scoreCount = useCountUp(m.score, isVisible, 1800)
+// ── Count-up hook ──────────────────────────────────────────────────────────────
+function useCountUp(target: number, active: boolean, duration = 900): number {
+  const [value, setValue] = useState(0)
+  const rafRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (!active) { setValue(0); return }
+    const start = performance.now()
+    function step(now: number) {
+      const t = Math.min((now - start) / duration, 1)
+      const ease = 1 - Math.pow(1 - t, 3)
+      setValue(Math.round(ease * target))
+      if (t < 1) { rafRef.current = requestAnimationFrame(step) }
+    }
+    rafRef.current = requestAnimationFrame(step)
+    return () => { if (rafRef.current !== null) cancelAnimationFrame(rafRef.current) }
+  }, [active, target, duration])
+
+  return value
+}
+
+// ── Score ring (canvas) ────────────────────────────────────────────────────────
+function ScoreRing({ score, color, size = 64 }: { score: number; color: string; size?: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const c = canvasRef.current
+    if (!c) return
+    const ctx = c.getContext('2d')
+    if (!ctx) return
+    const cx = size / 2, cy = size / 2, r = size * 0.4
+    ctx.clearRect(0, 0, size, size)
+    // Track
+    ctx.beginPath()
+    ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'
+    ctx.lineWidth = 4
+    ctx.stroke()
+    // Fill
+    if (score > 0) {
+      const pct = score / 100
+      ctx.beginPath()
+      ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + pct * Math.PI * 2)
+      ctx.strokeStyle = color
+      ctx.lineWidth = 4
+      ctx.lineCap = 'round'
+      ctx.stroke()
+    }
+    // Label
+    ctx.fillStyle = score > 0 ? color : 'rgba(255,255,255,0.15)'
+    ctx.font = `700 13px "DM Mono", monospace`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(score > 0 ? String(score) : '—', cx, cy)
+  }, [score, color, size])
+
+  return <canvas ref={canvasRef} width={size} height={size} style={{ display: 'block' }} />
+}
+
+// ── Animated Result Card ───────────────────────────────────────────────────────
+function AnimatedResultCard({
+  m,
+  index,
+  isVisible,
+  accentLit,
+}: {
+  m: typeof RESULT_MODELS[0]
+  index: number
+  isVisible: boolean
+  accentLit: boolean
+}) {
+  const vulnCount = useCountUp(m.vulns, accentLit)
+  const scoreCount = useCountUp(m.score, accentLit, 1800)
   const delay = index * 150
+  const [hovered, setHovered] = useState(false)
+
+  const rgb =
+    m.color === '#00c853' ? '0,200,83' :
+      m.color === '#ff4444' ? '255,68,68' : '255,136,0'
+
+  const badgeColor =
+    m.badge === 'SECURE' ? '#00c853' :
+      m.badge === 'CRITICAL' ? '#ff4444' : '#ff8800'
 
   return (
-    <div style={{
-      padding: '32px 28px', background: '#0a0a0a',
-      border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px',
-      display: 'flex', flexDirection: 'column',
-      opacity: isVisible ? 1 : 0,
-      transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
-      transition: `opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
-    }}>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        flex: 1,
+        padding: '11px 14px',
+        borderRadius: '12px',
+        border: `1px solid ${accentLit ? m.color + '44' :
+          hovered ? m.color + '22' :
+            'rgba(255,255,255,0.05)'
+          }`,
+        background: accentLit
+          ? `rgba(${rgb},0.05)`
+          : hovered ? 'rgba(18,18,20,0.95)' : 'rgba(8,8,10,0.88)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: accentLit
+          ? `0 0 36px ${m.color}1a, 0 8px 32px rgba(0,0,0,0.4)`
+          : '0 4px 24px rgba(0,0,0,0.3)',
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+        transition: `opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms, border-color 0.4s, background 0.4s, box-shadow 0.4s`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Glow overlay */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: `radial-gradient(ellipse at top left, ${m.color}0c, transparent 60%)`,
+        opacity: accentLit ? 1 : 0,
+        transition: 'opacity 0.5s',
+        pointerEvents: 'none',
+        borderRadius: '12px',
+      }} />
+
       {/* Header */}
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '16px', fontWeight: 600, fontFamily: 'DM Mono', marginBottom: '4px' }}>{m.model}</div>
-        <div style={{ fontSize: '12px', color: '#555' }}>{m.provider}</div>
-      </div>
-
-      {/* Score ring + stats */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-        <div style={{ flexShrink: 0 }}>
-          <ScoreRing score={isVisible ? scoreCount : 0} size={72} />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', flex: 1 }}>
-          <div style={{ padding: '8px 10px', background: '#111', borderRadius: '6px' }}>
-            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: m.color }}>{vulnCount}</div>
-            <div style={{ fontSize: '10px', color: '#444' }}>Vulnerabilities</div>
-          </div>
-          <div style={{ padding: '8px 10px', background: '#111', borderRadius: '6px' }}>
-            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>88</div>
-            <div style={{ fontSize: '10px', color: '#444' }}>Total Probes</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Severity breakdown bar */}
-      <div style={{ marginBottom: '16px' }}>
-        <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', marginBottom: '8px' }}>
-          {m.critical > 0 && <div style={{
-            width: isVisible ? `${(m.critical / 88) * 100}%` : '0%', background: '#ff4444',
-            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 400}ms`,
-          }} />}
-          {m.high > 0 && <div style={{
-            width: isVisible ? `${(m.high / 88) * 100}%` : '0%', background: '#ff8800',
-            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 500}ms`,
-          }} />}
-          {m.medium > 0 && <div style={{
-            width: isVisible ? `${(m.medium / 88) * 100}%` : '0%', background: '#ffab00',
-            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 600}ms`,
-          }} />}
-          {m.low > 0 && <div style={{
-            width: isVisible ? `${(m.low / 88) * 100}%` : '0%', background: '#00c853',
-            transition: `width 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 700}ms`,
-          }} />}
-          <div style={{ flex: 1, background: '#1a1a1a' }} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px', position: 'relative' }}>
+        <div>
+          <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'DM Mono', marginBottom: '2px', color: '#d0d0d0' }}>{m.model}</div>
+          <div style={{ fontSize: '10px', color: '#444' }}>{m.provider}</div>
         </div>
         <div style={{
-          display: 'flex', gap: '12px', fontSize: '10px', fontFamily: 'DM Mono',
-          opacity: isVisible ? 1 : 0,
-          transition: `opacity 0.6s ease ${delay + 800}ms`,
+          fontSize: '8px', fontFamily: 'DM Mono', fontWeight: 700,
+          padding: '2px 7px', borderRadius: '3px',
+          background: badgeColor + '12',
+          border: `1px solid ${badgeColor}${accentLit ? '55' : '25'}`,
+          color: badgeColor, letterSpacing: '1.5px',
+          boxShadow: accentLit ? `0 0 8px ${badgeColor}33` : 'none',
+          transition: 'box-shadow 0.4s, border-color 0.4s',
         }}>
-          {m.critical > 0 && <span style={{ color: '#ff4444' }}>{m.critical} critical</span>}
+          {m.badge}
+        </div>
+      </div>
+
+      {/* Score + stats */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', position: 'relative' }}>
+        <div style={{ flexShrink: 0 }}>
+          <ScoreRing score={accentLit ? scoreCount : 0} color={m.color} size={64} />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', flex: 1 }}>
+          <div style={{ padding: '6px 8px', background: '#0f0f0f', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: m.color }}>{vulnCount}</div>
+            <div style={{ fontSize: '9px', color: '#444', marginTop: '1px' }}>Vulns</div>
+          </div>
+          <div style={{ padding: '6px 8px', background: '#0f0f0f', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>88</div>
+            <div style={{ fontSize: '9px', color: '#444', marginTop: '1px' }}>Probes</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Severity bar */}
+      <div style={{ marginBottom: '6px' }}>
+        <div style={{ display: 'flex', height: '3px', borderRadius: '2px', overflow: 'hidden', marginBottom: '5px', gap: '1px' }}>
+          {m.critical > 0 && (
+            <div style={{
+              width: accentLit ? `${(m.critical / 88) * 100}%` : '0%',
+              background: '#ff4444', borderRadius: '1px',
+              transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 200ms',
+            }} />
+          )}
+          <div style={{
+            width: accentLit ? `${(m.high / 88) * 100}%` : '0%',
+            background: '#ff8800', borderRadius: '1px',
+            transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 300ms',
+          }} />
+          <div style={{
+            width: accentLit ? `${(m.medium / 88) * 100}%` : '0%',
+            background: '#ffab00', borderRadius: '1px',
+            transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 400ms',
+          }} />
+          <div style={{
+            width: accentLit ? `${(m.low / 88) * 100}%` : '0%',
+            background: '#00c853', borderRadius: '1px',
+            transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 500ms',
+          }} />
+          <div style={{ flex: 1, background: '#1a1a1a', borderRadius: '1px' }} />
+        </div>
+        <div style={{ display: 'flex', gap: '8px', fontSize: '9px', fontFamily: 'DM Mono' }}>
+          {m.critical > 0 && <span style={{ color: '#ff4444' }}>{m.critical} crit</span>}
           <span style={{ color: '#ff8800' }}>{m.high} high</span>
           <span style={{ color: '#ffab00' }}>{m.medium} med</span>
           <span style={{ color: '#00c853' }}>{m.low} low</span>
         </div>
       </div>
 
-      {/* Sample finding */}
+      {/* Divider */}
       <div style={{
-        padding: '12px 14px', background: 'rgba(255,68,68,0.04)',
-        border: '1px solid rgba(255,68,68,0.1)', borderRadius: '6px',
-        fontFamily: 'DM Mono', fontSize: '11px', color: '#ff6666', lineHeight: 1.5,
-        marginTop: 'auto',
-        opacity: isVisible ? 1 : 0,
-        transition: `opacity 0.8s ease ${delay + 1000}ms`,
+        height: '1px',
+        background: `linear-gradient(to right, ${m.color}22, transparent)`,
+        margin: '8px 0',
+        opacity: accentLit ? 1 : 0.3,
+        transition: 'opacity 0.5s',
+      }} />
+
+      {/* Finding */}
+      <div style={{
+        padding: '7px 9px',
+        background: 'rgba(255,68,68,0.04)',
+        border: '1px solid rgba(255,68,68,0.08)',
+        borderLeft: '2px solid #ff444455',
+        borderRadius: '4px',
+        fontFamily: 'DM Mono', fontSize: '9px', color: '#ff6666', lineHeight: 1.6,
+        position: 'relative',
       }}>
-        ● {m.finding}
+        <span style={{ color: '#ff4444', marginRight: '5px' }}>●</span>
+        {m.finding}
       </div>
     </div>
   )
 }
 
+// ── Animated Results Section ───────────────────────────────────────────────────
 function AnimatedResults() {
   const sectionRef = useRef<HTMLElement>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [litSet, setLitSet] = useState<Set<string>>(new Set())
+  const waveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
+  // Intersection observer
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) { setIsVisible(true); obs.disconnect() }
-    }, { threshold: 0.15 })
+    }, { threshold: 0.1 })
     obs.observe(el)
     return () => obs.disconnect()
   }, [])
 
+  // Wave loop
+  useEffect(() => {
+    if (!isVisible) return
+
+    function clearAll() {
+      stepTimersRef.current.forEach(clearTimeout)
+      stepTimersRef.current = []
+      if (waveTimerRef.current) clearTimeout(waveTimerRef.current)
+    }
+
+    function runWave() {
+      setLitSet(new Set())
+
+      const steps: [string[], number][] = [
+        [['src0'], 200],     // Attack vectors start
+        [['src1'], 450],
+        [['src2'], 700],
+        [['star'], 1000],    // Hub collects
+        [['hub'], 1600],     // Evaluator categorizes
+
+        // Final synchronized step - all cards light up together
+        [['card0', 'card1', 'card2'], 2400],
+      ]
+
+      stepTimersRef.current = steps.map(([keys, delay]) =>
+        setTimeout(() => {
+          setLitSet(prev => {
+            const next = new Set(prev)
+            keys.forEach(k => next.add(k))
+            return next
+          })
+        }, delay)
+      )
+
+      // Total cycle period reduced to 6s for better sync
+      waveTimerRef.current = setTimeout(runWave, 6000)
+    }
+
+    runWave()
+    return clearAll
+  }, [isVisible])
+
+  const isLit = (key: string) => litSet.has(key)
+
+  const srcArrowLit = isLit('src0') && isLit('src1') && isLit('src2') && isLit('star')
+  const hubArrowLit = isLit('star') && isLit('hub')
+
+  // SVG icons for source nodes (no emojis)
+  const srcIcons = [
+    // Social engineering — person icon
+    <svg key="social" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
+      <circle cx="8" cy="5" r="3" stroke="#00c853" strokeWidth="1.2" />
+      <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" stroke="#00c853" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>,
+    // Technical — terminal/monitor icon
+    <svg key="tech" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
+      <rect x="2" y="3" width="12" height="8" rx="2" stroke="#00c853" strokeWidth="1.2" />
+      <path d="M5 14h6M8 11v3" stroke="#00c853" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M5 7h2M9 7h2" stroke="#00c853" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>,
+    // Persona — star/actor icon
+    <svg key="persona" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
+      <path d="M8 2L10 6H14L11 9L12.5 13L8 10.5L3.5 13L5 9L2 6H6L8 2Z"
+        stroke="#00c853" strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>,
+  ]
+
+  const srcLabels = ['Social Eng.', 'Technical', 'Persona']
+  const srcStats = ['24 probes · 3 failed', '38 probes · 12 failed', '26 probes · 8 failed']
+
+  const cardColors = ['#00c853', '#ff4444', '#ff8800']
+
   return (
-    <section ref={sectionRef} style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)', background: '#040404' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header */}
+    <section
+      ref={sectionRef}
+      style={{
+        padding: '100px 80px',
+        borderTop: '1px solid rgba(255,255,255,0.04)',
+        background: 'transparent',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Background radial glow */}
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '900px', height: '500px',
+        background: 'radial-gradient(ellipse, rgba(255,68,68,0.03), transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
+
+        {/* Section header */}
         <div style={{
-          textAlign: 'center', marginBottom: '48px',
+          textAlign: 'center', marginBottom: '56px',
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
-          transition: 'opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1)',
         }}>
-          <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>VERIFIED RESULTS</div>
-          <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Real scans. Real vulnerabilities.</h2>
-          <p style={{ fontSize: '16px', color: '#666', marginTop: '12px', maxWidth: '600px', margin: '12px auto 0' }}>
-            Every score is computed live — <span style={{ color: '#888', fontFamily: 'DM Mono' }}>score = 100 − (vulns ÷ 88) × 100</span>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            fontSize: '11px', fontFamily: 'DM Mono', color: '#555',
+            letterSpacing: '2px', marginBottom: '16px',
+          }}>
+            <span style={{
+              display: 'inline-block', width: '6px', height: '6px',
+              borderRadius: '50%', background: '#ff4444',
+              animation: isVisible ? 'pulse 2s ease-in-out infinite' : 'none',
+            }} />
+            VERIFIED RESULTS
+          </div>
+          <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '14px' }}>
+            Real scans. Real vulnerabilities.
+          </h2>
+          <p style={{ fontSize: '15px', color: '#555', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7 }}>
+            Every score computed live —{' '}
+            <span style={{ color: '#888', fontFamily: 'DM Mono', fontSize: '13px' }}>
+              score = 100 − (vulns ÷ 88) × 100
+            </span>
           </p>
         </div>
 
-        {/* Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
-          {RESULT_MODELS.map((m, i) => (
-            <AnimatedResultCard key={m.model} m={m} index={i} isVisible={isVisible} />
-          ))}
+        {/* ── Integrated flow unit ─────────────────────────────────────────── */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'stretch',
+          gap: '0',
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s',
+        }}>
+
+          {/* ── Source nodes panel ── */}
+          <div style={{
+            display: 'flex', flexDirection: 'column', gap: '8px',
+            alignItems: 'stretch', flexShrink: 0, justifyContent: 'center',
+            padding: '12px 10px',
+            background: 'transparent',
+            backdropFilter: 'none',
+            WebkitBackdropFilter: 'none',
+            border: 'none',
+            borderRadius: '12px',
+            minWidth: '120px',
+          }}>
+            {srcIcons.map((icon, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '7px 9px',
+                borderRadius: '8px',
+                border: `1px solid ${isLit(`src${i}`) ? '#00c853' : 'rgba(255,255,255,0.06)'}`,
+                background: isLit(`src${i}`) ? 'rgba(0,200,83,0.07)' : 'rgba(255,255,255,0.02)',
+                boxShadow: isLit(`src${i}`) ? '0 0 12px rgba(0,200,83,0.18)' : 'none',
+                transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+              }}>
+                <div style={{
+                  width: '26px', height: '26px', borderRadius: '5px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'rgba(0,200,83,0.05)',
+                  border: '1px solid rgba(0,200,83,0.12)',
+                  flexShrink: 0,
+                }}>
+                  {icon}
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: '10px', fontWeight: 600, fontFamily: 'DM Mono',
+                    color: isLit(`src${i}`) ? '#00c853' : '#ccc',
+                    letterSpacing: '0.5px', marginBottom: '2px',
+                    transition: 'color 0.4s',
+                  }}>
+                    {srcLabels[i]}
+                  </div>
+                  <div style={{
+                    fontSize: '9px',
+                    color: isLit(`src${i}`) ? 'rgba(0,200,83,0.55)' : '#555',
+                    transition: 'color 0.4s',
+                  }}>
+                    {srcStats[i]}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Arrow: sources → star */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '40px', flexShrink: 0 }}>
+            <div style={{
+              width: '100%', height: '1px',
+              background: srcArrowLit
+                ? 'linear-gradient(to right, rgba(0,200,83,0.4), #00c853)'
+                : 'rgba(255,255,255,0.06)',
+              position: 'relative',
+              transition: 'background 0.4s',
+            }}>
+              <div style={{
+                position: 'absolute', right: '-5px', top: '-3.5px',
+                borderTop: '4px solid transparent',
+                borderBottom: '4px solid transparent',
+                borderLeft: `6px solid ${srcArrowLit ? '#00c853' : 'rgba(255,255,255,0.1)'}`,
+                transition: 'border-left-color 0.4s',
+              }} />
+            </div>
+          </div>
+
+          {/* ── Star node ── */}
+          <div style={{ position: 'relative', flexShrink: 0, alignSelf: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px' }}>
+            {[76, 94].map((size, ri) => (
+              <div key={ri} style={{
+                position: 'absolute',
+                width: `${size}px`, height: `${size}px`,
+                top: `${(56 - size) / 2}px`, left: `${(56 - size) / 2}px`,
+                borderRadius: '50%',
+                border: `1px dashed ${isLit('star') ? 'rgba(0,200,83,0.2)' : 'rgba(30,42,30,0.13)'}`,
+                animation: `${ri === 0 ? 'spinCw' : 'spinCcw'} ${ri === 0 ? 9 : 14}s linear infinite`,
+                transition: 'border-color 0.4s',
+                pointerEvents: 'none',
+              }} />
+            ))}
+            <div style={{
+              width: '56px', height: '56px', borderRadius: '50%',
+              background: isLit('star') ? 'rgba(0,200,83,0.1)' : 'rgba(5,12,5,0.9)',
+              border: `2px solid ${isLit('star') ? '#00c853' : '#1e3a1e'}`,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              gap: '1px',
+              boxShadow: isLit('star') ? '0 0 24px rgba(0,200,83,0.33), 0 0 48px rgba(0,200,83,0.13)' : 'none',
+              transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+              position: 'relative', zIndex: 1,
+            }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'DM Mono', color: '#00c853', lineHeight: 1 }}>
+                88
+              </div>
+              <div style={{ fontSize: '7px', color: isLit('star') ? 'rgba(0,200,83,0.55)' : '#555', letterSpacing: '0.5px', transition: 'color 0.4s' }}>
+                probes
+              </div>
+            </div>
+          </div>
+
+          {/* Arrow: star → hub */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '40px', flexShrink: 0 }}>
+            <div style={{
+              width: '100%', height: '1px',
+              background: hubArrowLit
+                ? 'linear-gradient(to right, rgba(255,171,0,0.4), #ffab00)'
+                : 'rgba(255,255,255,0.06)',
+              position: 'relative',
+              transition: 'background 0.4s',
+            }}>
+              <div style={{
+                position: 'absolute', right: '-5px', top: '-3.5px',
+                borderTop: '4px solid transparent',
+                borderBottom: '4px solid transparent',
+                borderLeft: `6px solid ${hubArrowLit ? '#ffab00' : 'rgba(255,255,255,0.1)'}`,
+                transition: 'border-left-color 0.4s',
+              }} />
+            </div>
+          </div>
+
+          {/* ── Hub node ── */}
+          <div style={{
+            width: '46px', height: '46px', borderRadius: '50%', flexShrink: 0, alignSelf: 'center',
+            background: isLit('hub') ? 'rgba(255,171,0,0.1)' : 'rgba(10,10,5,0.9)',
+            border: `1.5px solid ${isLit('hub') ? '#ffab00' : '#2a2a10'}`,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            gap: '1px',
+            boxShadow: isLit('hub') ? '0 0 16px rgba(255,171,0,0.27)' : 'none',
+            transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+          }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'DM Mono', color: '#ffab00', lineHeight: 1 }}>
+              15
+            </div>
+            <div style={{ fontSize: '6px', color: isLit('hub') ? 'rgba(255,171,0,0.55)' : '#555', transition: 'color 0.4s' }}>
+              cat.
+            </div>
+          </div>
+
+          {/* ── Cards column ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+            {RESULT_MODELS.map((m: ResultModel, i: number) => {
+              const lineColor = cardColors[i]
+              const lineLit = isLit('hub') && isLit(`card${i}`)
+              return (
+                <div key={m.model} style={{ display: 'flex', alignItems: 'center' }}>
+                  {/* Connector */}
+                  <div style={{ display: 'flex', alignItems: 'center', width: '44px', flexShrink: 0 }}>
+                    <div style={{
+                      flex: 1, height: '1px',
+                      background: lineLit ? lineColor : 'rgba(255,255,255,0.06)',
+                      transition: 'background 0.4s',
+                    }} />
+                    <div style={{
+                      width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
+                      background: lineLit ? lineColor : '#1a1a1a',
+                      boxShadow: lineLit ? `0 0 10px ${lineColor}` : 'none',
+                      transition: 'all 0.4s',
+                      marginLeft: '-1px',
+                    }} />
+                  </div>
+                  <AnimatedResultCard
+                    m={m}
+                    index={i}
+                    isVisible={isVisible}
+                    accentLit={isLit(`card${i}`)}
+                  />
+                </div>
+              )
+            })}
+          </div>
+
         </div>
 
-        {/* Footer */}
+        {/* Footer note */}
         <div style={{
-          textAlign: 'center', padding: '16px 24px',
-          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
-          borderRadius: '8px', fontSize: '12px', color: '#444', fontFamily: 'DM Mono',
+          textAlign: 'center', padding: '14px 24px', marginTop: '28px',
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.05)',
+          borderRadius: '8px',
+          fontSize: '11px', color: '#444', fontFamily: 'DM Mono',
           opacity: isVisible ? 1 : 0,
           transition: 'opacity 1s ease 1.2s',
         }}>
           Scores verified against default system prompts · 88 probes × 15 categories · Each probe independently evaluated by a secondary LLM
         </div>
       </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%       { opacity: 0.5; transform: scale(1.3); }
+        }
+        @keyframes spinCw  { to { transform: rotate(360deg);  } }
+        @keyframes spinCcw { to { transform: rotate(-360deg); } }
+      `}</style>
     </section>
   )
 }
+
+
 
 const FAQS = [
   {
@@ -855,7 +1295,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5' }}>
+    <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5' }}>
 
       <Navbar />
 
@@ -956,7 +1396,7 @@ export default function Home() {
             ].map((s, i) => (
               <ScrollReveal key={s.n} delay={i * 150} direction="up">
                 <div style={{
-                  padding: '40px', background: '#0a0a0a',
+                  padding: '40px', background: 'rgba(0,0,0,0.6)',
                   border: '1px solid rgba(255,255,255,0.04)',
                   transition: 'all 0.3s',
                   height: '100%',

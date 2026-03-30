@@ -32,11 +32,7 @@ export default function Navbar() {
     }}>
       <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.5px', color: '#f5f5f5' }}>GhostShield</span>
-        <span style={{
-          fontSize: '10px', fontFamily: 'DM Mono', color: '#ff4444',
-          border: '1px solid rgba(255,68,68,0.3)', borderRadius: '4px',
-          padding: '2px 6px', letterSpacing: '1px',
-        }}>BETA</span>
+
       </Link>
 
       <div style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>

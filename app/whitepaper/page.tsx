@@ -1,5 +1,6 @@
 'use client'
 import Navbar from '../components/Navbar'
+import { useState, useEffect, useRef } from 'react'
 
 const SECTIONS = [
   {
@@ -84,34 +85,233 @@ const SECTIONS = [
   }
 ]
 
-export default function WhitepaperPage() {
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.disconnect() }
+    }, { threshold })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  return { ref, visible }
+}
+
+function AnimatedSection({ section, index }: { section: typeof SECTIONS[0]; index: number }) {
+  const { ref, visible } = useInView(0.1)
+  const [activeNav, setActiveNav] = useState('')
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) setActiveNav(section.id)
+    }, { threshold: 0.4 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [section.id])
+
   return (
-    <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
+    <section
+      key={section.id}
+      id={section.id}
+      ref={ref}
+      style={{
+        marginBottom: '80px',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(32px)',
+        transition: `opacity 0.9s cubic-bezier(0.16,1,0.3,1) ${index * 80}ms, transform 0.9s cubic-bezier(0.16,1,0.3,1) ${index * 80}ms`,
+      }}
+    >
+      {/* Section eyebrow */}
+      <div style={{
+        fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444',
+        letterSpacing: '2px', marginBottom: '12px',
+        display: 'flex', alignItems: 'center', gap: '10px',
+        opacity: visible ? 1 : 0,
+        transition: `opacity 0.6s ease ${index * 80 + 200}ms`,
+      }}>
+        <span style={{ color: '#2a2a2a' }}>{String(index + 1).padStart(2, '0')} ──</span>
+        {section.label.toUpperCase()}
+      </div>
+
+      {/* Title with animated underline */}
+      <div style={{ position: 'relative', marginBottom: '28px', display: 'inline-block' }}>
+        <h2 style={{
+          fontSize: '26px', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.2,
+        }}>
+          {section.title}
+        </h2>
+        <div style={{
+          position: 'absolute', bottom: '-4px', left: 0,
+          height: '1px',
+          background: 'linear-gradient(to right, #ff4444, transparent)',
+          width: visible ? '100%' : '0%',
+          transition: `width 0.8s cubic-bezier(0.16,1,0.3,1) ${index * 80 + 400}ms`,
+        }} />
+      </div>
+
+      {/* Body */}
+      {section.body.map((para, j) => {
+        const isBlock = para.includes('\n')
+        if (isBlock) {
+          return (
+            <div key={j} style={{
+              margin: '20px 0',
+              padding: '20px 24px',
+              background: '#080808',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderLeft: '2px solid rgba(255,68,68,0.4)',
+              borderRadius: '8px',
+              fontFamily: 'DM Mono',
+              fontSize: '13px',
+              color: '#666',
+              lineHeight: 2,
+              whiteSpace: 'pre-line',
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateX(0)' : 'translateX(-12px)',
+              transition: `opacity 0.7s ease ${index * 80 + j * 100 + 300}ms, transform 0.7s ease ${index * 80 + j * 100 + 300}ms`,
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              {/* Shimmer line */}
+              <div style={{
+                position: 'absolute', top: 0, left: 0,
+                width: visible ? '100%' : '0%',
+                height: '1px',
+                background: 'linear-gradient(to right, transparent, rgba(255,68,68,0.3), transparent)',
+                transition: `width 1s ease ${index * 80 + 500}ms`,
+              }} />
+              {para}
+            </div>
+          )
+        }
+        return (
+          <p key={j} style={{
+            fontSize: '15px', color: '#555', lineHeight: 1.9, marginBottom: '20px',
+            opacity: visible ? 1 : 0,
+            transition: `opacity 0.7s ease ${index * 80 + j * 100 + 200}ms`,
+          }}>
+            {para}
+          </p>
+        )
+      })}
+    </section>
+  )
+}
+
+function HeroCounter({ value, label }: { value: string; label: string }) {
+  const [displayed, setDisplayed] = useState('0')
+  const num = parseInt(value)
+
+  useEffect(() => {
+    if (isNaN(num)) { setDisplayed(value); return }
+    let start = 0
+    const duration = 1800
+    const step = 16
+    const increment = num / (duration / step)
+    const timer = setInterval(() => {
+      start += increment
+      if (start >= num) { setDisplayed(value); clearInterval(timer) }
+      else setDisplayed(Math.floor(start).toString())
+    }, step)
+    return () => clearInterval(timer)
+  }, [value, num])
+
+  return (
+    <div>
+      <div style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>{displayed}</div>
+      <div style={{ fontSize: '11px', color: '#444', marginTop: '2px' }}>{label}</div>
+    </div>
+  )
+}
+
+export default function WhitepaperPage() {
+  const [activeSection, setActiveSection] = useState('abstract')
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [heroVisible, setHeroVisible] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setHeroVisible(true), 100)
+
+    const handleScroll = () => {
+      const el = document.documentElement
+      const progress = (el.scrollTop) / (el.scrollHeight - el.clientHeight)
+      setScrollProgress(progress * 100)
+
+      // Active section tracking
+      SECTIONS.forEach(s => {
+        const el = document.getElementById(s.id)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top < window.innerHeight * 0.4 && rect.bottom > 0) {
+            setActiveSection(s.id)
+          }
+        }
+      })
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return (
+    <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
+
+      {/* Reading progress bar */}
+      <div style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        height: '2px', background: 'rgba(255,255,255,0.05)',
+      }}>
+        <div style={{
+          height: '100%',
+          width: `${scrollProgress}%`,
+          background: 'linear-gradient(to right, #ff4444, #ff8800)',
+          transition: 'width 0.1s linear',
+        }} />
+      </div>
+
       <Navbar />
 
       {/* Hero */}
       <header style={{ padding: '140px 80px 80px', maxWidth: '900px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
-          <span style={{
-            fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444',
-            letterSpacing: '2px', textTransform: 'uppercase',
-          }}>Whitepaper</span>
+
+        {/* Eyebrow */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px',
+          opacity: heroVisible ? 1 : 0,
+          transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
+        }}>
+          <span style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', letterSpacing: '2px' }}>Whitepaper</span>
           <span style={{ color: '#222' }}>·</span>
           <span style={{ fontSize: '12px', color: '#333', fontFamily: 'DM Mono' }}>January 20, 2026</span>
           <span style={{ color: '#222' }}>·</span>
           <span style={{ fontSize: '12px', color: '#333', fontFamily: 'DM Mono' }}>12 min read</span>
         </div>
 
+        {/* Title */}
         <h1 style={{
           fontSize: 'clamp(36px, 5vw, 60px)', fontWeight: 700,
           letterSpacing: '-2px', lineHeight: 1.04, marginBottom: '24px',
+          opacity: heroVisible ? 1 : 0,
+          transform: heroVisible ? 'translateY(0)' : 'translateY(24px)',
+          transition: 'opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s, transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s',
         }}>
           GhostShield Security Research:<br />
           <span style={{ color: '#333' }}>Securing AI Systems Against</span><br />
           Prompt Extraction
         </h1>
 
-        <p style={{ fontSize: '18px', color: '#555', lineHeight: 1.75, maxWidth: '680px' }}>
+        {/* Subtitle */}
+        <p style={{
+          fontSize: '18px', color: '#555', lineHeight: 1.75, maxWidth: '680px',
+          opacity: heroVisible ? 1 : 0,
+          transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 0.9s ease 0.25s, transform 0.9s ease 0.25s',
+        }}>
           A technical whitepaper on how adversarial prompt extraction works, how GhostShield detects it
           with 88 automated probes, and how engineering teams build AI systems that hold under real attack conditions.
         </p>
@@ -120,16 +320,21 @@ export default function WhitepaperPage() {
         <div style={{
           display: 'flex', gap: '24px', marginTop: '48px', paddingTop: '32px',
           borderTop: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap',
+          opacity: heroVisible ? 1 : 0,
+          transition: 'opacity 0.9s ease 0.4s',
         }}>
           {[
             { label: 'Probes Documented', value: '88' },
             { label: 'Attack Categories', value: '15' },
             { label: 'Scoring Model', value: 'Weighted Depth' },
             { label: 'Sources', value: 'OWASP · MITRE ATLAS' },
-          ].map(m => (
-            <div key={m.label}>
-              <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>{m.value}</div>
-              <div style={{ fontSize: '11px', color: '#444', marginTop: '2px' }}>{m.label}</div>
+          ].map((m, i) => (
+            <div key={m.label} style={{
+              opacity: heroVisible ? 1 : 0,
+              transform: heroVisible ? 'translateY(0)' : 'translateY(12px)',
+              transition: `opacity 0.7s ease ${0.5 + i * 0.1}s, transform 0.7s ease ${0.5 + i * 0.1}s`,
+            }}>
+              <HeroCounter value={m.value} label={m.label} />
             </div>
           ))}
         </div>
@@ -143,24 +348,37 @@ export default function WhitepaperPage() {
 
         {/* Left — sticky nav */}
         <nav style={{ position: 'sticky', top: '80px', paddingTop: '8px' }}>
-          <div style={{ fontSize: '11px', color: '#333', fontFamily: 'DM Mono', letterSpacing: '1px', marginBottom: '16px' }}>
-            CONTENTS
-          </div>
-          {SECTIONS.map((s, i) => (
-            <a key={s.id} href={`#${s.id}`} style={{
-              display: 'block', fontSize: '13px', color: '#444',
-              textDecoration: 'none', padding: '5px 0',
-              transition: 'color 0.15s', lineHeight: 1.4,
-            }}
-              onMouseEnter={e => e.currentTarget.style.color = '#f5f5f5'}
-              onMouseLeave={e => e.currentTarget.style.color = '#444'}
-            >
-              <span style={{ fontFamily: 'DM Mono', fontSize: '10px', color: '#333', marginRight: '8px' }}>
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              {s.label}
-            </a>
-          ))}
+          <div style={{
+            fontSize: '11px', color: '#333', fontFamily: 'DM Mono',
+            letterSpacing: '1px', marginBottom: '16px',
+          }}>CONTENTS</div>
+
+          {SECTIONS.map((s, i) => {
+            const isActive = activeSection === s.id
+            return (
+              <a key={s.id} href={`#${s.id}`} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                fontSize: '13px',
+                color: isActive ? '#f5f5f5' : '#444',
+                textDecoration: 'none', padding: '5px 0',
+                transition: 'color 0.2s',
+                borderLeft: `2px solid ${isActive ? '#ff4444' : 'transparent'}`,
+                paddingLeft: '10px', marginLeft: '-10px',
+              }}
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#888' }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#444' }}
+              >
+                <span style={{
+                  fontFamily: 'DM Mono', fontSize: '10px',
+                  color: isActive ? '#ff4444' : '#333',
+                  transition: 'color 0.2s',
+                }}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                {s.label}
+              </a>
+            )
+          })}
 
           <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <a href="/dashboard" style={{
@@ -179,56 +397,7 @@ export default function WhitepaperPage() {
         {/* Right — content */}
         <article>
           {SECTIONS.map((section, i) => (
-            <section key={section.id} id={section.id} style={{ marginBottom: '72px' }}>
-              {/* Section label */}
-              <div style={{
-                fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444',
-                letterSpacing: '2px', marginBottom: '12px', display: 'flex',
-                alignItems: 'center', gap: '10px',
-              }}>
-                <span style={{ color: '#2a2a2a' }}>{String(i + 1).padStart(2, '0')} ──</span>
-                {section.label.toUpperCase()}
-              </div>
-
-              <h2 style={{
-                fontSize: '26px', fontWeight: 700, letterSpacing: '-0.5px',
-                marginBottom: '28px', lineHeight: 1.2,
-              }}>
-                {section.title}
-              </h2>
-
-              {section.body.map((para, j) => {
-                // Code-style block (contains \n with ▸ or numbered lines)
-                const isBlock = para.includes('\n')
-                if (isBlock) {
-                  return (
-                    <div key={j} style={{
-                      margin: '20px 0',
-                      padding: '20px 24px',
-                      background: '#080808',
-                      border: '1px solid rgba(255,255,255,0.06)',
-                      borderLeft: '3px solid rgba(255,68,68,0.3)',
-                      borderRadius: '8px',
-                      fontFamily: 'DM Mono',
-                      fontSize: '13px',
-                      color: '#777',
-                      lineHeight: 2,
-                      whiteSpace: 'pre-line',
-                    }}>
-                      {para}
-                    </div>
-                  )
-                }
-                return (
-                  <p key={j} style={{
-                    fontSize: '15px', color: '#666', lineHeight: 1.9,
-                    marginBottom: '20px',
-                  }}>
-                    {para}
-                  </p>
-                )
-              })}
-            </section>
+            <AnimatedSection key={section.id} section={section} index={i} />
           ))}
 
           {/* Final CTA */}
@@ -237,7 +406,15 @@ export default function WhitepaperPage() {
             background: 'rgba(255,68,68,0.04)',
             border: '1px solid rgba(255,68,68,0.14)',
             borderRadius: '12px',
+            position: 'relative', overflow: 'hidden',
           }}>
+            {/* Animated corner accent */}
+            <div style={{
+              position: 'absolute', top: 0, right: 0,
+              width: '120px', height: '120px',
+              background: 'radial-gradient(circle at top right, rgba(255,68,68,0.08), transparent 70%)',
+              pointerEvents: 'none',
+            }} />
             <div style={{ fontSize: '18px', fontWeight: 700, marginBottom: '10px', letterSpacing: '-0.3px' }}>
               Test your system prompt now.
             </div>
@@ -249,10 +426,10 @@ export default function WhitepaperPage() {
               <a href="/dashboard" style={{
                 padding: '10px 22px', background: '#ff4444', color: 'white',
                 borderRadius: '7px', textDecoration: 'none', fontSize: '14px',
-                fontWeight: 500, transition: 'opacity 0.2s',
+                fontWeight: 500, transition: 'opacity 0.2s, transform 0.2s',
               }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
               >Start Free Scan →</a>
               <a href="/contact" style={{
                 padding: '10px 22px', color: '#666',

@@ -55,7 +55,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5' }}>
+    <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5' }}>
       <Navbar />
 
       <section style={{ padding: '140px 80px 100px', maxWidth: '1200px', margin: '0 auto' }}>
