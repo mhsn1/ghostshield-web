@@ -490,8 +490,8 @@ export default function Docs() {
       }}>
         <div style={{
           opacity: transitioning ? 0 : 1,
-          transform: transitioning ? 'translateY(8px)' : 'translateY(0)',
-          transition: 'opacity 0.15s ease, transform 0.15s ease',
+          transform: transitioning ? 'translateY(12px)' : 'translateY(0)',
+          transition: 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1)',
         }}>
           {CONTENT[activeDoc] ? (
             <>
