@@ -145,6 +145,34 @@ h1, h2 {
   to   { transform: scaleX(1); }
 }
 
+/* ---- Docs page entrance animations ---- */
+.docs-sidebar { animation: docsSidebarIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.docs-content { animation: docsContentIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+
+/* Stagger the sidebar nav groups in */
+.docs-sidebar > div { animation: docsNavGroupIn 0.5s ease both; }
+.docs-sidebar > div:nth-child(2) { animation-delay: 0.07s; }
+.docs-sidebar > div:nth-child(3) { animation-delay: 0.14s; }
+.docs-sidebar > div:nth-child(4) { animation-delay: 0.21s; }
+.docs-sidebar > div:nth-child(5) { animation-delay: 0.28s; }
+.docs-sidebar > div:nth-child(6) { animation-delay: 0.35s; }
+
+/* Tactile nudge on nav items */
+.docs-sidebar button:hover { transform: translateX(3px); }
+
+@keyframes docsSidebarIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes docsContentIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes docsNavGroupIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
