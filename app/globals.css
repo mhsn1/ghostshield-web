@@ -75,17 +75,13 @@ body {
     max-width: 100%;
   }
 
-  /* --- Navbar: tighten and hide secondary text links --- */
+  /* --- Navbar: hamburger menu on mobile --- */
   nav {
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
-  .nav-actions {
-    gap: 12px !important;
-  }
-  .nav-link {
-    display: none !important; /* keep logo + GitHub + Get Started buttons only */
-  }
+  .nav-actions { display: none !important; }        /* hide desktop link/button row */
+  .nav-burger  { display: inline-flex !important; } /* show hamburger button */
 
   /* --- Section gutters (were 80–100px on the sides) --- */
   section {
@@ -120,6 +116,15 @@ body {
   /* --- Hero stats wrap instead of overflowing --- */
   .hero-stats { gap: 20px !important; flex-wrap: wrap !important; }
 
+  /* --- Footer: stack rows, wrap links, shrink giant brand --- */
+  .footer-top   { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; padding: 24px 20px !important; }
+  .footer-links { flex-wrap: wrap !important; gap: 14px 20px !important; }
+  .footer-brand { font-size: clamp(44px, 15vw, 90px) !important; letter-spacing: -2px !important; }
+  footer [style*="padding: 16px 80px 32px"] { padding: 16px 20px 28px !important; }
+
+  /* --- Wide horizontal flow diagram: scroll instead of clipping off-screen --- */
+  .flow-unit { overflow-x: auto !important; max-width: 100% !important; padding-bottom: 8px; }
+
   /* --- Media + code never blow out the layout --- */
   img, svg, video { max-width: 100%; height: auto; }
   pre, code { white-space: pre-wrap !important; word-break: break-word !important; }
@@ -134,4 +139,9 @@ body {
   [style*="font-size: 48px"] { font-size: 27px !important; }
   [style*="font-size: 40px"] { font-size: 23px !important; }
   .hero-stats { gap: 14px !important; }
+}
+
+/* Keep the mobile dropdown panel off desktop */
+@media (min-width: 769px) {
+  .nav-panel { display: none !important; }
 }
