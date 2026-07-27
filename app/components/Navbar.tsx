@@ -446,7 +446,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div style={{
+        <div className="nav-actions" style={{
           display: 'flex',
           gap: '28px',
           alignItems: 'center',
@@ -458,6 +458,7 @@ export default function Navbar() {
             <Link
               key={l.href}
               href={l.href}
+              className="nav-link"
               style={{
                 color: pathname === l.href ? '#f5f5f5' : '#666',
                 fontSize: '14px',

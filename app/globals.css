@@ -58,3 +58,80 @@ body {
 .mono {
   font-family: 'DM Mono', monospace;
 }
+
+/* ============================================================
+   MOBILE RESPONSIVE LAYER
+   The site was built desktop-only with fixed-pixel inline
+   styles and no breakpoints. These rules make it usable on
+   phones: kill horizontal overflow, collapse multi-column
+   grids to one column, shrink oversized gutters, and scale
+   down large headings. !important is required to override the
+   inline styles. Attribute selectors ([style*="..."]) target
+   the inline grids/paddings/font-sizes generically.
+   ============================================================ */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* --- Navbar: tighten and hide secondary text links --- */
+  nav {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .nav-actions {
+    gap: 12px !important;
+  }
+  .nav-link {
+    display: none !important; /* keep logo + GitHub + Get Started buttons only */
+  }
+
+  /* --- Section gutters (were 80–100px on the sides) --- */
+  section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  [style*="padding: 120px 80px 80px"] { padding: 96px 20px 56px !important; }
+  [style*="padding: 120px 80px"]      { padding: 64px 20px !important; }
+  [style*="padding: 100px 80px 80px"] { padding: 56px 20px !important; }
+  [style*="padding: 100px 80px"]      { padding: 56px 20px !important; }
+
+  /* --- Collapse every inline multi-column grid to one column --- */
+  [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  /* --- Cap oversized fixed-width boxes so they never overflow --- */
+  [style*="width: 420px"] { width: 100% !important; max-width: 420px; }
+  [style*="width: 900px"] { max-width: 100% !important; }
+  [style*="width: 700px"] { max-width: 100% !important; }
+
+  /* --- Scale down large fixed headings so they fit and wrap --- */
+  [style*="font-size: 64px"] { font-size: 34px !important; }
+  [style*="font-size: 56px"] { font-size: 32px !important; }
+  [style*="font-size: 48px"] { font-size: 30px !important; }
+  [style*="font-size: 44px"] { font-size: 28px !important; }
+  [style*="font-size: 40px"] { font-size: 26px !important; letter-spacing: -0.5px !important; }
+  [style*="font-size: 36px"] { font-size: 25px !important; }
+  [style*="font-size: 32px"] { font-size: 23px !important; }
+
+  /* --- Hero stats wrap instead of overflowing --- */
+  .hero-stats { gap: 20px !important; flex-wrap: wrap !important; }
+
+  /* --- Media + code never blow out the layout --- */
+  img, svg, video { max-width: 100%; height: auto; }
+  pre, code { white-space: pre-wrap !important; word-break: break-word !important; }
+}
+
+@media (max-width: 480px) {
+  section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  [style*="font-size: 64px"] { font-size: 30px !important; }
+  [style*="font-size: 48px"] { font-size: 27px !important; }
+  [style*="font-size: 40px"] { font-size: 23px !important; }
+  .hero-stats { gap: 14px !important; }
+}
