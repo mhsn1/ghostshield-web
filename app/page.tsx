@@ -1,6 +1,7 @@
 'use client'
 import Navbar from './components/Navbar'
 import { useState, useEffect, useRef } from 'react'
+import { Counter } from './components/Effects'
 
 declare global {
   interface Window {
@@ -418,9 +419,17 @@ function USDCBadge() {
 function Terminal() {
   const [visible, setVisible] = useState<number[]>([])
   useEffect(() => {
-    TERMINAL_LINES.forEach((line, i) => {
-      setTimeout(() => setVisible(v => [...v, i]), line.delay)
-    })
+    let timers: ReturnType<typeof setTimeout>[] = []
+    const run = () => {
+      setVisible([])
+      timers = TERMINAL_LINES.map((line, i) =>
+        setTimeout(() => setVisible(v => [...v, i]), line.delay)
+      )
+    }
+    run()
+    const cycle = TERMINAL_LINES[TERMINAL_LINES.length - 1].delay + 3000
+    const loop = setInterval(run, cycle)
+    return () => { clearInterval(loop); timers.forEach(clearTimeout) }
   }, [])
 
   return (
@@ -1332,7 +1341,7 @@ export default function Home() {
               lineHeight: 1.1, letterSpacing: '-2px', marginBottom: '24px',
             }}>
               Your AI has<br />
-              <span style={{ fontWeight: 700 }}>vulnerabilities</span><br />
+              <span className="gradient-text" style={{ fontWeight: 700 }}>vulnerabilities</span><br />
               <span style={{ color: '#444' }}>you can&apos;t see.</span>
             </h1>
 
@@ -1366,7 +1375,7 @@ export default function Home() {
             }}>
               {STATS.map((s, i) => (
                 <div key={s.label} style={{ animationDelay: `${1.2 + i * 0.1}s` }} className="hero-stat-item">
-                  <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5', marginBottom: '4px' }}>{s.value}</div>
+                  <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5', marginBottom: '4px' }}><Counter value={s.value} /></div>
                   <div style={{ fontSize: '12px', color: '#555' }}>{s.label}</div>
                 </div>
               ))}
@@ -1395,7 +1404,7 @@ export default function Home() {
               { n: '03', title: 'Evaluator LLM', desc: 'A separate LLM independently judges each response for leakage depth: none → hint → fragment → substantial → complete extraction.' },
             ].map((s, i) => (
               <ScrollReveal key={s.n} delay={i * 150} direction="up">
-                <div style={{
+                <div className="glass-card" style={{
                   padding: '40px', background: 'rgba(0,0,0,0.6)',
                   border: '1px solid rgba(255,255,255,0.04)',
                   transition: 'all 0.3s',
