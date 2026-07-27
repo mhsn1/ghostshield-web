@@ -436,13 +436,13 @@ export default function Docs() {
   }
 
   return (
-    <div style={{
+    <div className="docs-wrap" style={{
       display: 'flex', minHeight: '100vh', background: '#000',
       fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5'
     }}>
 
       {/* Sidebar */}
-      <aside style={{
+      <aside className="docs-sidebar" style={{
         width: '240px', flexShrink: 0, padding: '80px 16px 24px',
         borderRight: '1px solid rgba(255,255,255,0.05)',
         position: 'fixed', top: 0, left: 0, height: '100vh', overflowY: 'auto',
@@ -484,7 +484,7 @@ export default function Docs() {
       </aside>
 
       {/* Content */}
-      <main ref={contentRef} style={{
+      <main ref={contentRef} className="docs-content" style={{
         flex: 1, marginLeft: '240px', padding: '100px 80px 80px',
         maxWidth: '860px', overflowY: 'auto', minHeight: '100vh'
       }}>

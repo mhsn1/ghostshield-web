@@ -123,7 +123,42 @@ body {
   footer [style*="padding: 16px 80px 32px"] { padding: 16px 20px 28px !important; }
 
   /* --- Wide horizontal flow diagram: scroll instead of clipping off-screen --- */
-  .flow-unit { overflow-x: auto !important; max-width: 100% !important; padding-bottom: 8px; }
+  .flow-unit {
+    overflow-x: auto !important;
+    max-width: 100% !important;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start !important;
+  }
+
+  /* --- Docs page: fixed 240px sidebar -> scrollable top strip, full-width content --- */
+  .docs-wrap { flex-direction: column !important; }
+  .docs-sidebar {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 18px 12px 12px !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .docs-sidebar > a { display: none !important; }         /* hide logo inside the strip */
+  .docs-sidebar > div { margin-bottom: 0 !important; flex-shrink: 0; }
+  .docs-content {
+    margin-left: 0 !important;
+    padding: 28px 20px 64px !important;
+    max-width: 100% !important;
+  }
+  .docs-content table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    white-space: nowrap;
+  }
 
   /* --- Media + code never blow out the layout --- */
   img, svg, video { max-width: 100%; height: auto; }
