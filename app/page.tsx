@@ -1,7 +1,7 @@
 'use client'
 import Navbar from './components/Navbar'
 import { useState, useEffect, useRef } from 'react'
-import { Counter } from './components/Effects'
+import { Counter, HeroParticles } from './components/Effects'
 
 declare global {
   interface Window {
@@ -1334,8 +1334,10 @@ export default function Home() {
           pointerEvents: 'none',
         }} />
 
+        <HeroParticles />
+
         <div style={{
-          maxWidth: '1200px', margin: '0 auto', width: '100%',
+          maxWidth: '1200px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 1,
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center',
         }}>
           <div>
@@ -1365,7 +1367,7 @@ export default function Home() {
             </p>
 
             <div className="hero-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <a href="#pricing" style={{
+              <a href="#pricing" className="btn-primary" style={{
                 background: '#ff4444', color: 'white', padding: '12px 28px',
                 borderRadius: '8px', textDecoration: 'none', fontWeight: 500,
                 fontSize: '15px', transition: 'all 0.3s',
@@ -1462,7 +1464,8 @@ export default function Home() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {CATEGORIES.map((cat, i) => (
               <ScrollReveal key={cat.id} delay={i * 60} direction="right">
-                <div style={{
+                <div className="cat-row" style={{
+                  position: 'relative', overflow: 'hidden',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '12px 16px',
                   background: activeProbe === i ? '#111' : 'transparent',
@@ -1478,6 +1481,11 @@ export default function Home() {
                     <span style={{ fontSize: '14px', color: activeProbe === i ? '#f5f5f5' : '#666', transition: 'color 0.3s' }}>{cat.name}</span>
                   </div>
                   <span style={{ fontSize: '12px', fontFamily: 'DM Mono', color: activeProbe === i ? '#888' : '#333', transition: 'color 0.3s' }}>{cat.count} probes</span>
+                  <div className="cat-bar" style={{
+                    position: 'absolute', left: 0, bottom: 0, height: '2px',
+                    width: `${Math.min(cat.count / 12, 1) * 100}%`,
+                    background: SEVERITY_COLOR[cat.severity], opacity: 0.5, borderRadius: '0 2px 2px 0',
+                  }} />
                 </div>
               </ScrollReveal>
             ))}
@@ -1514,15 +1522,15 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2px', maxWidth: '800px', margin: '0 auto' }}>
             {PRICING.map((plan, i) => (
               <ScrollReveal key={plan.name} delay={i * 200} direction="scale">
-                <div style={{
+                <div className={plan.highlight ? 'pricing-pro' : undefined} style={{
                   padding: '40px',
                   background: plan.highlight ? '#0e0e0e' : '#080808',
                   border: plan.highlight ? '1px solid rgba(255,68,68,0.25)' : '1px solid rgba(255,255,255,0.04)',
                   borderRadius: '2px', position: 'relative',
-                  transition: 'all 0.3s',
+                  transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)' }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(255,68,68,0.4)' }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = plan.highlight ? 'rgba(255,68,68,0.25)' : 'rgba(255,255,255,0.04)' }}
                 >
                   {plan.highlight && (
                     <div style={{
@@ -1537,11 +1545,11 @@ export default function Home() {
                   <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                     {plan.usdc ? (
                       <>
-                        <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>{plan.price}</span>
+                        <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}><Counter value={plan.price} /></span>
                         <span style={{ fontSize: '14px', color: '#555' }}>USDC {plan.sub}</span>
                       </>
                     ) : (
-                      <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>{plan.price}</span>
+                      <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}><Counter value={plan.price} /></span>
                     )}
                   </div>
 
