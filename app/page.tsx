@@ -899,7 +899,7 @@ function AnimatedResults() {
         </div>
 
         {/* ── Integrated flow unit ─────────────────────────────────────────── */}
-        <div style={{
+        <div className="flow-unit" style={{
           display: 'flex',
           alignItems: 'stretch',
           gap: '0',
@@ -1595,7 +1595,7 @@ export default function Home() {
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.04)', overflow: 'hidden' }}>
 
         {/* Top row — links */}
-        <div style={{
+        <div className="footer-top" style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '32px 80px',
           borderBottom: '1px solid rgba(255,255,255,0.04)',
@@ -1605,10 +1605,10 @@ export default function Home() {
             <a href="https://github.com/mhsn1" target="_blank" style={{ color: '#555', textDecoration: 'none' }}>mhsn1</a>
             {' '}· Open source · MIT License
           </div>
-          <div style={{ display: 'flex', gap: '28px' }}>
+          <div className="footer-links" style={{ display: 'flex', gap: '28px' }}>
             {[
               { label: 'GitHub', href: 'https://github.com/mhsn1/ghostshield' },
-              { label: 'Docs', href: '#' },
+              { label: 'Docs', href: '/docs' },
               { label: 'Whitepaper', href: '/whitepaper' },
               { label: 'Terms', href: '/terms' },
               { label: 'Privacy', href: '/privacy' },
@@ -1632,7 +1632,7 @@ export default function Home() {
             background: 'radial-gradient(ellipse, rgba(255,68,68,0.06) 0%, transparent 70%)',
             pointerEvents: 'none',
           }} />
-          <div style={{
+          <div className="footer-brand" style={{
             fontSize: 'clamp(80px, 14vw, 180px)',
             fontWeight: 900,
             letterSpacing: '-4px',

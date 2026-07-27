@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { Menu, X } from 'lucide-react'
 
 // Types
 interface Drop {
@@ -313,6 +314,7 @@ export default function Navbar() {
   const [loading, setLoading] = useState<boolean>(true)
   const [logoAnimated, setLogoAnimated] = useState<boolean>(false)
   const [mounted, setMounted] = useState<boolean>(false)
+  const [menuOpen, setMenuOpen] = useState<boolean>(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -532,7 +534,42 @@ export default function Navbar() {
             Get Started
           </Link>
         </div>
+
+        <button
+          className="nav-burger"
+          aria-label="Toggle menu"
+          onClick={() => setMenuOpen((v) => !v)}
+          style={{ background: 'none', border: 'none', color: '#f5f5f5', cursor: 'pointer', padding: '8px', display: 'none', alignItems: 'center' }}
+        >
+          {menuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </nav>
+
+      {menuOpen && (
+        <div className="nav-panel" style={{
+          position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 99,
+          background: 'rgba(0,0,0,0.97)', backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          padding: '12px 20px 24px', display: 'flex', flexDirection: 'column', gap: '2px',
+        }}>
+          {links.map((l) => (
+            <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)}
+              style={{ color: pathname === l.href ? '#f5f5f5' : '#aaa', fontSize: '16px', textDecoration: 'none', padding: '13px 6px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              {l.label}
+            </Link>
+          ))}
+          <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+            <Link href="https://github.com/mhsn1/ghostshield" target="_blank" onClick={() => setMenuOpen(false)}
+              style={{ flex: 1, textAlign: 'center', color: '#f5f5f5', fontSize: '14px', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.14)', borderRadius: '8px', padding: '12px' }}>
+              GitHub
+            </Link>
+            <Link href="/auth" onClick={() => setMenuOpen(false)}
+              style={{ flex: 1, textAlign: 'center', background: '#ff4444', color: 'white', fontSize: '14px', textDecoration: 'none', borderRadius: '8px', padding: '12px', fontWeight: 500 }}>
+              Get Started
+            </Link>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         @keyframes shieldGlow {
