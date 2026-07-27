@@ -961,7 +961,7 @@ function AnimatedResults() {
           </div>
 
           {/* Arrow: sources → star */}
-          <div style={{ display: 'flex', alignItems: 'center', width: '40px', flexShrink: 0 }}>
+          <div className="flow-arrow" style={{ display: 'flex', alignItems: 'center', width: '40px', flexShrink: 0 }}>
             <div style={{
               width: '100%', height: '1px',
               background: srcArrowLit
@@ -1015,7 +1015,7 @@ function AnimatedResults() {
           </div>
 
           {/* Arrow: star → hub */}
-          <div style={{ display: 'flex', alignItems: 'center', width: '40px', flexShrink: 0 }}>
+          <div className="flow-arrow" style={{ display: 'flex', alignItems: 'center', width: '40px', flexShrink: 0 }}>
             <div style={{
               width: '100%', height: '1px',
               background: hubArrowLit
