@@ -1162,6 +1162,7 @@ const FAQS = [
 
 function FAQ() {
   const [open, setOpen] = useState<number | null>(null)
+  const [hover, setHover] = useState<number | null>(null)
 
   return (
     <section style={{
@@ -1229,12 +1230,14 @@ function FAQ() {
               return (
                 <div
                   key={i}
+                  onMouseEnter={() => setHover(i)}
+                  onMouseLeave={() => setHover(null)}
                   style={{
-                    background: isOpen ? 'rgba(255,255,255,0.02)' : 'transparent',
-                    border: `1px solid ${isOpen ? 'rgba(255,68,68,0.18)' : 'rgba(255,255,255,0.05)'}`,
-                    borderLeft: `3px solid ${isOpen ? '#ff4444' : 'rgba(255,255,255,0.05)'}`,
+                    background: isOpen ? 'rgba(255,255,255,0.025)' : (hover === i ? 'rgba(255,255,255,0.015)' : 'transparent'),
+                    border: `1px solid ${isOpen ? 'rgba(255,68,68,0.18)' : (hover === i ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)')}`,
+                    borderLeft: `3px solid ${isOpen ? '#ff4444' : (hover === i ? 'rgba(255,68,68,0.45)' : 'rgba(255,255,255,0.05)')}`,
                     borderRadius: '8px',
-                    transition: 'all 0.25s',
+                    transition: 'background 0.25s ease, border-color 0.25s ease',
                     overflow: 'hidden',
                   }}
                 >
@@ -1257,7 +1260,7 @@ function FAQ() {
                       </span>
                       <span style={{
                         fontSize: '15px', fontWeight: 500,
-                        color: isOpen ? '#f5f5f5' : '#888',
+                        color: isOpen ? '#f5f5f5' : (hover === i ? '#ccc' : '#888'),
                         transition: 'color 0.2s',
                       }}>
                         {faq.q}
@@ -1274,16 +1277,27 @@ function FAQ() {
                     }}>+</div>
                   </button>
 
-                  {isOpen && (
-                    <div style={{ padding: '0 24px 22px', paddingLeft: '64px' }}>
-                      <p style={{
-                        fontSize: '14px', color: '#666', lineHeight: 1.85, margin: 0,
-                        borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '16px',
+                  {/* Smooth height + fade reveal via grid-template-rows */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateRows: isOpen ? '1fr' : '0fr',
+                    transition: 'grid-template-rows 0.35s cubic-bezier(0.16,1,0.3,1)',
+                  }}>
+                    <div style={{ overflow: 'hidden', minHeight: 0 }}>
+                      <div style={{
+                        padding: '0 24px 22px', paddingLeft: '64px',
+                        opacity: isOpen ? 1 : 0,
+                        transition: 'opacity 0.3s ease',
                       }}>
-                        {faq.a}
-                      </p>
+                        <p style={{
+                          fontSize: '14px', color: '#666', lineHeight: 1.85, margin: 0,
+                          borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '16px',
+                        }}>
+                          {faq.a}
+                        </p>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}
