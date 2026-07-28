@@ -49,13 +49,19 @@ export default function Auth() {
       minHeight: '100vh', background: '#000', display: 'flex',
       alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Sans, sans-serif'
     }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .auth-wrap { max-width: 100%; padding: 0 16px; box-sizing: border-box; }
+          .auth-card { padding: 24px 20px; }
+        }
+      `}</style>
       <Navbar />
-      <div style={{ width: '100%', maxWidth: '400px', padding: '0 24px' }}>
+      <div className="auth-wrap" style={{ width: '100%', maxWidth: '400px', padding: '0 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <span style={{ fontSize: '20px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
         </div>
 
-        <div style={{
+        <div className="auth-card" style={{
           background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)',
           borderRadius: '12px', padding: '36px'
         }}>

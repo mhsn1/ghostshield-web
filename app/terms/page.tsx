@@ -52,7 +52,12 @@ export default function TermsPage() {
   return (
     <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
       <Navbar />
-      <div style={{ maxWidth: '780px', margin: '0 auto', padding: '140px 80px 120px' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .legal-wrap { padding: 110px 18px 80px !important; max-width: 100%; box-sizing: border-box; }
+        }
+      `}</style>
+      <div className="legal-wrap" style={{ maxWidth: '780px', margin: '0 auto', padding: '140px 80px 120px' }}>
         {/* Header */}
         <div style={{ marginBottom: '64px' }}>
           <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', letterSpacing: '2px', marginBottom: '16px' }}>

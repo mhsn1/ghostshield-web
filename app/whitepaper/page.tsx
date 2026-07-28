@@ -260,6 +260,20 @@ export default function WhitepaperPage() {
   return (
     <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
 
+      <style>{`
+        @media (max-width: 768px) {
+          .wp-hero { padding: 120px 18px 48px !important; }
+          .wp-body { padding: 0 18px 72px !important; gap: 40px !important; }
+          .wp-nav {
+            position: static !important;
+            top: auto !important;
+            width: 100% !important;
+            height: auto !important;
+          }
+          .wp-subtitle { max-width: 100% !important; }
+        }
+      `}</style>
+
       {/* Reading progress bar */}
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
@@ -276,7 +290,7 @@ export default function WhitepaperPage() {
       <Navbar />
 
       {/* Hero */}
-      <header style={{ padding: '140px 80px 80px', maxWidth: '900px', margin: '0 auto' }}>
+      <header className="wp-hero" style={{ padding: '140px 80px 80px', maxWidth: '900px', margin: '0 auto' }}>
 
         {/* Eyebrow */}
         <div style={{
@@ -306,7 +320,7 @@ export default function WhitepaperPage() {
         </h1>
 
         {/* Subtitle */}
-        <p style={{
+        <p className="wp-subtitle" style={{
           fontSize: '18px', color: '#555', lineHeight: 1.75, maxWidth: '680px',
           opacity: heroVisible ? 1 : 0,
           transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
@@ -341,13 +355,13 @@ export default function WhitepaperPage() {
       </header>
 
       {/* Body */}
-      <div style={{
+      <div className="wp-body" style={{
         maxWidth: '900px', margin: '0 auto', padding: '0 80px 120px',
         display: 'grid', gridTemplateColumns: '180px 1fr', gap: '80px', alignItems: 'start',
       }}>
 
         {/* Left — sticky nav */}
-        <nav style={{ position: 'sticky', top: '80px', paddingTop: '8px' }}>
+        <nav className="wp-nav" style={{ position: 'sticky', top: '80px', paddingTop: '8px' }}>
           <div style={{
             fontSize: '11px', color: '#333', fontFamily: 'DM Mono',
             letterSpacing: '1px', marginBottom: '16px',
