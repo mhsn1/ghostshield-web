@@ -624,20 +624,19 @@ export default function ShieldBench() {
               <p style={{ fontSize: 13, color: '#8a8a9e', maxWidth: 460, lineHeight: 1.8, marginBottom: 10 }}>
                 A continuously-updated leaderboard of AI models and open-source agents, ranked by how well they resist prompt extraction, jailbreaks, and data leakage.
               </p>
-              <p style={{ fontSize: 12, color: '#55556a', maxWidth: 460, lineHeight: 1.7, marginBottom: 30 }}>
-                Every stat, scan, and live event below is aggregated in real time from our ongoing adversarial scans of the models listed here.
-              </p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '10px 15px', marginBottom: 30, background: 'rgba(255,51,51,0.07)', border: '1px solid rgba(255,51,51,0.22)', borderRadius: 8, maxWidth: '100%' }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#ff3333', flexShrink: 0, animation: 'sb_pulse 1.4s infinite' }} />
+                <span style={{ fontSize: 13, color: '#d0d0dc', lineHeight: 1.5 }}>
+                  <strong style={{ color: '#ff6a6a', fontWeight: 600 }}>Live</strong> — every stat and event below is aggregated in real time from our ongoing scans of the {totalModels} models rated here.
+                </span>
+              </div>
               <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
                 {[{ label: 'Models Rated', val: totalModels, delay: 0 }, { label: 'Total Scans', val: totalScans, delay: 120 }, { label: 'Vulnerabilities Found', val: totalVulns, delay: 240 }].map(s => (
                   <div key={s.label}>
                     <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 26, fontWeight: 600, color: '#e8e8f0', marginBottom: 3 }}><CountUp end={s.val} delay={s.delay} /></div>
-                    <div style={{ fontSize: 11, color: '#55556a', letterSpacing: '.5px' }}>{s.label}</div>
+                    <div style={{ fontSize: 11, color: '#8a8a9e', letterSpacing: '.5px' }}>{s.label}</div>
                   </div>
                 ))}
-              </div>
-              <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#4a4a5e', letterSpacing: '.5px' }}>
-                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ff3333', animation: 'sb_pulse 1.4s infinite' }} />
-                LIVE — aggregated across all {totalModels} rated models
               </div>
             </div>
 
