@@ -52,7 +52,13 @@ export default function PrivacyPage() {
   return (
     <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
       <Navbar />
-      <div style={{ maxWidth: '780px', margin: '0 auto', padding: '140px 80px 120px' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .legal-wrap { padding: 110px 18px 80px !important; max-width: 100%; box-sizing: border-box; }
+          .legal-block { padding: 14px 16px !important; }
+        }
+      `}</style>
+      <div className="legal-wrap" style={{ maxWidth: '780px', margin: '0 auto', padding: '140px 80px 120px' }}>
         {/* Header */}
         <div style={{ marginBottom: '64px' }}>
           <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', letterSpacing: '2px', marginBottom: '16px' }}>
@@ -89,7 +95,7 @@ export default function PrivacyPage() {
                   color: '#f5f5f5', letterSpacing: '-0.2px',
                 }}>{s.title}</h2>
                 {hasBlock ? (
-                  <div style={{
+                  <div className="legal-block" style={{
                     padding: '16px 20px', background: '#080808',
                     border: '1px solid rgba(255,255,255,0.06)',
                     borderLeft: '3px solid rgba(255,68,68,0.2)',

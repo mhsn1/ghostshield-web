@@ -56,13 +56,21 @@ export default function ContactPage() {
 
   return (
     <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .ct-section { padding: 120px 18px 72px !important; }
+          .ct-grid { gap: 40px !important; }
+          .ct-form-card { padding: 24px 20px !important; }
+          .ct-copy p { max-width: 100% !important; }
+        }
+      `}</style>
       <Navbar />
 
-      <section style={{ padding: '140px 80px 100px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '100px', alignItems: 'start' }}>
+      <section className="ct-section" style={{ padding: '140px 80px 100px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="ct-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '100px', alignItems: 'start' }}>
 
           {/* Left — copy */}
-          <div>
+          <div className="ct-copy">
             <div style={{
               fontSize: '12px', fontFamily: 'DM Mono', color: '#555',
               letterSpacing: '2px', marginBottom: '20px',
@@ -84,7 +92,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right — form */}
-          <div style={{
+          <div className="ct-form-card" style={{
             background: '#080808', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '16px', padding: '40px',
           }}>

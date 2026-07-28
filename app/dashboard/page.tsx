@@ -257,9 +257,10 @@ function Overview({ scans, onNewScan }: { scans: any[], onNewScan: () => void })
           </button>
         </div>
       ) : (
+        <div className="dash-scroll-recent">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {scans.slice(0, 5).map(scan => (
-            <div key={scan.id} style={{
+            <div key={scan.id} className="dash-row-recent" style={{
               display: 'grid', gridTemplateColumns: '1fr auto auto auto auto',
               gap: '24px', alignItems: 'center',
               padding: '16px 20px', background: '#0d0d0d',
@@ -294,6 +295,7 @@ function Overview({ scans, onNewScan }: { scans: any[], onNewScan: () => void })
               <div style={{ color: '#333' }}>→</div>
             </div>
           ))}
+        </div>
         </div>
       )}
       {selectedScan && <ScanDetailModal scan={selectedScan} onClose={() => setSelectedScan(null)} />}
@@ -1056,8 +1058,9 @@ function ShieldBench() {
         </div>
       </div>
 
+      <div className="dash-scroll-bench">
       {/* Legend row */}
-      <div style={{
+      <div className="dash-row-bench" style={{
         display: 'grid', gridTemplateColumns: '36px 1fr 90px 70px 80px 80px',
         gap: '16px', padding: '8px 20px',
         fontSize: '11px', color: '#333', fontFamily: 'DM Mono', letterSpacing: '0.5px',
@@ -1079,7 +1082,7 @@ function ShieldBench() {
           const circ = 2 * Math.PI * r
           const dash = (row.score / 100) * circ
           return (
-            <div key={row.model} style={{
+            <div key={row.model} className="dash-row-bench" style={{
               display: 'grid', gridTemplateColumns: '36px 1fr 90px 70px 80px 80px',
               gap: '16px', alignItems: 'center',
               padding: '14px 20px', background: '#0d0d0d',
@@ -1137,6 +1140,7 @@ function ShieldBench() {
             </div>
           )
         })}
+      </div>
       </div>
 
       {/* Footer note */}
@@ -1536,12 +1540,49 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{
+    <div className="dash-shell" style={{
       display: 'flex', minHeight: '100vh', background: '#000',
       fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5'
     }}>
+      <style>{`
+        @media (max-width: 768px) {
+          /* Sidebar stacks on top instead of a fixed side column */
+          .dash-shell { flex-direction: column; }
+          .dash-sidebar {
+            width: 100% !important;
+            border-right: none !important;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 16px !important;
+          }
+          /* Sidebar nav becomes a horizontal scrollable pill row */
+          .dash-nav {
+            flex-direction: row !important;
+            flex-wrap: wrap;
+            gap: 6px !important;
+          }
+          .dash-nav button { width: auto !important; }
+          .dash-main { padding: 24px 16px !important; }
 
-      <aside style={{
+          /* ShieldBench leaderboard — keep desktop columns, scroll horizontally */
+          .dash-scroll-bench { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          .dash-scroll-bench .dash-row-bench {
+            grid-template-columns: 36px 1fr 90px 70px 80px 80px !important;
+            min-width: 560px;
+          }
+
+          /* Overview recent-scan rows — keep desktop columns, scroll horizontally */
+          .dash-scroll-recent { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          .dash-scroll-recent .dash-row-recent {
+            grid-template-columns: 1fr auto auto auto auto !important;
+            min-width: 520px;
+          }
+
+          /* Cap fixed-width content blocks so nothing overflows the viewport */
+          .dash-cap { max-width: 100% !important; }
+        }
+      `}</style>
+
+      <aside className="dash-sidebar" style={{
         width: '220px', flexShrink: 0,
         borderRight: '1px solid rgba(255,255,255,0.05)',
         padding: '24px 16px', display: 'flex', flexDirection: 'column',
@@ -1550,7 +1591,7 @@ export default function Dashboard() {
           <span style={{ fontSize: '16px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
         </a>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
+        <nav className="dash-nav" style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
           {SIDEBAR.map(item => (
             <button key={item.id} onClick={() => setActive(item.id)} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
@@ -1605,7 +1646,7 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
+      <main className="dash-main" style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
         {active === 'overview' && <Overview scans={scans} onNewScan={() => setActive('scan')} />}
         {active === 'scan' && (
           <NewScan
