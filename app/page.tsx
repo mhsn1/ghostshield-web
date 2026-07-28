@@ -1183,7 +1183,7 @@ function FAQ() {
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '100px', alignItems: 'start' }}>
 
           {/* LEFT — sticky header */}
-          <div style={{ position: 'sticky', top: '80px' }}>
+          <div className="faq-left" style={{ position: 'sticky', top: '80px' }}>
             <div style={{
               fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444',
               letterSpacing: '3px', marginBottom: '20px',
@@ -1219,7 +1219,7 @@ function FAQ() {
                 e.currentTarget.style.borderColor = 'rgba(255,68,68,0.2)'
               }}
             >
-              ✉ Email us →
+              Email us →
             </a>
           </div>
 
@@ -1348,7 +1348,7 @@ export default function Home() {
             }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff4444', animation: 'pulse 2s infinite' }} />
               <span style={{ fontSize: '12px', color: '#ff4444', fontFamily: 'DM Mono', letterSpacing: '0.5px' }}>
-                REAL ATTACKS. ZERO DUMMY DATA.
+                FIND THE LEAKS BEFORE ATTACKERS DO
               </span>
             </div>
 
