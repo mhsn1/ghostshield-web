@@ -240,6 +240,9 @@ h1, h2 {
   /* --- Hero stats wrap instead of overflowing --- */
   .hero-stats { gap: 20px !important; flex-wrap: wrap !important; }
 
+  /* --- FAQ left column: don't stick on mobile (it stacks above the accordion) --- */
+  .faq-left { position: static !important; margin-bottom: 32px; }
+
   /* --- Footer: stack rows, wrap links, shrink giant brand --- */
   .footer-top   { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; padding: 24px 20px !important; }
   .footer-links { flex-wrap: wrap !important; gap: 14px 20px !important; }
