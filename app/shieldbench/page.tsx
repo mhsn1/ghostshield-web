@@ -579,9 +579,12 @@ export default function ShieldBench() {
   }, [models])
 
   useEffect(() => {
+    if (!mounted) return // header only exists after mount (hydration gate) — attach then
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setHeaderVis(true) }, { threshold: .1 })
-    if (headerRef.current) obs.observe(headerRef.current); return () => obs.disconnect()
-  }, [])
+    if (headerRef.current) obs.observe(headerRef.current)
+    const fallback = setTimeout(() => setHeaderVis(true), 500) // guarantee visibility
+    return () => { obs.disconnect(); clearTimeout(fallback) }
+  }, [mounted])
 
   const totalVulns = Object.values(liveVulns).reduce((a, b) => a + b, 0)
   const totalScans = models.reduce((a, m) => a + m.scans, 0) + community.reduce((a, c) => a + c.scans, 0)
