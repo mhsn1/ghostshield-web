@@ -325,7 +325,7 @@ function ModelRow({ row, index }: { row: ModelRow; index: number }) {
   }, [])
   const sc = SC[row.status]
   return (
-    <div ref={ref}
+    <div ref={ref} className="sb-mrow"
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       // Tooltip shows real metadata — inspect will see these as live data attributes
       data-model-id={row.id}
@@ -370,7 +370,7 @@ function CommunityRow({ row, index }: { row: CommunityRow; index: number }) {
   }, [])
   const sc = SC[row.status]
   return (
-    <div ref={ref}
+    <div ref={ref} className="sb-crow"
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       data-project-id={row.id}
       data-repo={row.repo}
@@ -614,7 +614,7 @@ export default function ShieldBench() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 284px', maxWidth: 1280, margin: '0 auto' }}>
 
           {/* ── Main panel ── */}
-          <div style={{ padding: '48px 40px 60px', borderRight: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="sb-main" style={{ padding: '48px 40px 60px', borderRight: '1px solid rgba(255,255,255,0.04)' }}>
 
             <div ref={headerRef} style={{ marginBottom: 48, opacity: headerVis ? 1 : 0, transform: headerVis ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity .65s ease,transform .65s ease' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
@@ -654,8 +654,8 @@ export default function ShieldBench() {
 
             {/* Models */}
             {tab === 'models' && (
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px 60px 60px', gap: 16, padding: '8px 16px', marginBottom: 6 }}>
+              <div className="sb-scroll">
+                <div className="sb-mrow" style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px 60px 60px', gap: 16, padding: '8px 16px', marginBottom: 6 }}>
                   {['#', 'Model', 'Score', 'Status', 'Vulns', 'Scans', 'Trend'].map(h => (
                     <div key={h} style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#2a2a3c', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{h}</div>
                   ))}
@@ -671,13 +671,15 @@ export default function ShieldBench() {
             {/* Community */}
             {tab === 'community' && (
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px', gap: 16, padding: '8px 16px', marginBottom: 6 }}>
+                <div className="sb-scroll">
+                <div className="sb-crow" style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px', gap: 16, padding: '8px 16px', marginBottom: 6 }}>
                   {['#', 'Project', 'Score', 'Status', 'Scans'].map(h => (
                     <div key={h} style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#2a2a3c', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{h}</div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 32 }}>
                   {community.map((row, i) => <CommunityRow key={row.id} row={row} index={i} />)}
+                </div>
                 </div>
 
                 <div style={{ padding: 28, background: '#0c0c10', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10 }}>

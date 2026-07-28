@@ -250,6 +250,18 @@ h1, h2 {
     border-left: none !important;
     border-top: 1px solid rgba(255,255,255,0.06) !important;
   }
+  /* Keep the leaderboard in its desktop layout and scroll it sideways
+     (overrides the global grid-collapse so the table stays readable). */
+  .sb-main { padding: 28px 16px 48px !important; }
+  .sb-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+  .sb-scroll .sb-mrow {
+    grid-template-columns: 30px minmax(150px, 1fr) 54px 92px 54px 54px 54px !important;
+    min-width: 560px;
+  }
+  .sb-scroll .sb-crow {
+    grid-template-columns: 30px minmax(160px, 1fr) 54px 92px 60px !important;
+    min-width: 460px;
+  }
 
   /* --- Footer: stack rows, wrap links, shrink giant brand --- */
   .footer-top   { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; padding: 24px 20px !important; }
