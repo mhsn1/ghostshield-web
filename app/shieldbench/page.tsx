@@ -440,7 +440,7 @@ function LiveSidebar({ chartData }: { chartData: number[] }) {
   }, [])
 
   return (
-    <div style={{ padding: '24px 20px', background: '#0c0c10', borderLeft: '1px solid rgba(255,255,255,0.04)', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div className="sb-sidebar" style={{ padding: '24px 20px', background: '#0c0c10', borderLeft: '1px solid rgba(255,255,255,0.04)', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
         <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '2px', color: '#55556a', textTransform: 'uppercase', flex: 1 }}>Live Activity</div>
@@ -621,16 +621,23 @@ export default function ShieldBench() {
               <h1 style={{ fontSize: 'clamp(36px,5vw,54px)', fontWeight: 700, letterSpacing: '-3px', lineHeight: 1, marginBottom: 12, background: 'linear-gradient(135deg,#ffffff 0%,#888899 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 ShieldBench
               </h1>
-              <p style={{ fontSize: 13, color: '#55556a', maxWidth: 440, lineHeight: 1.8, marginBottom: 32 }}>
-                Weekly adversarial security scans of AI models & open-source agents — ranked by prompt extraction resistance, jailbreak resilience, and data leakage prevention.
+              <p style={{ fontSize: 13, color: '#8a8a9e', maxWidth: 460, lineHeight: 1.8, marginBottom: 10 }}>
+                A continuously-updated leaderboard of AI models and open-source agents, ranked by how well they resist prompt extraction, jailbreaks, and data leakage.
               </p>
-              <div style={{ display: 'flex', gap: 32 }}>
-                {[{ label: 'Models Tested', val: totalModels, delay: 0 }, { label: 'Total Scans', val: totalScans, delay: 120 }, { label: 'Vulnerabilities Found', val: totalVulns, delay: 240 }].map(s => (
+              <p style={{ fontSize: 12, color: '#55556a', maxWidth: 460, lineHeight: 1.7, marginBottom: 30 }}>
+                Every stat, scan, and live event below is aggregated in real time from our ongoing adversarial scans of the models listed here.
+              </p>
+              <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+                {[{ label: 'Models Rated', val: totalModels, delay: 0 }, { label: 'Total Scans', val: totalScans, delay: 120 }, { label: 'Vulnerabilities Found', val: totalVulns, delay: 240 }].map(s => (
                   <div key={s.label}>
                     <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 26, fontWeight: 600, color: '#e8e8f0', marginBottom: 3 }}><CountUp end={s.val} delay={s.delay} /></div>
                     <div style={{ fontSize: 11, color: '#55556a', letterSpacing: '.5px' }}>{s.label}</div>
                   </div>
                 ))}
+              </div>
+              <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#4a4a5e', letterSpacing: '.5px' }}>
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ff3333', animation: 'sb_pulse 1.4s infinite' }} />
+                LIVE — aggregated across all {totalModels} rated models
               </div>
             </div>
 
