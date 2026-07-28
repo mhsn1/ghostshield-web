@@ -24,140 +24,112 @@ interface MatrixPreloaderProps {
   onComplete: () => void
 }
 
-// Preloader Component - Only renders on client
+// Preloader — clean, premium logo reveal
 function MatrixPreloader({ onComplete }: MatrixPreloaderProps) {
   const [mounted, setMounted] = useState<boolean>(false)
-  const [text, setText] = useState<string>('')
-  const [showLightning, setShowLightning] = useState<boolean>(false)
-  const [glitch, setGlitch] = useState<boolean>(false)
-  const targetText = 'GhostShield'
+  const [progress, setProgress] = useState<number>(0)
+  const [exiting, setExiting] = useState<boolean>(false)
+  const WORD = 'GhostShield'
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     if (!mounted) return
-
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'
-    let iteration = 0
-    const interval = setInterval(() => {
-      setText(
-        targetText
-          .split('')
-          .map((letter, index) => {
-            if (index < iteration) {
-              return targetText[index]
-            }
-            return chars[Math.floor(Math.random() * chars.length)]
-          })
-          .join('')
-      )
-
-      if (iteration >= targetText.length) {
-        clearInterval(interval)
+    const DURATION = 1500
+    const start = performance.now()
+    let raf = 0
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / DURATION, 1)
+      const eased = 1 - Math.pow(1 - p, 3) // easeOutCubic
+      setProgress(eased)
+      if (p < 1) {
+        raf = requestAnimationFrame(tick)
+      } else {
         setTimeout(() => {
-          setShowLightning(true)
-          setTimeout(() => {
-            setGlitch(true)
-            setTimeout(onComplete, 800)
-          }, 600)
-        }, 400)
+          setExiting(true)
+          setTimeout(onComplete, 600)
+        }, 280)
       }
-
-      iteration += 1 / 3
-    }, 50)
-
-    return () => clearInterval(interval)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
   }, [mounted, onComplete])
 
   if (!mounted) {
     return <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }} />
   }
 
+  const pct = Math.round(progress * 100)
+
   return (
     <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: '#000',
-      zIndex: 9999,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      overflow: 'hidden',
+      position: 'fixed', inset: 0, zIndex: 9999, background: '#000',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      gap: '26px', overflow: 'hidden',
+      opacity: exiting ? 0 : 1,
+      transition: 'opacity 0.6s ease',
+      pointerEvents: exiting ? 'none' : 'auto',
     }}>
-      <MatrixRain />
-
-      {showLightning && <LightningEffect />}
-
+      {/* soft ambient glow */}
       <div style={{
-        position: 'relative',
-        zIndex: 10,
-        fontSize: 'clamp(40px, 10vw, 120px)',
-        fontWeight: 900,
-        letterSpacing: '-2px',
-        color: glitch ? '#ff4444' : '#f5f5f5',
-        textShadow: glitch
-          ? '2px 0 #00ff00, -2px 0 #0000ff, 0 0 30px #ff4444'
-          : '0 0 20px rgba(255,68,68,0.5), 0 0 40px rgba(255,68,68,0.3)',
-        fontFamily: 'monospace',
-        animation: glitch ? 'glitch 0.3s infinite' : 'pulse 2s ease-in-out',
-        transform: glitch ? 'translateX(2px)' : 'none',
-      }}>
-        {text || ' '}
+        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+        width: '560px', height: '560px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,68,68,0.10), transparent 65%)',
+        pointerEvents: 'none',
+      }} />
 
+      {/* Shield icon draws itself in */}
+      <svg viewBox="0 0 24 24" width="60" height="60" fill="none" style={{ position: 'relative' }}>
+        <path
+          d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"
+          stroke="#ff4444" strokeWidth="1.5" strokeLinejoin="round"
+          style={{
+            strokeDasharray: 100, strokeDashoffset: 100 * (1 - progress),
+            filter: 'drop-shadow(0 0 10px rgba(255,68,68,0.5))',
+          }}
+        />
+        <path
+          d="M9 12l2 2 4-4"
+          stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+          style={{ opacity: progress > 0.62 ? (progress - 0.62) / 0.38 : 0, transition: 'opacity 0.2s ease' }}
+        />
+      </svg>
+
+      {/* Wordmark — crisp pure-white, reveals letter by letter */}
+      <div style={{
+        position: 'relative', display: 'flex',
+        fontFamily: "'DM Sans', sans-serif", fontWeight: 700,
+        fontSize: 'clamp(30px, 6vw, 50px)', letterSpacing: '-1.5px', lineHeight: 1,
+      }}>
+        {WORD.split('').map((ch, i) => {
+          const shown = progress > (i / WORD.length) * 0.9
+          return (
+            <span key={i} style={{
+              color: '#ffffff',
+              opacity: shown ? 1 : 0.1,
+              transform: shown ? 'translateY(0)' : 'translateY(6px)',
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+            }}>{ch}</span>
+          )
+        })}
+      </div>
+
+      {/* Progress bar */}
+      <div style={{
+        width: '220px', height: '2px', marginTop: '2px',
+        background: 'rgba(255,255,255,0.10)', borderRadius: '2px', overflow: 'hidden',
+      }}>
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '140%',
-          height: '140%',
-          border: `2px solid ${glitch ? '#ff4444' : 'rgba(255,68,68,0.3)'}`,
-          borderRadius: '20px',
-          opacity: glitch ? 1 : 0.5,
-          animation: glitch ? 'shieldPulse 0.5s ease-out' : 'none',
+          height: '100%', width: `${pct}%`,
+          background: 'linear-gradient(90deg, #ff4444, #ff8800)',
+          boxShadow: '0 0 12px rgba(255,68,68,0.55)',
         }} />
       </div>
 
-      <div style={{
-        position: 'absolute',
-        bottom: '20%',
-        width: '200px',
-        height: '2px',
-        background: 'rgba(255,255,255,0.1)',
-        borderRadius: '2px',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          height: '100%',
-          width: text.length === targetText.length ? '100%' : `${(text.length / targetText.length) * 100}%`,
-          background: 'linear-gradient(90deg, #ff4444, #ff6666)',
-          transition: 'width 0.1s',
-          boxShadow: '0 0 10px #ff4444',
-        }} />
+      {/* Percentage */}
+      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: '#555', letterSpacing: '3px' }}>
+        {pct.toString().padStart(3, '0')}
       </div>
-
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.8; }
-        }
-        @keyframes glitch {
-          0% { transform: translate(0); }
-          20% { transform: translate(-2px, 2px); }
-          40% { transform: translate(-2px, -2px); }
-          60% { transform: translate(2px, 2px); }
-          80% { transform: translate(2px, -2px); }
-          100% { transform: translate(0); }
-        }
-        @keyframes shieldPulse {
-          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-          50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-          100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-        }
-      `}</style>
     </div>
   )
 }
