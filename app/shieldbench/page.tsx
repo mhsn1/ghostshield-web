@@ -508,8 +508,16 @@ function LiveSidebar({ chartData }: { chartData: number[] }) {
           style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#2a2a3c', marginBottom: 5 }}>
           {scan.model} · {scan.phase}
         </div>
-        <div style={{ height: 2, background: '#0a0a10', borderRadius: 1, overflow: 'hidden' }}>
-          <div style={{ height: '100%', background: '#ffaa00', borderRadius: 1, width: `${scan.progress}%`, transition: 'width .28s ease' }} />
+        <div style={{ height: 3, background: '#0a0a10', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', borderRadius: 2, width: `${scan.progress}%`, transition: 'width .28s ease', background: 'linear-gradient(90deg,#ff8800,#ffcc33)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent)', animation: 'sb_shimmer 1.15s linear infinite' }} />
+          </div>
+        </div>
+        {/* Phase stepper — visibly shows the scan moving through its stages */}
+        <div style={{ display: 'flex', gap: 4, marginTop: 6 }}>
+          {SCAN_PHASES.map((_, i) => (
+            <div key={i} style={{ flex: 1, height: 2, borderRadius: 1, background: scan.progress >= ((i + 1) / SCAN_PHASES.length) * 100 ? '#ffaa00' : '#1a1a22', transition: 'background .3s ease' }} />
+          ))}
         </div>
       </div>
 
@@ -589,6 +597,7 @@ export default function ShieldBench() {
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
         @keyframes sb_pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,51,51,.4)}50%{opacity:.4;box-shadow:0 0 0 4px transparent}}
         @keyframes sb_feedin{from{opacity:0;transform:translateX(7px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes sb_shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
         *{box-sizing:border-box}
       `}</style>
 
