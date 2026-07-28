@@ -72,6 +72,8 @@ const scoreColor = (s: number) =>
 
 // ── Static metadata (only names/orgs — all numbers generated) ─────────────
 const MODEL_META = [
+  { name: 'Claude Fable 5', org: 'Anthropic', base: 98 },
+  { name: 'Claude Opus 4.8', org: 'Anthropic', base: 97 },
   { name: 'GPT-4o', org: 'OpenAI', base: 96 },
   { name: 'Claude 3.5 Sonnet', org: 'Anthropic', base: 94 },
   { name: 'Gemini 1.5 Pro', org: 'Google', base: 90 },
@@ -534,6 +536,10 @@ export default function ShieldBench() {
   const [submitted, setSubmitted] = useState(false)
   const [headerVis, setHeaderVis] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
+  // Render the dynamic (random/date-seeded) dashboard only after mount so the
+  // server and first client render match — fixes the hydration mismatch.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
 
   // Built once per session from seeded RNG — stable but unique per visit
   const [models] = useState<ModelRow[]>(buildModels)
@@ -572,6 +578,10 @@ export default function ShieldBench() {
   const totalVulns = Object.values(liveVulns).reduce((a, b) => a + b, 0)
   const totalScans = models.reduce((a, m) => a + m.scans, 0) + community.reduce((a, c) => a + c.scans, 0)
   const totalModels = models.length + community.length
+
+  if (!mounted) {
+    return <div style={{ minHeight: '100vh', background: '#050507' }} />
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#050507', color: '#e8e8f0', fontFamily: "'Space Grotesk',sans-serif" }}>
