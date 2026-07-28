@@ -1496,6 +1496,57 @@ export default function Home() {
       {/* REAL RESULTS - Animated */}
       <AnimatedResults />
 
+      {/* OPEN SOURCE / CLI */}
+      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
+          <ScrollReveal direction="left">
+            <div>
+              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>OPEN SOURCE · MIT</div>
+              <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '16px' }}>
+                Prefer to run it <span className="gradient-text" style={{ fontWeight: 700 }}>yourself?</span>
+              </h2>
+              <p style={{ fontSize: '16px', color: '#888', lineHeight: 1.75, marginBottom: '28px', maxWidth: '460px' }}>
+                The GhostShield scanner is open source and free to self-host. Clone the repo, add your own Groq or OpenRouter key, and run unlimited scans from your terminal &mdash; no account required. The hosted plans below add a dashboard, saved history, and exportable reports.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+                {['MIT licensed — free forever', 'Unlimited local scans', 'JSON export for CI pipelines', 'Bring your own Groq / OpenRouter key'].map(f => (
+                  <div key={f} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <span style={{ color: '#00c853', fontSize: '14px' }}>✓</span>
+                    <span style={{ fontSize: '14px', color: '#999' }}>{f}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <a className="btn-primary" href="https://github.com/mhsn1/ghostshield" target="_blank" style={{
+                  background: '#ff4444', color: 'white', padding: '12px 24px', borderRadius: '8px',
+                  textDecoration: 'none', fontWeight: 500, fontSize: '14px', transition: 'all 0.3s',
+                }}>View on GitHub →</a>
+                <a href="/docs" style={{ color: '#888', padding: '12px 18px', textDecoration: 'none', fontSize: '14px' }}>Read the docs →</a>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal direction="right">
+            <div className="glass-card" style={{
+              background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '12px', padding: '22px', fontFamily: 'DM Mono, monospace', fontSize: '13px', lineHeight: 1.9,
+            }}>
+              <div style={{ display: 'flex', gap: '6px', marginBottom: '18px' }}>
+                {['#ff5f56', '#ffbd2e', '#27c93f'].map(c => (
+                  <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+                ))}
+              </div>
+              <div style={{ color: '#bbb' }}><span style={{ color: '#00c853' }}>$</span> {'git clone https://github.com/mhsn1/ghostshield'}</div>
+              <div style={{ color: '#bbb' }}><span style={{ color: '#00c853' }}>$</span> {'cd ghostshield && bun install'}</div>
+              <div style={{ color: '#555' }}>{'# add GROQ_API_KEY / OPENROUTER_API_KEY to .env'}</div>
+              <div style={{ color: '#bbb' }}><span style={{ color: '#00c853' }}>$</span> {'bun run src/cli.ts scan --file ./prompt.txt --output results.json'}</div>
+              <div style={{ color: '#666', marginTop: '6px' }}>{'  running GhostShield probe suite...'}</div>
+              <div style={{ color: '#00c853' }}>{'  ✓ scan complete · results.json'}</div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* PRICING */}
       <section id="pricing" style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
