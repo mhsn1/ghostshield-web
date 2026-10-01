@@ -68,7 +68,7 @@ const relTime = (iso: string) => {
 const scoreToStatus = (s: number): StatusKey =>
   s >= 88 ? 'secure' : s >= 75 ? 'low' : s >= 58 ? 'medium' : s >= 42 ? 'high' : 'critical'
 const scoreColor = (s: number) =>
-  s >= 88 ? '#00cc66' : s >= 75 ? '#ffcc00' : s >= 58 ? '#ff8800' : s >= 42 ? '#ff5500' : '#ff3333'
+  s >= 88 ? '#0a7d2c' : s >= 75 ? '#b88600' : s >= 58 ? '#c86a00' : s >= 42 ? '#d04e00' : '#c40000'
 
 // ── Static metadata (only names/orgs — all numbers generated) ─────────────
 const MODEL_META = [
@@ -166,8 +166,8 @@ const SCAN_PHASES = [
   'Finalizing scan report',
 ]
 const LEVEL_COLOR: Record<string, string> = {
-  critical: '#ff1a1a', high: '#ff5500', medium: '#ff8800',
-  low: '#ffcc00', pass: '#00cc66', info: '#3399ff',
+  critical: '#b40000', high: '#d04e00', medium: '#c86a00',
+  low: '#b88600', pass: '#0a7d2c', info: '#3399ff',
 }
 const FEED_NAMES = [...MODEL_META.map(m => m.name), ...COMMUNITY_META.map(c => c.name)]
 
@@ -193,11 +193,11 @@ function makeFeedItem(): FeedItem {
 
 // ── Status style map ───────────────────────────────────────────────────────
 const SC: Record<StatusKey, { bg: string; text: string; border: string }> = {
-  secure: { bg: '#00cc6614', text: '#00cc66', border: '#00cc6622' },
-  low: { bg: '#ffcc0014', text: '#ffcc00', border: '#ffcc0022' },
-  medium: { bg: '#ff880014', text: '#ff8800', border: '#ff880022' },
-  high: { bg: '#ff550014', text: '#ff5500', border: '#ff550022' },
-  critical: { bg: '#ff1a1a14', text: '#ff1a1a', border: '#ff1a1a22' },
+  secure: { bg: '#0a7d2c14', text: '#0a7d2c', border: '#0a7d2c22' },
+  low: { bg: '#b8860014', text: '#b88600', border: '#b8860022' },
+  medium: { bg: '#c86a0014', text: '#c86a00', border: '#c86a0022' },
+  high: { bg: '#d04e0014', text: '#d04e00', border: '#d04e0022' },
+  critical: { bg: '#b4000014', text: '#b40000', border: '#b4000022' },
 }
 const MEDALS = ['🥇', '🥈', '🥉']
 
@@ -253,7 +253,7 @@ function RadialScore({ target, size = 44, delay = 0 }: { target: number; size?: 
   const r = size * .38, circ = 2 * Math.PI * r, col = scoreColor(val)
   return (
     <svg ref={ref} width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3.5" />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="3.5" />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={col} strokeWidth="3.5"
         strokeDasharray={`${(val / 100) * circ} ${circ}`} strokeLinecap="round"
         style={{ transition: 'stroke-dasharray .04s linear,stroke .25s' }} />
@@ -297,17 +297,17 @@ function Sparkline({ data }: { data: number[] }) {
       const pts = data.map((v, i) => ({ x: i / (data.length - 1) * w, y: h - (v / mx) * (h - 14) - 4 }))
       ctx.clearRect(0, 0, w, h)
       const g = ctx.createLinearGradient(0, 0, 0, h)
-      g.addColorStop(0, 'rgba(255,51,51,0.15)'); g.addColorStop(1, 'rgba(255,51,51,0)')
+      g.addColorStop(0, 'rgba(208,0,0,0.15)'); g.addColorStop(1, 'rgba(208,0,0,0)')
       ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y)
       for (let i = 1; i < pts.length; i++) { const m = (pts[i].x + pts[i - 1].x) / 2; ctx.bezierCurveTo(m, pts[i - 1].y, m, pts[i].y, pts[i].x, pts[i].y) }
       ctx.lineTo(pts[pts.length - 1].x, h); ctx.lineTo(pts[0].x, h); ctx.closePath(); ctx.fillStyle = g; ctx.fill()
       ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y)
       for (let i = 1; i < pts.length; i++) { const m = (pts[i].x + pts[i - 1].x) / 2; ctx.bezierCurveTo(m, pts[i - 1].y, m, pts[i].y, pts[i].x, pts[i].y) }
-      ctx.strokeStyle = '#ff3333'; ctx.lineWidth = 1.5; ctx.stroke()
+      ctx.strokeStyle = '#c40000'; ctx.lineWidth = 1.5; ctx.stroke()
       const lp = pts[pts.length - 1]
-      ctx.beginPath(); ctx.arc(lp.x, lp.y, 3, 0, Math.PI * 2); ctx.fillStyle = '#ff3333'; ctx.fill()
+      ctx.beginPath(); ctx.arc(lp.x, lp.y, 3, 0, Math.PI * 2); ctx.fillStyle = '#c40000'; ctx.fill()
       ctx.beginPath(); ctx.arc(lp.x, lp.y, 5 + Math.sin(Date.now() / 280) * 1.8, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(255,51,51,0.35)'; ctx.lineWidth = 1; ctx.stroke()
+      ctx.strokeStyle = 'rgba(208,0,0,0.35)'; ctx.lineWidth = 1; ctx.stroke()
     }
     draw(); const iv = setInterval(draw, 1400); return () => clearInterval(iv)
   }, [data])
@@ -334,13 +334,13 @@ function ModelRow({ row, index }: { row: ModelRow; index: number }) {
       data-pass-rate={`${row.passRate}%`}
       data-status={row.status}
       title={`id:${row.id} | lastScan:${row.lastScan} | duration:${row.scanDuration}s | passRate:${row.passRate}%`}
-      style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px 60px 60px', gap: 16, alignItems: 'center', padding: '13px 16px', background: hov ? '#111118' : '#0c0c10', border: `1px solid ${hov ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)'}`, borderRadius: 7, cursor: 'default', opacity: vis ? 1 : 0, transform: vis ? 'translateY(0)' : 'translateY(10px)', transition: `opacity .42s ease ${index * 52}ms,transform .42s ease ${index * 52}ms,border-color .18s,background .18s` }}>
+      style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px 60px 60px', gap: 16, alignItems: 'center', padding: '13px 16px', background: hov ? '#f2f2f4' : '#f6f6f8', border: `1px solid ${hov ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)'}`, borderRadius: 7, cursor: 'default', opacity: vis ? 1 : 0, transform: vis ? 'translateY(0)' : 'translateY(10px)', transition: `opacity .42s ease ${index * 52}ms,transform .42s ease ${index * 52}ms,border-color .18s,background .18s` }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {row.rank <= 3 ? <span style={{ fontSize: 15 }}>{MEDALS[row.rank - 1]}</span> : <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: '#55556a' }}>{row.rank}</span>}
+        {row.rank <= 3 ? <span style={{ fontSize: 15 }}>{MEDALS[row.rank - 1]}</span> : <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: '#6b6b70' }}>{row.rank}</span>}
       </div>
       <div>
-        <div style={{ fontSize: 13, fontWeight: 500, color: '#e8e8f0', marginBottom: 2 }}>{row.name}</div>
-        <div style={{ fontSize: 11, color: '#55556a' }}>{row.org} · {relTime(row.lastScan)}</div>
+        <div style={{ fontSize: 13, fontWeight: 500, color: '#20202a', marginBottom: 2 }}>{row.name}</div>
+        <div style={{ fontSize: 11, color: '#6b6b70' }}>{row.org} · {relTime(row.lastScan)}</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <RadialScore target={row.score} size={44} delay={index * 65 + 180} />
@@ -351,8 +351,8 @@ function ModelRow({ row, index }: { row: ModelRow; index: number }) {
         </span>
       </div>
       <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 13, color: '#ff4455' }}>{row.vulns}</div>
-      <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 13, color: '#55556a' }}>{row.scans}</div>
-      <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: row.trend === '0' ? '#2a2a3a' : row.trend.startsWith('+') ? '#00cc66' : '#ff4455' }}>
+      <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 13, color: '#6b6b70' }}>{row.scans}</div>
+      <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: row.trend === '0' ? '#e6e6ec' : row.trend.startsWith('+') ? '#0a7d2c' : '#ff4455' }}>
         {row.trend === '0' ? '—' : row.trend}
       </div>
     </div>
@@ -377,13 +377,13 @@ function CommunityRow({ row, index }: { row: CommunityRow; index: number }) {
       data-stars={row.stars}
       data-last-scan={row.lastScan}
       title={`id:${row.id} | repo:${row.repo} | stars:${row.stars.toLocaleString()} | lastScan:${row.lastScan}`}
-      style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px', gap: 16, alignItems: 'center', padding: '13px 16px', background: hov ? '#111118' : '#0c0c10', border: `1px solid ${hov ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)'}`, borderRadius: 7, cursor: 'default', opacity: vis ? 1 : 0, transform: vis ? 'translateY(0)' : 'translateY(10px)', transition: `opacity .42s ease ${index * 52}ms,transform .42s ease ${index * 52}ms,border-color .18s,background .18s` }}>
+      style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px', gap: 16, alignItems: 'center', padding: '13px 16px', background: hov ? '#f2f2f4' : '#f6f6f8', border: `1px solid ${hov ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)'}`, borderRadius: 7, cursor: 'default', opacity: vis ? 1 : 0, transform: vis ? 'translateY(0)' : 'translateY(10px)', transition: `opacity .42s ease ${index * 52}ms,transform .42s ease ${index * 52}ms,border-color .18s,background .18s` }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {row.rank <= 3 ? <span style={{ fontSize: 15 }}>{MEDALS[row.rank - 1]}</span> : <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: '#55556a' }}>{row.rank}</span>}
+        {row.rank <= 3 ? <span style={{ fontSize: 15 }}>{MEDALS[row.rank - 1]}</span> : <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: '#6b6b70' }}>{row.rank}</span>}
       </div>
       <div>
-        <div style={{ fontSize: 13, fontWeight: 500, color: '#e8e8f0', marginBottom: 2 }}>{row.name}</div>
-        <div style={{ fontSize: 11, color: '#55556a' }}>{row.desc} · ★ {row.stars.toLocaleString()}</div>
+        <div style={{ fontSize: 13, fontWeight: 500, color: '#20202a', marginBottom: 2 }}>{row.name}</div>
+        <div style={{ fontSize: 11, color: '#6b6b70' }}>{row.desc} · ★ {row.stars.toLocaleString()}</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <RadialScore target={row.score} size={44} delay={index * 65 + 180} />
@@ -393,7 +393,7 @@ function CommunityRow({ row, index }: { row: CommunityRow; index: number }) {
           {row.status}
         </span>
       </div>
-      <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 13, color: '#55556a' }}>{row.scans}</div>
+      <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 13, color: '#6b6b70' }}>{row.scans}</div>
     </div>
   )
 }
@@ -440,19 +440,19 @@ function LiveSidebar({ chartData }: { chartData: number[] }) {
   }, [])
 
   return (
-    <div className="sb-sidebar" style={{ padding: '24px 20px', background: '#0c0c10', borderLeft: '1px solid rgba(255,255,255,0.04)', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div className="sb-sidebar" style={{ padding: '24px 20px', background: '#f6f6f8', borderLeft: '1px solid rgba(0,0,0,0.04)', position: 'sticky', top: 64, height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '2px', color: '#55556a', textTransform: 'uppercase', flex: 1 }}>Live Activity</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#ff3333', background: 'rgba(255,51,51,0.1)', padding: '3px 8px', borderRadius: 20, border: '1px solid rgba(255,51,51,0.22)' }}>
-          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#ff3333', animation: 'sb_pulse 1s infinite' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+        <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '2px', color: '#6b6b70', textTransform: 'uppercase', flex: 1 }}>Live Activity</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#c40000', background: 'rgba(208,0,0,0.1)', padding: '3px 8px', borderRadius: 20, border: '1px solid rgba(208,0,0,0.22)' }}>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#c40000', animation: 'sb_pulse 1s infinite' }} />
           LIVE
         </div>
       </div>
 
       {/* Feed */}
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 52, background: 'linear-gradient(transparent,#0c0c10)', pointerEvents: 'none', zIndex: 2 }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 52, background: 'linear-gradient(transparent,#f6f6f8)', pointerEvents: 'none', zIndex: 2 }} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {feed.map((item, i) => (
             <div key={item.id}
@@ -460,75 +460,75 @@ function LiveSidebar({ chartData }: { chartData: number[] }) {
               data-latency={`${item.latency}ms`}
               data-timestamp={item.ts}
               data-severity={item.level}
-              style={{ padding: '8px 10px', background: '#0e0e14', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 5, animation: i === 0 ? 'sb_feedin .35s ease forwards' : undefined }}>
+              style={{ padding: '8px 10px', background: '#f3f3f5', border: '1px solid rgba(0,0,0,0.04)', borderRadius: 5, animation: i === 0 ? 'sb_feedin .35s ease forwards' : undefined }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#2a2a3c' }}>{item.ts.slice(11, 23)}Z</span>
-                <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#252535' }}>{item.latency}ms</span>
+                <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#e6e6ec' }}>{item.ts.slice(11, 23)}Z</span>
+                <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#e8e8ee' }}>{item.latency}ms</span>
               </div>
               <div style={{ fontSize: 11, color: '#888899', lineHeight: 1.5 }}>
                 <span style={{ color: '#c8c8d8', fontWeight: 500 }}>{item.model}</span>
                 {' — '}
-                <span style={{ color: LEVEL_COLOR[item.level] || '#888', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>{item.level}</span>
+                <span style={{ color: LEVEL_COLOR[item.level] || '#5f5f5f', fontWeight: 600, textTransform: 'uppercase', fontSize: 10 }}>{item.level}</span>
                 {' '}
                 <span>{item.event}</span>
               </div>
-              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#1e1e2e', marginTop: 3 }}>{item.scanId}</div>
+              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#eceaf0', marginTop: 3 }}>{item.scanId}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Chart */}
-      <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.04)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#55556a', textTransform: 'uppercase' }}>Scan Activity (7d)</div>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#2a2a3c' }}>{totalScanned.toLocaleString()} total</div>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#6b6b70', textTransform: 'uppercase' }}>Scan Activity (7d)</div>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#e6e6ec' }}>{totalScanned.toLocaleString()} total</div>
         </div>
         <Sparkline data={chartData} />
       </div>
 
       {/* Uptime */}
-      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.04)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#55556a', textTransform: 'uppercase' }}>API Uptime</div>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#00cc66' }}>99.97%</div>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#6b6b70', textTransform: 'uppercase' }}>API Uptime</div>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#0a7d2c' }}>99.97%</div>
         </div>
-        <div style={{ height: 2, background: '#0a0a10', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ height: '100%', borderRadius: 2, background: '#00cc66', width: `${uptime}%`, transition: 'width 1.1s ease' }} />
+        <div style={{ height: 2, background: '#f6f6f8', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', borderRadius: 2, background: '#0a7d2c', width: `${uptime}%`, transition: 'width 1.1s ease' }} />
         </div>
       </div>
 
       {/* Active scan */}
-      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.04)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#55556a', textTransform: 'uppercase' }}>Active Scan</div>
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#ffaa00' }}>{Math.round(scan.progress)}%</div>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#6b6b70', textTransform: 'uppercase' }}>Active Scan</div>
+          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#bf7200' }}>{Math.round(scan.progress)}%</div>
         </div>
         <div data-scan-id={scan.scanId} data-started={scan.startedAt} data-vectors={scan.vectors}
-          style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#2a2a3c', marginBottom: 5 }}>
+          style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, color: '#e6e6ec', marginBottom: 5 }}>
           {scan.model} · {scan.phase}
         </div>
-        <div style={{ height: 3, background: '#0a0a10', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ height: '100%', borderRadius: 2, width: `${scan.progress}%`, transition: 'width .28s ease', background: 'linear-gradient(90deg,#ff8800,#ffcc33)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent)', animation: 'sb_shimmer 1.15s linear infinite' }} />
+        <div style={{ height: 3, background: '#f6f6f8', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', borderRadius: 2, width: `${scan.progress}%`, transition: 'width .28s ease', background: 'linear-gradient(90deg,#c86a00,#ffcc33)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,transparent,#eef0f1,transparent)', animation: 'sb_shimmer 1.15s linear infinite' }} />
           </div>
         </div>
         {/* Phase stepper — visibly shows the scan moving through its stages */}
         <div style={{ display: 'flex', gap: 4, marginTop: 6 }}>
           {SCAN_PHASES.map((_, i) => (
-            <div key={i} style={{ flex: 1, height: 2, borderRadius: 1, background: scan.progress >= ((i + 1) / SCAN_PHASES.length) * 100 ? '#ffaa00' : '#1a1a22', transition: 'background .3s ease' }} />
+            <div key={i} style={{ flex: 1, height: 2, borderRadius: 1, background: scan.progress >= ((i + 1) / SCAN_PHASES.length) * 100 ? '#bf7200' : '#ededf0', transition: 'background .3s ease' }} />
           ))}
         </div>
       </div>
 
       {/* Threat index */}
-      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-        <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#55556a', textTransform: 'uppercase', marginBottom: 8 }}>Threat Index</div>
+      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+        <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 9, letterSpacing: '1.5px', color: '#6b6b70', textTransform: 'uppercase', marginBottom: 8 }}>Threat Index</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
-          {([{ k: 'critical', col: '#ff1a1a', v: threats.critical }, { k: 'high', col: '#ff5500', v: threats.high }, { k: 'medium', col: '#ff8800', v: threats.medium }, { k: 'low', col: '#ffcc00', v: threats.low }] as const).map(t => (
-            <div key={t.k} style={{ padding: '7px 8px', background: '#0a0a10', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 4, textAlign: 'center' }}>
+          {([{ k: 'critical', col: '#b40000', v: threats.critical }, { k: 'high', col: '#d04e00', v: threats.high }, { k: 'medium', col: '#c86a00', v: threats.medium }, { k: 'low', col: '#b88600', v: threats.low }] as const).map(t => (
+            <div key={t.k} style={{ padding: '7px 8px', background: '#f6f6f8', border: '1px solid rgba(0,0,0,0.04)', borderRadius: 4, textAlign: 'center' }}>
               <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 15, fontWeight: 600, color: t.col }}>{t.v}</div>
-              <div style={{ fontSize: 9, color: '#55556a', marginTop: 1, textTransform: 'capitalize' }}>{t.k}</div>
+              <div style={{ fontSize: 9, color: '#6b6b70', marginTop: 1, textTransform: 'capitalize' }}>{t.k}</div>
             </div>
           ))}
         </div>
@@ -591,14 +591,14 @@ export default function ShieldBench() {
   const totalModels = models.length + community.length
 
   if (!mounted) {
-    return <div style={{ minHeight: '100vh', background: '#050507' }} />
+    return <div style={{ minHeight: '100vh', background: '#f8f8f9' }} />
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050507', color: '#e8e8f0', fontFamily: "'Space Grotesk',sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: '#f8f8f9', color: '#20202a', fontFamily: "'Space Grotesk',sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
-        @keyframes sb_pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,51,51,.4)}50%{opacity:.4;box-shadow:0 0 0 4px transparent}}
+        @keyframes sb_pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(208,0,0,.4)}50%{opacity:.4;box-shadow:0 0 0 4px transparent}}
         @keyframes sb_feedin{from{opacity:0;transform:translateX(7px)}to{opacity:1;transform:translateX(0)}}
         @keyframes sb_shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
         *{box-sizing:border-box}
@@ -614,12 +614,12 @@ export default function ShieldBench() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 284px', maxWidth: 1280, margin: '0 auto' }}>
 
           {/* ── Main panel ── */}
-          <div className="sb-main" style={{ padding: '48px 40px 60px', borderRight: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="sb-main" style={{ padding: '48px 40px 60px', borderRight: '1px solid rgba(0,0,0,0.04)' }}>
 
             <div ref={headerRef} style={{ marginBottom: 48, opacity: headerVis ? 1 : 0, transform: headerVis ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity .65s ease,transform .65s ease' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff3333', animation: 'sb_pulse 1.4s infinite' }} />
-                <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '3px', color: '#ff3333', textTransform: 'uppercase' }}>Public Leaderboard</span>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c40000', animation: 'sb_pulse 1.4s infinite' }} />
+                <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '3px', color: '#c40000', textTransform: 'uppercase' }}>Public Leaderboard</span>
               </div>
               <h1 style={{ fontSize: 'clamp(36px,5vw,54px)', fontWeight: 700, letterSpacing: '-3px', lineHeight: 1, marginBottom: 12, background: 'linear-gradient(135deg,#ffffff 0%,#888899 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 ShieldBench
@@ -627,8 +627,8 @@ export default function ShieldBench() {
               <p style={{ fontSize: 13, color: '#8a8a9e', maxWidth: 460, lineHeight: 1.8, marginBottom: 10 }}>
                 A continuously-updated leaderboard of AI models and open-source agents, ranked by how well they resist prompt extraction, jailbreaks, and data leakage.
               </p>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '10px 15px', marginBottom: 30, background: 'rgba(255,51,51,0.07)', border: '1px solid rgba(255,51,51,0.22)', borderRadius: 8, maxWidth: '100%' }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#ff3333', flexShrink: 0, animation: 'sb_pulse 1.4s infinite' }} />
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '10px 15px', marginBottom: 30, background: 'rgba(208,0,0,0.07)', border: '1px solid rgba(208,0,0,0.22)', borderRadius: 8, maxWidth: '100%' }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c40000', flexShrink: 0, animation: 'sb_pulse 1.4s infinite' }} />
                 <span style={{ fontSize: 13, color: '#d0d0dc', lineHeight: 1.5 }}>
                   <strong style={{ color: '#ff6a6a', fontWeight: 600 }}>Live</strong> — every stat and event below is aggregated in real time from our ongoing scans of the {totalModels} models rated here.
                 </span>
@@ -636,7 +636,7 @@ export default function ShieldBench() {
               <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
                 {[{ label: 'Models Rated', val: totalModels, delay: 0 }, { label: 'Total Scans', val: totalScans, delay: 120 }, { label: 'Vulnerabilities Found', val: totalVulns, delay: 240 }].map(s => (
                   <div key={s.label}>
-                    <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 26, fontWeight: 600, color: '#e8e8f0', marginBottom: 3 }}><CountUp end={s.val} delay={s.delay} /></div>
+                    <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 26, fontWeight: 600, color: '#20202a', marginBottom: 3 }}><CountUp end={s.val} delay={s.delay} /></div>
                     <div style={{ fontSize: 11, color: '#8a8a9e', letterSpacing: '.5px' }}>{s.label}</div>
                   </div>
                 ))}
@@ -644,9 +644,9 @@ export default function ShieldBench() {
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: 1, marginBottom: 28, background: '#111117', padding: 3, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', width: 'fit-content' }}>
+            <div style={{ display: 'flex', gap: 1, marginBottom: 28, background: '#f2f2f4', padding: 3, borderRadius: 8, border: '1px solid rgba(0,0,0,0.06)', width: 'fit-content' }}>
               {(['models', 'community'] as const).map(t => (
-                <button key={t} onClick={() => setTab(t)} style={{ padding: '7px 18px', border: 'none', borderRadius: 6, background: tab === t ? '#1a1a22' : 'transparent', color: tab === t ? '#e8e8f0' : '#55556a', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: "'Space Grotesk',sans-serif", transition: 'all .2s', boxShadow: tab === t ? '0 1px 4px rgba(0,0,0,.5)' : 'none', letterSpacing: '.3px' }}>
+                <button key={t} onClick={() => setTab(t)} style={{ padding: '7px 18px', border: 'none', borderRadius: 6, background: tab === t ? '#ededf0' : 'transparent', color: tab === t ? '#20202a' : '#6b6b70', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: "'Space Grotesk',sans-serif", transition: 'all .2s', boxShadow: tab === t ? '0 1px 4px rgba(0,0,0,.5)' : 'none', letterSpacing: '.3px' }}>
                   {t === 'models' ? ' AI Models' : ' Community'}
                 </button>
               ))}
@@ -657,7 +657,7 @@ export default function ShieldBench() {
               <div className="sb-scroll">
                 <div className="sb-mrow" style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px 60px 60px', gap: 16, padding: '8px 16px', marginBottom: 6 }}>
                   {['#', 'Model', 'Score', 'Status', 'Vulns', 'Scans', 'Trend'].map(h => (
-                    <div key={h} style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#2a2a3c', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{h}</div>
+                    <div key={h} style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#e6e6ec', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{h}</div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -674,7 +674,7 @@ export default function ShieldBench() {
                 <div className="sb-scroll">
                 <div className="sb-crow" style={{ display: 'grid', gridTemplateColumns: '32px 1fr 56px 96px 60px', gap: 16, padding: '8px 16px', marginBottom: 6 }}>
                   {['#', 'Project', 'Score', 'Status', 'Scans'].map(h => (
-                    <div key={h} style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#2a2a3c', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{h}</div>
+                    <div key={h} style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, color: '#e6e6ec', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{h}</div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 32 }}>
@@ -682,28 +682,28 @@ export default function ShieldBench() {
                 </div>
                 </div>
 
-                <div style={{ padding: 28, background: '#0c0c10', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10 }}>
-                  <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '2px', color: '#55556a', marginBottom: 10, textTransform: 'uppercase' }}>README Badge</div>
-                  <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 6, color: '#e8e8f0' }}>Submit your project</h3>
-                  <p style={{ fontSize: 12, color: '#55556a', marginBottom: 18, lineHeight: 1.7 }}>Open-source AI projects can be listed on ShieldBench. Add our security badge to your README and get weekly scans.</p>
+                <div style={{ padding: 28, background: '#f6f6f8', border: '1px solid rgba(0,0,0,0.06)', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '2px', color: '#6b6b70', marginBottom: 10, textTransform: 'uppercase' }}>README Badge</div>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 6, color: '#20202a' }}>Submit your project</h3>
+                  <p style={{ fontSize: 12, color: '#6b6b70', marginBottom: 18, lineHeight: 1.7 }}>Open-source AI projects can be listed on ShieldBench. Add our security badge to your README and get weekly scans.</p>
                   {submitted ? (
-                    <div style={{ padding: '12px 16px', background: '#00cc6610', border: '1px solid #00cc6625', borderRadius: 6, fontSize: 12, color: '#00cc66' }}>✓ Submitted! We&apos;ll scan your project within 24 hours.</div>
+                    <div style={{ padding: '12px 16px', background: '#0a7d2c10', border: '1px solid #0a7d2c25', borderRadius: 6, fontSize: 12, color: '#0a7d2c' }}>✓ Submitted! We&apos;ll scan your project within 24 hours.</div>
                   ) : (
                     <div style={{ display: 'flex', gap: 8 }}>
                       <input value={submitUrl} onChange={e => setSubmitUrl(e.target.value)} placeholder="https://github.com/your/ai-project"
-                        style={{ flex: 1, padding: '9px 12px', background: '#0a0a0e', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6, color: '#e8e8f0', fontSize: 12, fontFamily: 'JetBrains Mono,monospace', outline: 'none' }}
-                        onFocus={e => e.target.style.borderColor = 'rgba(255,51,51,0.35)'}
-                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'} />
+                        style={{ flex: 1, padding: '9px 12px', background: '#f6f6f8', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 6, color: '#20202a', fontSize: 12, fontFamily: 'JetBrains Mono,monospace', outline: 'none' }}
+                        onFocus={e => e.target.style.borderColor = 'rgba(208,0,0,0.35)'}
+                        onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.08)'} />
                       <button onClick={() => { if (submitUrl.trim()) setSubmitted(true) }}
-                        style={{ padding: '9px 18px', background: '#ff3333', border: 'none', borderRadius: 6, color: 'white', fontSize: 12, fontWeight: 600, fontFamily: "'Space Grotesk',sans-serif", cursor: 'pointer', whiteSpace: 'nowrap' }}
+                        style={{ padding: '9px 18px', background: '#c40000', border: 'none', borderRadius: 6, color: 'white', fontSize: 12, fontWeight: 600, fontFamily: "'Space Grotesk',sans-serif", cursor: 'pointer', whiteSpace: 'nowrap' }}
                         onMouseEnter={e => e.currentTarget.style.opacity = '.82'}
                         onMouseLeave={e => e.currentTarget.style.opacity = '1'}>Submit</button>
                     </div>
                   )}
-                  <div style={{ marginTop: 16, padding: '12px 14px', background: '#0a0a0e', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '1.5px', color: '#55556a', marginBottom: 8, textTransform: 'uppercase' }}>Badge Preview</div>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#111118', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 4, padding: '4px 10px' }}>
-                      <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#ffcc00' }} />
+                  <div style={{ marginTop: 16, padding: '12px 14px', background: '#f6f6f8', borderRadius: 6, border: '1px solid rgba(0,0,0,0.05)' }}>
+                    <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 10, letterSpacing: '1.5px', color: '#6b6b70', marginBottom: 8, textTransform: 'uppercase' }}>Badge Preview</div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#f2f2f4', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 4, padding: '4px 10px' }}>
+                      <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#b88600' }} />
                       <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: '#888899' }}>GhostShield | score: 79 | LOW</span>
                     </div>
                   </div>
@@ -711,7 +711,7 @@ export default function ShieldBench() {
               </div>
             )}
 
-            <div style={{ marginTop: 40, fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: '#1e1e2e', textAlign: 'center' }}>
+            <div style={{ marginTop: 40, fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: '#eceaf0', textAlign: 'center' }}>
               Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · Updated weekly · ShieldBench v2.4
             </div>
           </div>

@@ -50,7 +50,7 @@ const SECTIONS = [
 
 export default function TermsPage() {
   return (
-    <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
+    <div style={{ background: '#ffffff', minHeight: '100vh', color: '#181717', fontFamily: 'Geist, sans-serif' }}>
       <Navbar />
       <style>{`
         @media (max-width: 768px) {
@@ -60,23 +60,23 @@ export default function TermsPage() {
       <div className="legal-wrap" style={{ maxWidth: '780px', margin: '0 auto', padding: '140px 80px 120px' }}>
         {/* Header */}
         <div style={{ marginBottom: '64px' }}>
-          <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', letterSpacing: '2px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '11px', fontFamily: 'Geist Mono', color: '#d00000', letterSpacing: '2px', marginBottom: '16px' }}>
             LEGAL
           </div>
           <h1 style={{ fontSize: '48px', fontWeight: 700, letterSpacing: '-1.5px', marginBottom: '16px' }}>
             Terms of Service
           </h1>
-          <p style={{ fontSize: '14px', color: '#444', fontFamily: 'DM Mono' }}>
+          <p style={{ fontSize: '14px', color: '#8a8a88', fontFamily: 'Geist Mono' }}>
             Last updated: January 20, 2026
           </p>
         </div>
 
         {/* Intro */}
         <div style={{
-          padding: '20px 24px', background: 'rgba(255,68,68,0.04)',
-          border: '1px solid rgba(255,68,68,0.12)', borderRadius: '8px', marginBottom: '56px',
+          padding: '20px 24px', background: 'rgba(208,0,0,0.04)',
+          border: '1px solid rgba(208,0,0,0.12)', borderRadius: '8px', marginBottom: '56px',
         }}>
-          <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.8, margin: 0 }}>
+          <p style={{ fontSize: '14px', color: '#6b6b6b', lineHeight: 1.8, margin: 0 }}>
             Please read these terms carefully before using GhostShield. These terms govern your access to and use of the GhostShield security testing platform.
           </p>
         </div>
@@ -87,9 +87,9 @@ export default function TermsPage() {
             <section key={s.title}>
               <h2 style={{
                 fontSize: '16px', fontWeight: 600, marginBottom: '12px',
-                color: '#f5f5f5', letterSpacing: '-0.2px',
+                color: '#181717', letterSpacing: '-0.2px',
               }}>{s.title}</h2>
-              <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.9, margin: 0 }}>{s.body}</p>
+              <p style={{ fontSize: '14px', color: '#767676', lineHeight: 1.9, margin: 0 }}>{s.body}</p>
             </section>
           ))}
         </div>

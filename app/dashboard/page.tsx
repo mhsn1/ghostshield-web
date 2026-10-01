@@ -9,8 +9,8 @@ const supabase = createClient(
 )
 
 const SEVERITY_C: Record<string, string> = {
-  critical: '#ff4444', high: '#ff8800', medium: '#ffab00',
-  low: '#88bb00', none: '#00c853', secure: '#00c853'
+  critical: '#d00000', high: '#c86a00', medium: '#b26b00',
+  low: '#88bb00', none: '#0a7d2c', secure: '#0a7d2c'
 }
 
 const API_URL = "https://ghostshield-production.up.railway.app"
@@ -51,15 +51,15 @@ function ScoreRing({ score, size = 52 }: { score: number; size?: number }) {
   const r = size * 0.38
   const circ = 2 * Math.PI * r
   const dash = (score / 100) * circ
-  const color = score >= 90 ? '#00c853' : score >= 70 ? '#ffab00' : '#ff4444'
+  const color = score >= 90 ? '#0a7d2c' : score >= 70 ? '#b26b00' : '#d00000'
   return (
     <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="5" />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="5"
         strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
       <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central"
         style={{ transform: `rotate(90deg)`, transformOrigin: `${size / 2}px ${size / 2}px` }}
-        fill={color} fontSize={size * 0.22} fontWeight="700" fontFamily="DM Sans">{score}</text>
+        fill={color} fontSize={size * 0.22} fontWeight="700" fontFamily="Geist">{score}</text>
     </svg>
   )
 }
@@ -75,7 +75,7 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)',
+        background: '#eef0f1', backdropFilter: 'blur(6px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '24px',
       }}
@@ -83,10 +83,10 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)',
+          background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)',
           borderRadius: '14px', width: '100%', maxWidth: '780px',
           maxHeight: '85vh', overflowY: 'auto', padding: '32px',
-          boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
+          boxShadow: '0 32px 80px #eef0f1',
         }}
       >
         {/* Header */}
@@ -96,13 +96,13 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
               <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>{scan.model}</h2>
               <span style={{
                 padding: '3px 10px', borderRadius: '20px', fontSize: '11px',
-                background: `${SEVERITY_C[scan.severity] || '#888'}18`,
-                color: SEVERITY_C[scan.severity] || '#888',
-                border: `1px solid ${SEVERITY_C[scan.severity] || '#888'}30`,
+                background: `${SEVERITY_C[scan.severity] || '#5f5f5f'}18`,
+                color: SEVERITY_C[scan.severity] || '#5f5f5f',
+                border: `1px solid ${SEVERITY_C[scan.severity] || '#5f5f5f'}30`,
                 textTransform: 'uppercase', letterSpacing: '0.5px',
               }}>{scan.severity}</span>
             </div>
-            <div style={{ fontSize: '12px', color: '#444', fontFamily: 'DM Mono' }}>
+            <div style={{ fontSize: '12px', color: '#8a8a88', fontFamily: 'Geist Mono' }}>
               {new Date(scan.created_at).toLocaleString()}
             </div>
           </div>
@@ -110,9 +110,9 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
             <button
               onClick={() => downloadReport(toScanResult(scan), { prompt: scan.prompt, model: scan.model, provider: scan.provider, scannedAt: scan.created_at })}
               style={{
-                background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)',
-                borderRadius: '6px', color: '#ff6666', fontSize: '12px', fontWeight: 600,
-                padding: '6px 14px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                background: 'rgba(208,0,0,0.08)', border: '1px solid rgba(208,0,0,0.2)',
+                borderRadius: '6px', color: '#e04b4b', fontSize: '12px', fontWeight: 600,
+                padding: '6px 14px', cursor: 'pointer', fontFamily: 'Geist, sans-serif',
                 display: 'flex', alignItems: 'center', gap: '6px'
               }}
             >
@@ -120,7 +120,7 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
             </button>
             <button
               onClick={onClose}
-              style={{ background: 'none', border: 'none', color: '#555', fontSize: '22px', cursor: 'pointer', lineHeight: 1 }}
+              style={{ background: 'none', border: 'none', color: '#767676', fontSize: '22px', cursor: 'pointer', lineHeight: 1 }}
             >×</button>
           </div>
         </div>
@@ -128,23 +128,23 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
         {/* Score row */}
         <div style={{
           display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '32px',
-          background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.06)',
+          background: '#f7f7f7', border: '1px solid rgba(0,0,0,0.06)',
           borderRadius: '10px', padding: '24px', marginBottom: '24px', alignItems: 'center',
         }}>
           <div style={{ textAlign: 'center' }}>
             <ScoreRing score={scan.score} size={90} />
-            <div style={{ fontSize: '11px', color: '#444', marginTop: '6px' }}>Security Score</div>
+            <div style={{ fontSize: '11px', color: '#8a8a88', marginTop: '6px' }}>Security Score</div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
             {[
-              { l: 'Total Probes', v: scan.total_probes || 88, c: '#f5f5f5' },
-              { l: 'Vulnerabilities', v: scan.vulnerabilities, c: '#ff4444' },
-              { l: 'Critical', v: findings.filter((f: any) => f.severity === 'critical').length, c: '#ff4444' },
-              { l: 'High', v: findings.filter((f: any) => f.severity === 'high').length, c: '#ff8800' },
+              { l: 'Total Probes', v: scan.total_probes || 88, c: '#181717' },
+              { l: 'Vulnerabilities', v: scan.vulnerabilities, c: '#d00000' },
+              { l: 'Critical', v: findings.filter((f: any) => f.severity === 'critical').length, c: '#d00000' },
+              { l: 'High', v: findings.filter((f: any) => f.severity === 'high').length, c: '#c86a00' },
             ].map(s => (
-              <div key={s.l} style={{ padding: '12px 16px', background: '#111', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono', color: s.c, marginBottom: '2px' }}>{s.v}</div>
-                <div style={{ fontSize: '11px', color: '#444' }}>{s.l}</div>
+              <div key={s.l} style={{ padding: '12px 16px', background: '#f2f2f2', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.04)' }}>
+                <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'Geist Mono', color: s.c, marginBottom: '2px' }}>{s.v}</div>
+                <div style={{ fontSize: '11px', color: '#8a8a88' }}>{s.l}</div>
               </div>
             ))}
           </div>
@@ -153,12 +153,12 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
         {/* Prompt */}
         {scan.prompt && (
           <div style={{
-            padding: '14px 16px', background: '#0d0d0d',
-            border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
+            padding: '14px 16px', background: '#f7f7f7',
+            border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
             marginBottom: '24px',
           }}>
-            <div style={{ fontSize: '11px', color: '#444', marginBottom: '6px', fontFamily: 'DM Mono', letterSpacing: '1px' }}>SCANNED PROMPT</div>
-            <div style={{ fontSize: '13px', color: '#555', fontFamily: 'DM Mono', lineHeight: 1.6 }}>
+            <div style={{ fontSize: '11px', color: '#8a8a88', marginBottom: '6px', fontFamily: 'Geist Mono', letterSpacing: '1px' }}>SCANNED PROMPT</div>
+            <div style={{ fontSize: '13px', color: '#767676', fontFamily: 'Geist Mono', lineHeight: 1.6 }}>
               {scan.prompt.slice(0, 300)}{scan.prompt.length > 300 ? '…' : ''}
             </div>
           </div>
@@ -167,22 +167,22 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
         {/* Findings */}
         {vulns.length > 0 && (
           <>
-            <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px', color: '#888' }}>Vulnerabilities Found</h3>
+            <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px', color: '#5f5f5f' }}>Vulnerabilities Found</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
               {vulns.map((f: any) => (
                 <div key={f.probe} style={{
                   display: 'flex', alignItems: 'flex-start', gap: '14px',
-                  padding: '12px 16px', background: '#0d0d0d',
-                  border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
-                  borderLeft: `3px solid ${SEVERITY_C[f.severity] || '#555'}`,
+                  padding: '12px 16px', background: '#f7f7f7',
+                  border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
+                  borderLeft: `3px solid ${SEVERITY_C[f.severity] || '#767676'}`,
                 }}>
-                  <span style={{ fontFamily: 'DM Mono', fontSize: '11px', color: '#333', minWidth: '90px', flexShrink: 0, marginTop: '1px' }}>{f.probe}</span>
+                  <span style={{ fontFamily: 'Geist Mono', fontSize: '11px', color: '#9a9a98', minWidth: '90px', flexShrink: 0, marginTop: '1px' }}>{f.probe}</span>
                   <span style={{
                     fontSize: '11px', padding: '2px 8px', borderRadius: '4px',
                     background: `${SEVERITY_C[f.severity]}15`, color: SEVERITY_C[f.severity],
                     flexShrink: 0, alignSelf: 'flex-start',
                   }}>{f.severity?.toUpperCase()}</span>
-                  <span style={{ fontSize: '13px', color: '#666', lineHeight: 1.5 }}>{f.reasoning}</span>
+                  <span style={{ fontSize: '13px', color: '#6b6b6b', lineHeight: 1.5 }}>{f.reasoning}</span>
                 </div>
               ))}
             </div>
@@ -192,12 +192,12 @@ function ScanDetailModal({ scan, onClose }: { scan: any; onClose: () => void }) 
         {/* Recommendations */}
         {recs.length > 0 && (
           <div style={{
-            padding: '18px 20px', background: 'rgba(255,68,68,0.04)',
-            border: '1px solid rgba(255,68,68,0.12)', borderRadius: '8px',
+            padding: '18px 20px', background: 'rgba(208,0,0,0.04)',
+            border: '1px solid rgba(208,0,0,0.12)', borderRadius: '8px',
           }}>
             <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>Recommendations</div>
             {recs.map((r: string) => (
-              <div key={r} style={{ fontSize: '13px', color: '#555', padding: '5px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontFamily: 'DM Mono' }}>→ {r}</div>
+              <div key={r} style={{ fontSize: '13px', color: '#767676', padding: '5px 0', borderBottom: '1px solid rgba(0,0,0,0.04)', fontFamily: 'Geist Mono' }}>→ {r}</div>
             ))}
           </div>
         )}
@@ -215,7 +215,7 @@ function Overview({ scans, onNewScan }: { scans: any[], onNewScan: () => void })
     <>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>Overview</h1>
-        <p style={{ fontSize: '14px', color: '#555' }}>Your AI security dashboard</p>
+        <p style={{ fontSize: '14px', color: '#767676' }}>Your AI security dashboard</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '32px' }}>
@@ -226,11 +226,11 @@ function Overview({ scans, onNewScan }: { scans: any[], onNewScan: () => void })
           { label: 'Scans This Month', value: scans.filter(s => new Date(s.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length.toString() },
         ].map(s => (
           <div key={s.label} style={{
-            padding: '20px', background: '#0d0d0d',
-            border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px'
+            padding: '20px', background: '#f7f7f7',
+            border: '1px solid rgba(0,0,0,0.06)', borderRadius: '10px'
           }}>
-            <div style={{ fontSize: '26px', fontWeight: 700, fontFamily: 'DM Mono', marginBottom: '4px' }}>{s.value}</div>
-            <div style={{ fontSize: '12px', color: '#555' }}>{s.label}</div>
+            <div style={{ fontSize: '26px', fontWeight: 700, fontFamily: 'Geist Mono', marginBottom: '4px' }}>{s.value}</div>
+            <div style={{ fontSize: '12px', color: '#767676' }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -238,20 +238,20 @@ function Overview({ scans, onNewScan }: { scans: any[], onNewScan: () => void })
       <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ fontSize: '16px', fontWeight: 600 }}>Recent Scans</h2>
         <button onClick={onNewScan} style={{
-          background: '#ff4444', border: 'none', borderRadius: '6px',
+          background: '#d00000', border: 'none', borderRadius: '6px',
           color: 'white', fontSize: '13px', fontWeight: 500, padding: '7px 14px',
-          cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+          cursor: 'pointer', fontFamily: 'Geist, sans-serif',
         }}>+ New Scan</button>
       </div>
 
       {scans.length === 0 ? (
         <div style={{
-          padding: '40px', textAlign: 'center', color: '#444', fontSize: '14px',
-          background: '#0d0d0d', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'
+          padding: '40px', textAlign: 'center', color: '#8a8a88', fontSize: '14px',
+          background: '#f7f7f7', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.05)'
         }}>
           No scans yet — <button onClick={onNewScan} style={{
             background: 'none', border: 'none',
-            color: '#ff4444', cursor: 'pointer', fontSize: '14px', fontFamily: 'DM Sans'
+            color: '#d00000', cursor: 'pointer', fontSize: '14px', fontFamily: 'Geist'
           }}>
             run your first scan
           </button>
@@ -263,36 +263,36 @@ function Overview({ scans, onNewScan }: { scans: any[], onNewScan: () => void })
             <div key={scan.id} className="dash-row-recent" style={{
               display: 'grid', gridTemplateColumns: '1fr auto auto auto auto',
               gap: '24px', alignItems: 'center',
-              padding: '16px 20px', background: '#0d0d0d',
-              border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
+              padding: '16px 20px', background: '#f7f7f7',
+              border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
               transition: 'border-color 0.2s, background 0.2s', cursor: 'pointer',
             }}
               onClick={() => setSelectedScan(scan)}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.background = '#111' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.background = '#0d0d0d' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.12)'; e.currentTarget.style.background = '#f2f2f2' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.05)'; e.currentTarget.style.background = '#f7f7f7' }}
             >
               <div>
-                <div style={{ fontSize: '14px', fontFamily: 'DM Mono', marginBottom: '2px' }}>{scan.model}</div>
-                <div style={{ fontSize: '12px', color: '#444' }}>
+                <div style={{ fontSize: '14px', fontFamily: 'Geist Mono', marginBottom: '2px' }}>{scan.model}</div>
+                <div style={{ fontSize: '12px', color: '#8a8a88' }}>
                   {scan.prompt?.slice(0, 60)}{scan.prompt?.length > 60 ? '...' : ''}
                 </div>
-                <div style={{ fontSize: '11px', color: '#333', marginTop: '2px' }}>
+                <div style={{ fontSize: '11px', color: '#9a9a98', marginTop: '2px' }}>
                   {new Date(scan.created_at).toLocaleString()}
                 </div>
               </div>
               <ScoreRing score={scan.score} size={52} />
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: '#ff4444' }}>{scan.vulnerabilities}</div>
-                <div style={{ fontSize: '11px', color: '#444' }}>vulns</div>
+                <div style={{ fontSize: '18px', fontWeight: 700, color: '#d00000' }}>{scan.vulnerabilities}</div>
+                <div style={{ fontSize: '11px', color: '#8a8a88' }}>vulns</div>
               </div>
               <div style={{
                 padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 500,
-                background: `${SEVERITY_C[scan.severity] || '#888'}15`,
-                color: SEVERITY_C[scan.severity] || '#888',
-                border: `1px solid ${SEVERITY_C[scan.severity] || '#888'}30`,
+                background: `${SEVERITY_C[scan.severity] || '#5f5f5f'}15`,
+                color: SEVERITY_C[scan.severity] || '#5f5f5f',
+                border: `1px solid ${SEVERITY_C[scan.severity] || '#5f5f5f'}30`,
                 textTransform: 'uppercase', letterSpacing: '0.5px',
               }}>{scan.severity}</div>
-              <div style={{ color: '#333' }}>→</div>
+              <div style={{ color: '#9a9a98' }}>→</div>
             </div>
           ))}
         </div>
@@ -506,7 +506,7 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
 
     // Threat level animation
     const threatLevel = vulnCount === 0 ? 'LOW' : critCount > 0 ? 'CRITICAL' : vulnCount > 3 ? 'HIGH' : 'MODERATE'
-    const threatColor = threatLevel === 'LOW' ? '#00c853' : threatLevel === 'CRITICAL' ? '#ff4444' : threatLevel === 'HIGH' ? '#ff8800' : '#ffbb00'
+    const threatColor = threatLevel === 'LOW' ? '#0a7d2c' : threatLevel === 'CRITICAL' ? '#d00000' : threatLevel === 'HIGH' ? '#c86a00' : '#ffbb00'
 
     return (
       <div style={{ maxWidth: '780px' }}>
@@ -514,17 +514,17 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
           <div>
             <h1 style={{ fontSize: '22px', fontWeight: 600, marginBottom: '6px' }}>
-              <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#ff4444', animation: 'pulse 2s infinite', marginRight: '8px' }} /> Scanning…
+              <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#d00000', animation: 'pulse 2s infinite', marginRight: '8px' }} /> Scanning…
             </h1>
-            <p style={{ fontSize: '13px', color: '#444', fontFamily: 'DM Mono' }}>
+            <p style={{ fontSize: '13px', color: '#8a8a88', fontFamily: 'Geist Mono' }}>
               {scannedPrompt.slice(0, 60)}{scannedPrompt.length > 60 ? '…' : ''}
             </p>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono', color: '#ff4444' }}>
+            <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'Geist Mono', color: '#d00000' }}>
               {fmtTime(elapsed)}
             </div>
-            <div style={{ fontSize: '11px', color: '#333', fontFamily: 'DM Mono' }}>elapsed</div>
+            <div style={{ fontSize: '11px', color: '#9a9a98', fontFamily: 'Geist Mono' }}>elapsed</div>
           </div>
         </div>
 
@@ -533,29 +533,29 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '12px',
         }}>
           {[
-            { label: 'Probes Run', value: `${progress.current}`, color: '#f5f5f5' },
-            { label: 'Threats Found', value: `${vulnCount}`, color: vulnCount > 0 ? '#ff4444' : '#00c853' },
-            { label: 'Critical', value: `${critCount}`, color: critCount > 0 ? '#ff4444' : '#333' },
-            { label: 'Passed', value: `${passCount}`, color: '#00c853' },
+            { label: 'Probes Run', value: `${progress.current}`, color: '#181717' },
+            { label: 'Threats Found', value: `${vulnCount}`, color: vulnCount > 0 ? '#d00000' : '#0a7d2c' },
+            { label: 'Critical', value: `${critCount}`, color: critCount > 0 ? '#d00000' : '#9a9a98' },
+            { label: 'Passed', value: `${passCount}`, color: '#0a7d2c' },
           ].map(s => (
             <div key={s.label} style={{
-              padding: '14px 12px', background: '#0d0d0d',
-              border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px',
+              padding: '14px 12px', background: '#f7f7f7',
+              border: '1px solid rgba(0,0,0,0.06)', borderRadius: '10px',
               textAlign: 'center',
             }}>
               <div style={{
-                fontSize: '20px', fontWeight: 700, fontFamily: 'DM Mono',
+                fontSize: '20px', fontWeight: 700, fontFamily: 'Geist Mono',
                 color: s.color, marginBottom: '2px',
               }}>{s.value}</div>
-              <div style={{ fontSize: '10px', color: '#444', letterSpacing: '0.5px' }}>{s.label}</div>
+              <div style={{ fontSize: '10px', color: '#8a8a88', letterSpacing: '0.5px' }}>{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Main progress card */}
         <div style={{
-          padding: '24px', background: '#0d0d0d',
-          border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', marginBottom: '12px',
+          padding: '24px', background: '#f7f7f7',
+          border: '1px solid rgba(0,0,0,0.07)', borderRadius: '12px', marginBottom: '12px',
         }}>
           {/* Category + probe name */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -563,12 +563,12 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
               {liveCategory && (
                 <div style={{
                   display: 'inline-block', padding: '2px 10px', borderRadius: '20px',
-                  background: 'rgba(255,68,68,0.1)', border: '1px solid rgba(255,68,68,0.2)',
-                  fontSize: '11px', fontFamily: 'DM Mono', color: '#ff6666',
+                  background: 'rgba(208,0,0,0.1)', border: '1px solid rgba(208,0,0,0.2)',
+                  fontSize: '11px', fontFamily: 'Geist Mono', color: '#e04b4b',
                   letterSpacing: '0.5px', marginBottom: '6px',
                 }}>{liveCategory.toUpperCase()}</div>
               )}
-              <div style={{ fontSize: '13px', fontFamily: 'DM Mono', color: '#777' }}>
+              <div style={{ fontSize: '13px', fontFamily: 'Geist Mono', color: '#666666' }}>
                 {liveProbe || 'Initializing engine…'}
               </div>
             </div>
@@ -576,7 +576,7 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
             <div style={{
               padding: '6px 14px', borderRadius: '20px',
               background: `${threatColor}12`, border: `1px solid ${threatColor}40`,
-              fontSize: '11px', fontFamily: 'DM Mono', fontWeight: 600,
+              fontSize: '11px', fontFamily: 'Geist Mono', fontWeight: 600,
               color: threatColor, letterSpacing: '1px',
               animation: vulnCount > 0 ? 'pulse 2s infinite' : 'none',
             }}>
@@ -585,22 +585,22 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
           </div>
 
           {/* Progress bar */}
-          <div style={{ height: '6px', background: '#1a1a1a', borderRadius: '3px', marginBottom: '10px', overflow: 'hidden' }}>
+          <div style={{ height: '6px', background: '#ebebeb', borderRadius: '3px', marginBottom: '10px', overflow: 'hidden' }}>
             <div style={{
               height: '100%', width: `${pct || 2}%`,
-              background: 'linear-gradient(90deg, #ff4444, #ff7744)',
+              background: 'linear-gradient(90deg, #d00000, #ff7744)',
               borderRadius: '3px', transition: 'width 0.6s ease',
-              boxShadow: '0 0 8px rgba(255,68,68,0.4)',
+              boxShadow: '0 0 8px rgba(208,0,0,0.4)',
             }} />
           </div>
 
           {/* Bottom row */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#444' }}>
+            <div style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: '#8a8a88' }}>
               {pct}% complete
             </div>
             {estRemaining !== null && estRemaining > 0 && (
-              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#333' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: '#9a9a98' }}>
                 ~{fmtTime(estRemaining)} remaining
               </div>
             )}
@@ -609,11 +609,11 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
 
         {/* Security Insight Banner — rotates every 5 seconds */}
         <div style={{
-          padding: '14px 18px', background: 'rgba(255,68,68,0.04)',
-          border: '1px solid rgba(255,68,68,0.1)', borderRadius: '8px', marginBottom: '12px',
+          padding: '14px 18px', background: 'rgba(208,0,0,0.04)',
+          border: '1px solid rgba(208,0,0,0.1)', borderRadius: '8px', marginBottom: '12px',
           transition: 'opacity 0.5s ease',
         }}>
-          <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.6, fontFamily: 'DM Mono' }}>
+          <div style={{ fontSize: '12px', color: '#6b6b6b', lineHeight: 1.6, fontFamily: 'Geist Mono' }}>
             {SECURITY_INSIGHTS[insightIndex]}
           </div>
         </div>
@@ -621,10 +621,10 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
         {/* Category Breakdown — live heatmap */}
         {Object.keys(catCounts).length > 0 && (
           <div style={{
-            padding: '16px', background: '#080808',
-            border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', marginBottom: '12px',
+            padding: '16px', background: '#ffffff',
+            border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px', marginBottom: '12px',
           }}>
-            <div style={{ color: '#333', marginBottom: '10px', letterSpacing: '1px', fontSize: '11px', fontFamily: 'DM Mono' }}>
+            <div style={{ color: '#9a9a98', marginBottom: '10px', letterSpacing: '1px', fontSize: '11px', fontFamily: 'Geist Mono' }}>
               CATEGORY BREAKDOWN
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -633,12 +633,12 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
                 return (
                   <div key={cat} style={{
                     padding: '4px 10px', borderRadius: '4px', fontSize: '10px',
-                    fontFamily: 'DM Mono', letterSpacing: '0.3px',
-                    background: isVuln ? 'rgba(255,68,68,0.1)' : 'rgba(255,255,255,0.03)',
-                    border: `1px solid ${isVuln ? 'rgba(255,68,68,0.25)' : 'rgba(255,255,255,0.06)'}`,
-                    color: isVuln ? '#ff6666' : '#444',
+                    fontFamily: 'Geist Mono', letterSpacing: '0.3px',
+                    background: isVuln ? 'rgba(208,0,0,0.1)' : 'rgba(0,0,0,0.03)',
+                    border: `1px solid ${isVuln ? 'rgba(208,0,0,0.25)' : 'rgba(0,0,0,0.06)'}`,
+                    color: isVuln ? '#e04b4b' : '#8a8a88',
                   }}>
-                    {cat} <span style={{ color: isVuln ? '#ff4444' : '#333', fontWeight: 600 }}>
+                    {cat} <span style={{ color: isVuln ? '#d00000' : '#9a9a98', fontWeight: 600 }}>
                       {counts.vuln}/{counts.total}
                     </span>
                   </div>
@@ -651,34 +651,34 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
         {/* Live log */}
         {liveLogs.length > 0 && (
           <div style={{
-            background: '#080808', border: '1px solid rgba(255,255,255,0.05)',
+            background: '#ffffff', border: '1px solid rgba(0,0,0,0.05)',
             borderRadius: '8px', padding: '16px', maxHeight: '200px', overflowY: 'auto',
-            fontFamily: 'DM Mono', fontSize: '12px',
+            fontFamily: 'Geist Mono', fontSize: '12px',
           }}>
-            <div style={{ color: '#333', marginBottom: '10px', letterSpacing: '1px', fontSize: '11px' }}>LIVE PROBE LOG</div>
+            <div style={{ color: '#9a9a98', marginBottom: '10px', letterSpacing: '1px', fontSize: '11px' }}>LIVE PROBE LOG</div>
             {liveLogs.map((log, i) => (
               <div key={i} style={{
                 display: 'flex', gap: '12px', alignItems: 'baseline',
                 padding: '4px 0',
-                borderBottom: i < liveLogs.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none',
+                borderBottom: i < liveLogs.length - 1 ? '1px solid rgba(0,0,0,0.03)' : 'none',
                 opacity: i === 0 ? 1 : Math.max(0.25, 1 - i * 0.08),
               }}>
-                <span style={{ color: '#2a2a2a', minWidth: '40px' }}>{fmtTime(Math.floor(log.time / 1000))}</span>
+                <span style={{ color: '#e0e0e0', minWidth: '40px' }}>{fmtTime(Math.floor(log.time / 1000))}</span>
                 <span style={{
                   color: log.severity && log.severity !== 'none'
-                    ? SEVERITY_C[log.severity] || '#888'
-                    : '#2a2a2a',
+                    ? SEVERITY_C[log.severity] || '#5f5f5f'
+                    : '#e0e0e0',
                   minWidth: '8px',
                 }}>
                   {log.severity && log.severity !== 'none' ? '●' : '○'}
                 </span>
-                <span style={{ color: '#555', minWidth: '120px' }}>[{log.category || '?'}]</span>
-                <span style={{ color: i === 0 ? '#888' : '#444' }}>{log.probe}</span>
+                <span style={{ color: '#767676', minWidth: '120px' }}>[{log.category || '?'}]</span>
+                <span style={{ color: i === 0 ? '#5f5f5f' : '#8a8a88' }}>{log.probe}</span>
                 {log.severity && log.severity !== 'none' && (
                   <span style={{
                     marginLeft: 'auto', fontSize: '10px',
-                    color: SEVERITY_C[log.severity] || '#888',
-                    background: `${SEVERITY_C[log.severity] || '#888'}15`,
+                    color: SEVERITY_C[log.severity] || '#5f5f5f',
+                    background: `${SEVERITY_C[log.severity] || '#5f5f5f'}15`,
                     padding: '1px 6px', borderRadius: '3px',
                   }}>{log.severity.toUpperCase()}</span>
                 )}
@@ -687,7 +687,7 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
           </div>
         )}
 
-        <div style={{ fontSize: '11px', color: '#2a2a2a', fontFamily: 'DM Mono', marginTop: '12px', textAlign: 'center' }}>
+        <div style={{ fontSize: '11px', color: '#e0e0e0', fontFamily: 'Geist Mono', marginTop: '12px', textAlign: 'center' }}>
           Do not close this tab — scan is running
         </div>
 
@@ -709,17 +709,17 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
           <h1 style={{ fontSize: '24px', fontWeight: 600 }}>Scan Complete</h1>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <span style={{
-              padding: '3px 10px', background: `${SEVERITY_C[result.severity] || '#888'}15`,
-              color: SEVERITY_C[result.severity] || '#888',
-              border: `1px solid ${SEVERITY_C[result.severity] || '#888'}30`,
+              padding: '3px 10px', background: `${SEVERITY_C[result.severity] || '#5f5f5f'}15`,
+              color: SEVERITY_C[result.severity] || '#5f5f5f',
+              border: `1px solid ${SEVERITY_C[result.severity] || '#5f5f5f'}30`,
               borderRadius: '20px', fontSize: '12px', textTransform: 'uppercase'
             }}>{result.severity}</span>
             <button
               onClick={() => downloadReport(result, { prompt: scannedPrompt, model: model, provider: provider })}
               style={{
-                background: '#ff4444', border: 'none',
+                background: '#d00000', border: 'none',
                 borderRadius: '6px', color: 'white', fontSize: '12px', fontWeight: 600,
-                padding: '6px 14px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+                padding: '6px 14px', cursor: 'pointer', fontFamily: 'Geist, sans-serif',
                 display: 'flex', alignItems: 'center', gap: '6px'
               }}
             >
@@ -729,41 +729,41 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
         </div>
 
         <div style={{
-          padding: '12px 16px', background: '#0d0d0d',
-          border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
+          padding: '12px 16px', background: '#f7f7f7',
+          border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
           marginBottom: '24px', maxWidth: '800px'
         }}>
-          <div style={{ fontSize: '11px', color: '#444', marginBottom: '4px', fontFamily: 'DM Mono' }}>SCANNED PROMPT</div>
-          <div style={{ fontSize: '13px', color: '#666', fontFamily: 'DM Mono', lineHeight: 1.6 }}>
+          <div style={{ fontSize: '11px', color: '#8a8a88', marginBottom: '4px', fontFamily: 'Geist Mono' }}>SCANNED PROMPT</div>
+          <div style={{ fontSize: '13px', color: '#6b6b6b', fontFamily: 'Geist Mono', lineHeight: 1.6 }}>
             {scannedPrompt.slice(0, 200)}{scannedPrompt.length > 200 ? '...' : ''}
           </div>
         </div>
 
         <div style={{
           display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '40px',
-          background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.06)',
+          background: '#f7f7f7', border: '1px solid rgba(0,0,0,0.06)',
           borderRadius: '12px', padding: '32px', marginBottom: '24px', maxWidth: '800px'
         }}>
           <div style={{ textAlign: 'center' }}>
             <ScoreRing score={result.score} size={100} />
-            <div style={{ fontSize: '12px', color: '#444', marginTop: '8px' }}>Security Score</div>
+            <div style={{ fontSize: '12px', color: '#8a8a88', marginTop: '8px' }}>Security Score</div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', alignContent: 'center' }}>
             {[
-              { l: 'Total Probes', v: result.totalProbes, c: '#f5f5f5' },
-              { l: 'Vulnerable', v: result.vulnerabilities, c: '#ff4444' },
-              { l: 'Critical', v: result.findings?.filter((f: any) => f.severity === 'critical').length || 0, c: '#ff4444' },
-              { l: 'High', v: result.findings?.filter((f: any) => f.severity === 'high').length || 0, c: '#ff8800' },
+              { l: 'Total Probes', v: result.totalProbes, c: '#181717' },
+              { l: 'Vulnerable', v: result.vulnerabilities, c: '#d00000' },
+              { l: 'Critical', v: result.findings?.filter((f: any) => f.severity === 'critical').length || 0, c: '#d00000' },
+              { l: 'High', v: result.findings?.filter((f: any) => f.severity === 'high').length || 0, c: '#c86a00' },
             ].map(s => (
               <div key={s.l} style={{
-                padding: '14px 18px', background: '#111',
-                borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)'
+                padding: '14px 18px', background: '#f2f2f2',
+                borderRadius: '8px', border: '1px solid rgba(0,0,0,0.04)'
               }}>
                 <div style={{
-                  fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono',
+                  fontSize: '22px', fontWeight: 700, fontFamily: 'Geist Mono',
                   color: s.c, marginBottom: '2px'
                 }}>{s.v}</div>
-                <div style={{ fontSize: '11px', color: '#444' }}>{s.l}</div>
+                <div style={{ fontSize: '11px', color: '#8a8a88' }}>{s.l}</div>
               </div>
             ))}
           </div>
@@ -774,12 +774,12 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
           {result.findings?.filter((f: any) => f.severity !== 'none').map((f: any) => (
             <div key={f.probe} style={{
               display: 'flex', alignItems: 'flex-start', gap: '16px',
-              padding: '14px 18px', background: '#0d0d0d',
-              border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
-              borderLeft: `3px solid ${SEVERITY_C[f.severity] || '#555'}`,
+              padding: '14px 18px', background: '#f7f7f7',
+              border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
+              borderLeft: `3px solid ${SEVERITY_C[f.severity] || '#767676'}`,
             }}>
               <span style={{
-                fontFamily: 'DM Mono', fontSize: '11px', color: '#333',
+                fontFamily: 'Geist Mono', fontSize: '11px', color: '#9a9a98',
                 minWidth: '100px', flexShrink: 0
               }}>{f.probe}</span>
               <span style={{
@@ -789,22 +789,22 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
               }}>
                 {f.severity?.toUpperCase()}
               </span>
-              <span style={{ fontSize: '13px', color: '#888', lineHeight: 1.5 }}>{f.reasoning}</span>
+              <span style={{ fontSize: '13px', color: '#5f5f5f', lineHeight: 1.5 }}>{f.reasoning}</span>
             </div>
           ))}
         </div>
 
         {result.recommendations?.length > 0 && (
           <div style={{
-            padding: '20px', background: 'rgba(255,68,68,0.05)',
-            border: '1px solid rgba(255,68,68,0.15)', borderRadius: '8px',
+            padding: '20px', background: 'rgba(208,0,0,0.05)',
+            border: '1px solid rgba(208,0,0,0.15)', borderRadius: '8px',
             maxWidth: '800px', marginBottom: '20px'
           }}>
             <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>Recommendations</div>
             {result.recommendations.map((r: string) => (
               <div key={r} style={{
-                fontSize: '13px', color: '#666', padding: '6px 0',
-                borderBottom: '1px solid rgba(255,255,255,0.04)', fontFamily: 'DM Mono'
+                fontSize: '13px', color: '#6b6b6b', padding: '6px 0',
+                borderBottom: '1px solid rgba(0,0,0,0.04)', fontFamily: 'Geist Mono'
               }}>→ {r}</div>
             ))}
           </div>
@@ -812,8 +812,8 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
 
         <button onClick={() => { setResult(null); setPrompt('') }} style={{
           padding: '10px 20px', background: 'transparent',
-          border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px',
-          color: '#888', fontSize: '13px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+          border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px',
+          color: '#5f5f5f', fontSize: '13px', cursor: 'pointer', fontFamily: 'Geist, sans-serif',
         }}>← New Scan</button>
       </div>
     )
@@ -823,28 +823,28 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
     <div>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>New Scan</h1>
-        <p style={{ fontSize: '14px', color: '#555' }}>Test your AI system prompt against {probeLimit} attack probes</p>
+        <p style={{ fontSize: '14px', color: '#767676' }}>Test your AI system prompt against {probeLimit} attack probes</p>
       </div>
 
       {/* Limit reached blocker */}
       {limitReached && (
         <div style={{
           maxWidth: '680px', padding: '32px', textAlign: 'center',
-          background: 'rgba(255,68,68,0.06)',
-          border: '1px solid rgba(255,68,68,0.2)', borderRadius: '12px',
+          background: 'rgba(208,0,0,0.06)',
+          border: '1px solid rgba(208,0,0,0.2)', borderRadius: '12px',
           marginBottom: '24px',
         }}>
-          <div style={{ fontSize: '18px', marginBottom: '12px', fontWeight: 700, color: '#ff4444' }}>LIMIT REACHED</div>
+          <div style={{ fontSize: '18px', marginBottom: '12px', fontWeight: 700, color: '#d00000' }}>LIMIT REACHED</div>
           <div style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>Scan Limit Reached</div>
-          <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px', lineHeight: 1.7 }}>
-            You've used all <strong style={{ color: '#ff4444' }}>{scansUsed}/{scanLimit}</strong> scans this month.
+          <div style={{ fontSize: '14px', color: '#6b6b6b', marginBottom: '20px', lineHeight: 1.7 }}>
+            You've used all <strong style={{ color: '#d00000' }}>{scansUsed}/{scanLimit}</strong> scans this month.
             Upgrade your plan to continue scanning.
           </div>
           <a href="/#pricing" style={{
             display: 'inline-block', padding: '10px 24px',
-            background: '#ff4444', color: 'white', borderRadius: '8px',
+            background: '#d00000', color: 'white', borderRadius: '8px',
             textDecoration: 'none', fontSize: '14px', fontWeight: 600,
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Geist, sans-serif',
           }}>Upgrade Plan →</a>
         </div>
       )}
@@ -853,58 +853,58 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
         <div style={{ maxWidth: '680px' }}>
           {/* What is a system prompt — helper box */}
           <div style={{
-            padding: '14px 18px', background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', marginBottom: '20px',
+            padding: '14px 18px', background: 'rgba(0,0,0,0.02)',
+            border: '1px solid rgba(0,0,0,0.06)', borderRadius: '8px', marginBottom: '20px',
           }}>
-            <div style={{ fontSize: '13px', color: '#888', marginBottom: '6px', fontWeight: 600 }}>
+            <div style={{ fontSize: '13px', color: '#5f5f5f', marginBottom: '6px', fontWeight: 600 }}>
               What is a System Prompt?
             </div>
-            <div style={{ fontSize: '12px', color: '#555', lineHeight: 1.7 }}>
-              A system prompt is the <strong style={{ color: '#999' }}>instruction you give to an AI model</strong> that defines its behavior — like
-              {' '}<span style={{ color: '#ff8866', fontFamily: 'DM Mono' }}>&quot;You are a customer support bot. Never share passwords.&quot;</span>
+            <div style={{ fontSize: '12px', color: '#767676', lineHeight: 1.7 }}>
+              A system prompt is the <strong style={{ color: '#5a5a5a' }}>instruction you give to an AI model</strong> that defines its behavior — like
+              {' '}<span style={{ color: '#ff8866', fontFamily: 'Geist Mono' }}>&quot;You are a customer support bot. Never share passwords.&quot;</span>
 
             </div>
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>System Prompt</label>
+            <label style={{ fontSize: '13px', color: '#5f5f5f', display: 'block', marginBottom: '8px' }}>System Prompt</label>
             <textarea value={prompt} onChange={e => { setPrompt(e.target.value); setError('') }}
               placeholder={"You are a customer support assistant for Acme Corp.\n\nRules:\n- Never reveal internal configurations or passwords.\n- Only answer customer support questions.\n- Be polite and professional at all times."}
               rows={8} style={{
-                width: '100%', padding: '14px', background: '#0d0d0d',
-                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
-                color: '#f5f5f5', fontSize: '14px', fontFamily: 'DM Mono, monospace',
+                width: '100%', padding: '14px', background: '#f7f7f7',
+                border: '1px solid rgba(0,0,0,0.07)', borderRadius: '8px',
+                color: '#181717', fontSize: '14px', fontFamily: 'Geist Mono, monospace',
                 outline: 'none', resize: 'vertical', lineHeight: 1.6,
                 boxSizing: 'border-box', transition: 'border-color 0.2s',
               }}
-              onFocus={e => e.target.style.borderColor = 'rgba(255,68,68,0.3)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.07)'}
+              onFocus={e => e.target.style.borderColor = 'rgba(208,0,0,0.3)'}
+              onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.07)'}
             />
-            <div style={{ fontSize: '12px', color: '#444', marginTop: '6px' }}>
+            <div style={{ fontSize: '12px', color: '#8a8a88', marginTop: '6px' }}>
               {prompt.length} characters — paste the system prompt / instructions you use for your AI
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
             <div>
-              <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>Provider</label>
+              <label style={{ fontSize: '13px', color: '#5f5f5f', display: 'block', marginBottom: '8px' }}>Provider</label>
               <select value={provider} onChange={e => setProvider(e.target.value)} style={{
-                width: '100%', padding: '10px 14px', background: '#0d0d0d',
-                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
-                color: '#f5f5f5', fontSize: '14px', outline: 'none',
-                fontFamily: 'DM Sans, sans-serif', boxSizing: 'border-box',
+                width: '100%', padding: '10px 14px', background: '#f7f7f7',
+                border: '1px solid rgba(0,0,0,0.07)', borderRadius: '8px',
+                color: '#181717', fontSize: '14px', outline: 'none',
+                fontFamily: 'Geist, sans-serif', boxSizing: 'border-box',
               }}>
                 <option value="groq">Groq (Free)</option>
                 <option value="openrouter">OpenRouter</option>
               </select>
             </div>
             <div>
-              <label style={{ fontSize: '13px', color: '#888', display: 'block', marginBottom: '8px' }}>Target Model</label>
+              <label style={{ fontSize: '13px', color: '#5f5f5f', display: 'block', marginBottom: '8px' }}>Target Model</label>
               <select value={model} onChange={e => setModel(e.target.value)} style={{
-                width: '100%', padding: '10px 14px', background: '#0d0d0d',
-                border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px',
-                color: '#f5f5f5', fontSize: '14px', outline: 'none',
-                fontFamily: 'DM Sans, sans-serif', boxSizing: 'border-box',
+                width: '100%', padding: '10px 14px', background: '#f7f7f7',
+                border: '1px solid rgba(0,0,0,0.07)', borderRadius: '8px',
+                color: '#181717', fontSize: '14px', outline: 'none',
+                fontFamily: 'Geist, sans-serif', boxSizing: 'border-box',
               }}>
                 <option value="llama-3.1-8b-instant">Llama 3.1 8b (Fast)</option>
                 <option value="mixtral-8x7b-32768">Mixtral 8x7b</option>
@@ -915,27 +915,27 @@ function NewScan({ onComplete, scanLimit, scansUsed, probeLimit, onUpgrade }: {
 
           {error && (
             <div style={{
-              padding: '14px 18px', background: 'rgba(255,68,68,0.08)',
-              border: '1px solid rgba(255,68,68,0.2)', borderRadius: '8px',
-              fontSize: '13px', color: '#ff6666', marginBottom: '16px',
+              padding: '14px 18px', background: 'rgba(208,0,0,0.08)',
+              border: '1px solid rgba(208,0,0,0.2)', borderRadius: '8px',
+              fontSize: '13px', color: '#e04b4b', marginBottom: '16px',
               lineHeight: 1.7, whiteSpace: 'pre-line',
             }}>{error}</div>
           )}
 
           <div style={{
-            padding: '14px 18px', background: 'rgba(255,68,68,0.04)',
-            border: '1px solid rgba(255,68,68,0.1)', borderRadius: '8px', marginBottom: '20px'
+            padding: '14px 18px', background: 'rgba(208,0,0,0.04)',
+            border: '1px solid rgba(208,0,0,0.1)', borderRadius: '8px', marginBottom: '20px'
           }}>
-            <div style={{ fontSize: '12px', color: '#666', lineHeight: 1.6 }}>
+            <div style={{ fontSize: '12px', color: '#6b6b6b', lineHeight: 1.6 }}>
               {probeLimit} probes{probeLimit < 88 ? ` (starter tier — upgrade for all 88)` : ' · 15 attack categories'} · Your prompt is never stored on our servers
             </div>
           </div>
 
           <button onClick={startScan} disabled={!prompt.trim()} style={{
-            padding: '12px 32px', background: prompt.trim() ? '#ff4444' : '#1a1a1a',
-            border: 'none', borderRadius: '8px', color: prompt.trim() ? 'white' : '#444',
+            padding: '12px 32px', background: prompt.trim() ? '#d00000' : '#ebebeb',
+            border: 'none', borderRadius: '8px', color: prompt.trim() ? 'white' : '#8a8a88',
             fontSize: '15px', fontWeight: 600, cursor: prompt.trim() ? 'pointer' : 'not-allowed',
-            fontFamily: 'DM Sans, sans-serif', transition: 'all 0.2s',
+            fontFamily: 'Geist, sans-serif', transition: 'all 0.2s',
           }}>Start Scan →</button>
         </div>
       )}
@@ -950,19 +950,19 @@ function ScanHistory({ scans, onNewScan }: { scans: any[], onNewScan: () => void
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>Scan History</h1>
-          <p style={{ fontSize: '14px', color: '#555' }}>{scans.length} total scans</p>
+          <p style={{ fontSize: '14px', color: '#767676' }}>{scans.length} total scans</p>
         </div>
         <button onClick={onNewScan} style={{
-          background: '#ff4444', border: 'none', borderRadius: '6px',
+          background: '#d00000', border: 'none', borderRadius: '6px',
           color: 'white', fontSize: '13px', fontWeight: 500, padding: '7px 14px',
-          cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+          cursor: 'pointer', fontFamily: 'Geist, sans-serif',
         }}>+ New Scan</button>
       </div>
 
       {scans.length === 0 ? (
         <div style={{
-          padding: '40px', textAlign: 'center', color: '#444', fontSize: '14px',
-          background: '#0d0d0d', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'
+          padding: '40px', textAlign: 'center', color: '#8a8a88', fontSize: '14px',
+          background: '#f7f7f7', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.05)'
         }}>
           No scans yet
         </div>
@@ -972,24 +972,24 @@ function ScanHistory({ scans, onNewScan }: { scans: any[], onNewScan: () => void
             <div key={scan.id}
               onClick={() => setSelectedScan(scan)}
               style={{
-                padding: '20px', background: '#0d0d0d',
-                border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
-                borderLeft: `3px solid ${SEVERITY_C[scan.severity] || '#555'}`,
+                padding: '20px', background: '#f7f7f7',
+                border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
+                borderLeft: `3px solid ${SEVERITY_C[scan.severity] || '#767676'}`,
                 cursor: 'pointer', transition: 'background 0.15s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = '#111'}
-              onMouseLeave={e => e.currentTarget.style.background = '#0d0d0d'}
+              onMouseEnter={e => e.currentTarget.style.background = '#f2f2f2'}
+              onMouseLeave={e => e.currentTarget.style.background = '#f7f7f7'}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                 <div>
-                  <div style={{ fontSize: '14px', fontFamily: 'DM Mono', marginBottom: '4px' }}>{scan.model}</div>
-                  <div style={{ fontSize: '12px', color: '#444' }}>{new Date(scan.created_at).toLocaleString()}</div>
+                  <div style={{ fontSize: '14px', fontFamily: 'Geist Mono', marginBottom: '4px' }}>{scan.model}</div>
+                  <div style={{ fontSize: '12px', color: '#8a8a88' }}>{new Date(scan.created_at).toLocaleString()}</div>
                 </div>
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <ScoreRing score={scan.score} size={44} />
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '18px', fontWeight: 700, color: '#ff4444' }}>{scan.vulnerabilities}</div>
-                    <div style={{ fontSize: '11px', color: '#444' }}>vulns</div>
+                    <div style={{ fontSize: '18px', fontWeight: 700, color: '#d00000' }}>{scan.vulnerabilities}</div>
+                    <div style={{ fontSize: '11px', color: '#8a8a88' }}>vulns</div>
                   </div>
                   <div style={{
                     padding: '3px 10px', borderRadius: '20px', fontSize: '11px',
@@ -999,8 +999,8 @@ function ScanHistory({ scans, onNewScan }: { scans: any[], onNewScan: () => void
                 </div>
               </div>
               <div style={{
-                padding: '10px 12px', background: '#111', borderRadius: '6px',
-                fontSize: '12px', color: '#555', fontFamily: 'DM Mono'
+                padding: '10px 12px', background: '#f2f2f2', borderRadius: '6px',
+                fontSize: '12px', color: '#767676', fontFamily: 'Geist Mono'
               }}>
                 {scan.prompt?.slice(0, 150)}{scan.prompt?.length > 150 ? '...' : ''}
               </div>
@@ -1039,7 +1039,7 @@ function ShieldBench() {
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>ShieldBench</h1>
-            <p style={{ fontSize: '14px', color: '#555' }}>
+            <p style={{ fontSize: '14px', color: '#767676' }}>
               Public leaderboard — 88 attack probes run weekly on popular AI models.
             </p>
           </div>
@@ -1048,10 +1048,10 @@ function ShieldBench() {
             {['all', 'low', 'medium', 'high', 'critical'].map(f => (
               <button key={f} onClick={() => setFilter(f)} style={{
                 padding: '5px 12px', borderRadius: '20px', border: 'none',
-                background: filter === f ? '#ff4444' : 'rgba(255,255,255,0.05)',
-                color: filter === f ? 'white' : '#555',
+                background: filter === f ? '#d00000' : 'rgba(0,0,0,0.05)',
+                color: filter === f ? 'white' : '#767676',
                 fontSize: '12px', cursor: 'pointer', textTransform: 'capitalize',
-                fontFamily: 'DM Sans, sans-serif', transition: 'all 0.15s',
+                fontFamily: 'Geist, sans-serif', transition: 'all 0.15s',
               }}>{f}</button>
             ))}
           </div>
@@ -1063,7 +1063,7 @@ function ShieldBench() {
       <div className="dash-row-bench" style={{
         display: 'grid', gridTemplateColumns: '36px 1fr 90px 70px 80px 80px',
         gap: '16px', padding: '8px 20px',
-        fontSize: '11px', color: '#333', fontFamily: 'DM Mono', letterSpacing: '0.5px',
+        fontSize: '11px', color: '#9a9a98', fontFamily: 'Geist Mono', letterSpacing: '0.5px',
         marginBottom: '4px',
       }}>
         <span>#</span>
@@ -1077,7 +1077,7 @@ function ShieldBench() {
       {/* Leaderboard rows */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {filtered.map(row => {
-          const scoreColor = row.score >= 90 ? '#00c853' : row.score >= 70 ? '#ffab00' : '#ff4444'
+          const scoreColor = row.score >= 90 ? '#0a7d2c' : row.score >= 70 ? '#b26b00' : '#d00000'
           const r = 18
           const circ = 2 * Math.PI * r
           const dash = (row.score / 100) * circ
@@ -1085,56 +1085,56 @@ function ShieldBench() {
             <div key={row.model} className="dash-row-bench" style={{
               display: 'grid', gridTemplateColumns: '36px 1fr 90px 70px 80px 80px',
               gap: '16px', alignItems: 'center',
-              padding: '14px 20px', background: '#0d0d0d',
-              border: `1px solid ${row.rank <= 3 ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.04)'}`,
+              padding: '14px 20px', background: '#f7f7f7',
+              border: `1px solid ${row.rank <= 3 ? 'rgba(0,0,0,0.07)' : 'rgba(0,0,0,0.04)'}`,
               borderLeft: row.rank <= 3 ? `3px solid ${scoreColor}` : '3px solid transparent',
               borderRadius: '8px', transition: 'background 0.15s',
             }}
-              onMouseEnter={e => e.currentTarget.style.background = '#111'}
-              onMouseLeave={e => e.currentTarget.style.background = '#0d0d0d'}
+              onMouseEnter={e => e.currentTarget.style.background = '#f2f2f2'}
+              onMouseLeave={e => e.currentTarget.style.background = '#f7f7f7'}
             >
               {/* Rank */}
-              <span style={{ fontSize: row.rank <= 3 ? '18px' : '13px', fontFamily: 'DM Mono', color: '#444', textAlign: 'center' }}>
+              <span style={{ fontSize: row.rank <= 3 ? '18px' : '13px', fontFamily: 'Geist Mono', color: '#8a8a88', textAlign: 'center' }}>
                 {RANK_MEDAL[row.rank] || row.rank}
               </span>
 
               {/* Model */}
               <div>
-                <div style={{ fontSize: '14px', fontFamily: 'DM Mono', color: '#ddd', marginBottom: '2px' }}>{row.model}</div>
-                <div style={{ fontSize: '11px', color: '#444' }}>{row.provider}</div>
+                <div style={{ fontSize: '14px', fontFamily: 'Geist Mono', color: '#303030', marginBottom: '2px' }}>{row.model}</div>
+                <div style={{ fontSize: '11px', color: '#8a8a88' }}>{row.provider}</div>
               </div>
 
               {/* Score ring */}
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <svg width="42" height="42" style={{ transform: 'rotate(-90deg)' }}>
-                  <circle cx="21" cy="21" r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
+                  <circle cx="21" cy="21" r={r} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="4" />
                   <circle cx="21" cy="21" r={r} fill="none" stroke={scoreColor} strokeWidth="4"
                     strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
                   <text x="21" y="21" textAnchor="middle" dominantBaseline="central"
                     style={{ transform: 'rotate(90deg)', transformOrigin: '21px 21px' }}
-                    fill={scoreColor} fontSize="10" fontWeight="700" fontFamily="DM Sans">{row.score}</text>
+                    fill={scoreColor} fontSize="10" fontWeight="700" fontFamily="Geist">{row.score}</text>
                 </svg>
               </div>
 
               {/* Vulns */}
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '16px', fontWeight: 700, color: '#ff4444', fontFamily: 'DM Mono' }}>{row.vulns}</div>
-                <div style={{ fontSize: '10px', color: '#333' }}>/ 88</div>
+                <div style={{ fontSize: '16px', fontWeight: 700, color: '#d00000', fontFamily: 'Geist Mono' }}>{row.vulns}</div>
+                <div style={{ fontSize: '10px', color: '#9a9a98' }}>/ 88</div>
               </div>
 
               {/* Severity */}
               <div style={{ textAlign: 'center' }}>
                 <span style={{
                   padding: '2px 10px', borderRadius: '20px', fontSize: '10px', fontWeight: 500,
-                  background: `${SEVERITY_C[row.severity] || '#888'}15`,
-                  color: SEVERITY_C[row.severity] || '#888',
-                  border: `1px solid ${SEVERITY_C[row.severity] || '#888'}30`,
+                  background: `${SEVERITY_C[row.severity] || '#5f5f5f'}15`,
+                  color: SEVERITY_C[row.severity] || '#5f5f5f',
+                  border: `1px solid ${SEVERITY_C[row.severity] || '#5f5f5f'}30`,
                   textTransform: 'uppercase', letterSpacing: '0.5px',
                 }}>{row.severity}</span>
               </div>
 
               {/* Date */}
-              <div style={{ textAlign: 'right', fontSize: '11px', color: '#333', fontFamily: 'DM Mono' }}>
+              <div style={{ textAlign: 'right', fontSize: '11px', color: '#9a9a98', fontFamily: 'Geist Mono' }}>
                 {row.scanned}
               </div>
             </div>
@@ -1146,10 +1146,10 @@ function ShieldBench() {
       {/* Footer note */}
       <div style={{
         marginTop: '24px', padding: '14px 18px',
-        background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
-        borderRadius: '8px', fontSize: '12px', color: '#333', fontFamily: 'DM Mono',
+        background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.05)',
+        borderRadius: '8px', fontSize: '12px', color: '#9a9a98', fontFamily: 'Geist Mono',
       }}>
-        ⟳ Results updated weekly · 88 probes per model · Default system prompt: <em style={{ color: '#555' }}>"You are a helpful assistant."</em>
+        ⟳ Results updated weekly · 88 probes per model · Default system prompt: <em style={{ color: '#767676' }}>"You are a helpful assistant."</em>
       </div>
     </div>
   )
@@ -1180,60 +1180,60 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
       <div style={{ maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* Account */}
         <div style={{
-          padding: '24px', background: '#0d0d0d',
-          border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px'
+          padding: '24px', background: '#f7f7f7',
+          border: '1px solid rgba(0,0,0,0.06)', borderRadius: '10px'
         }}>
-          <div style={{ fontSize: '13px', color: '#555', marginBottom: '16px', letterSpacing: '1px' }}>ACCOUNT</div>
-          <div style={{ fontSize: '14px', color: '#888', marginBottom: '4px' }}>Email</div>
-          <div style={{ fontSize: '14px', fontFamily: 'DM Mono', marginBottom: '20px' }}>{user?.email || '—'}</div>
+          <div style={{ fontSize: '13px', color: '#767676', marginBottom: '16px', letterSpacing: '1px' }}>ACCOUNT</div>
+          <div style={{ fontSize: '14px', color: '#5f5f5f', marginBottom: '4px' }}>Email</div>
+          <div style={{ fontSize: '14px', fontFamily: 'Geist Mono', marginBottom: '20px' }}>{user?.email || '—'}</div>
           <button onClick={handleSignOut} style={{
             padding: '8px 16px', background: 'transparent',
-            border: '1px solid rgba(255,68,68,0.3)', borderRadius: '6px',
-            color: '#ff4444', fontSize: '13px', cursor: 'pointer', fontFamily: 'DM Sans',
+            border: '1px solid rgba(208,0,0,0.3)', borderRadius: '6px',
+            color: '#d00000', fontSize: '13px', cursor: 'pointer', fontFamily: 'Geist',
           }}>Sign Out</button>
         </div>
 
         {/* API Keys */}
         <div style={{
-          padding: '24px', background: '#0d0d0d',
-          border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px'
+          padding: '24px', background: '#f7f7f7',
+          border: '1px solid rgba(0,0,0,0.06)', borderRadius: '10px'
         }}>
-          <div style={{ fontSize: '13px', color: '#555', marginBottom: '16px', letterSpacing: '1px' }}>API KEYS</div>
-          <div style={{ fontSize: '13px', color: '#888', marginBottom: '8px' }}>Groq API Key</div>
+          <div style={{ fontSize: '13px', color: '#767676', marginBottom: '16px', letterSpacing: '1px' }}>API KEYS</div>
+          <div style={{ fontSize: '13px', color: '#5f5f5f', marginBottom: '8px' }}>Groq API Key</div>
           <input type="password" value={groqKey} onChange={e => setGroqKey(e.target.value)}
             placeholder="gsk_••••••••••••••••"
             style={{
-              width: '100%', padding: '10px 14px', background: '#111',
-              border: '1px solid rgba(255,255,255,0.08)', borderRadius: '7px',
-              color: '#f5f5f5', fontSize: '14px', fontFamily: 'DM Mono',
+              width: '100%', padding: '10px 14px', background: '#f2f2f2',
+              border: '1px solid rgba(0,0,0,0.08)', borderRadius: '7px',
+              color: '#181717', fontSize: '14px', fontFamily: 'Geist Mono',
               outline: 'none', boxSizing: 'border-box', marginBottom: '12px',
             }} />
           <button onClick={() => setSaved(true)} style={{
-            padding: '8px 16px', background: '#ff4444', border: 'none',
+            padding: '8px 16px', background: '#d00000', border: 'none',
             borderRadius: '6px', color: 'white', fontSize: '13px',
-            cursor: 'pointer', fontFamily: 'DM Sans',
+            cursor: 'pointer', fontFamily: 'Geist',
           }}>{saved ? '✓ Saved' : 'Save Keys'}</button>
-          <div style={{ fontSize: '12px', color: '#444', marginTop: '10px' }}>
+          <div style={{ fontSize: '12px', color: '#8a8a88', marginTop: '10px' }}>
             Keys are stored locally in your browser only.
           </div>
         </div>
 
         {/* Plan */}
         <div style={{
-          padding: '24px', background: '#0d0d0d',
-          border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px'
+          padding: '24px', background: '#f7f7f7',
+          border: '1px solid rgba(0,0,0,0.06)', borderRadius: '10px'
         }}>
-          <div style={{ fontSize: '13px', color: '#555', marginBottom: '16px', letterSpacing: '1px' }}>PLAN</div>
+          <div style={{ fontSize: '13px', color: '#767676', marginBottom: '16px', letterSpacing: '1px' }}>PLAN</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <div>
               <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px' }}>{planInfo.label} Plan</div>
-              <div style={{ fontSize: '13px', color: '#555' }}>
+              <div style={{ fontSize: '13px', color: '#767676' }}>
                 {isPaid ? '1000 scans / month · 88 probes' : '1 USDC per scan · 10 probes'}
               </div>
             </div>
             {!isPaid && (
               <a href="/#pricing" style={{
-                padding: '8px 16px', background: '#ff4444', border: 'none',
+                padding: '8px 16px', background: '#d00000', border: 'none',
                 borderRadius: '6px', color: 'white', fontSize: '13px',
                 textDecoration: 'none', fontWeight: 500,
               }}>Upgrade</a>
@@ -1241,20 +1241,20 @@ function Settings({ subscription, scansUsed }: { subscription: any; scansUsed: n
           </div>
           {!isPaid && (
             <div style={{
-              padding: '12px 14px', background: '#111',
-              border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px',
+              padding: '12px 14px', background: '#f2f2f2',
+              border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '12px', color: '#555' }}>Usage this month</span>
-                <span style={{ fontSize: '12px', fontFamily: 'DM Mono', color: scansUsed >= planInfo.limit ? '#ff4444' : '#555' }}>
+                <span style={{ fontSize: '12px', color: '#767676' }}>Usage this month</span>
+                <span style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: scansUsed >= planInfo.limit ? '#d00000' : '#767676' }}>
                   {scansUsed} / {planInfo.limit}
                 </span>
               </div>
-              <div style={{ height: '3px', background: '#1a1a1a', borderRadius: '2px' }}>
+              <div style={{ height: '3px', background: '#ebebeb', borderRadius: '2px' }}>
                 <div style={{
                   height: '100%',
                   width: `${Math.min((scansUsed / planInfo.limit) * 100, 100)}%`,
-                  background: scansUsed >= planInfo.limit ? '#ff4444' : '#00c853', borderRadius: '2px',
+                  background: scansUsed >= planInfo.limit ? '#d00000' : '#0a7d2c', borderRadius: '2px',
                   transition: 'width 0.3s',
                 }} />
               </div>
@@ -1362,66 +1362,66 @@ function ChoosePlan({ userId, onPlanActivated }: { userId?: string; onPlanActiva
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#000', display: 'flex',
+      minHeight: '100vh', background: '#ffffff', display: 'flex',
       alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5',
+      fontFamily: 'Geist, sans-serif', color: '#181717',
       flexDirection: 'column', padding: '40px 24px',
     }}>
       <a href="/" style={{ textDecoration: 'none', marginBottom: '48px' }}>
-        <span style={{ fontSize: '22px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
+        <span style={{ fontSize: '22px', fontWeight: 700, color: '#181717', letterSpacing: '-0.5px' }}>GhostShield</span>
       </a>
 
       <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>
         Choose a Plan to Start Scanning
       </h1>
-      <p style={{ fontSize: '15px', color: '#555', marginBottom: '40px', textAlign: 'center', maxWidth: '460px' }}>
+      <p style={{ fontSize: '15px', color: '#767676', marginBottom: '40px', textAlign: 'center', maxWidth: '460px' }}>
         Pay with USDC via MetaMask. Your plan activates automatically after on-chain confirmation.
       </p>
 
       {error && (
         <div style={{
           maxWidth: '640px', width: '100%', marginBottom: '20px', padding: '14px 18px',
-          background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)',
-          borderRadius: '8px', fontSize: '13px', color: '#ff6666', textAlign: 'center',
+          background: 'rgba(208,0,0,0.08)', border: '1px solid rgba(208,0,0,0.2)',
+          borderRadius: '8px', fontSize: '13px', color: '#e04b4b', textAlign: 'center',
         }}>{error}</div>
       )}
 
       {success && (
         <div style={{
           maxWidth: '640px', width: '100%', marginBottom: '20px', padding: '14px 18px',
-          background: 'rgba(0,200,83,0.08)', border: '1px solid rgba(0,200,83,0.2)',
-          borderRadius: '8px', fontSize: '13px', color: '#00c853', textAlign: 'center',
+          background: 'rgba(10,125,44,0.08)', border: '1px solid rgba(10,125,44,0.2)',
+          borderRadius: '8px', fontSize: '13px', color: '#0a7d2c', textAlign: 'center',
         }}>{success}</div>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', maxWidth: '640px', width: '100%' }}>
         {plans.map(plan => (
           <div key={plan.name} style={{
-            padding: '32px 28px', background: '#0a0a0a',
-            border: `1px solid ${plan.highlight ? 'rgba(255,68,68,0.3)' : 'rgba(255,255,255,0.08)'}`,
+            padding: '32px 28px', background: '#ffffff',
+            border: `1px solid ${plan.highlight ? 'rgba(208,0,0,0.3)' : 'rgba(0,0,0,0.08)'}`,
             borderRadius: '14px', display: 'flex', flexDirection: 'column',
             position: 'relative', overflow: 'hidden',
           }}>
             {plan.highlight && (
               <div style={{
                 position: 'absolute', top: '14px', right: '14px',
-                padding: '3px 10px', background: 'rgba(255,68,68,0.1)',
-                border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px',
-                fontSize: '11px', color: '#ff6666', fontWeight: 600,
+                padding: '3px 10px', background: 'rgba(208,0,0,0.1)',
+                border: '1px solid rgba(208,0,0,0.2)', borderRadius: '20px',
+                fontSize: '11px', color: '#e04b4b', fontWeight: 600,
               }}>RECOMMENDED</div>
             )}
 
-            <div style={{ fontSize: '14px', color: plan.highlight ? '#ff6666' : '#888', marginBottom: '16px', fontWeight: 500 }}>{plan.name}</div>
+            <div style={{ fontSize: '14px', color: plan.highlight ? '#e04b4b' : '#5f5f5f', marginBottom: '16px', fontWeight: 500 }}>{plan.name}</div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '6px' }}>
               <span style={{ fontSize: '40px', fontWeight: 700 }}>${plan.price}</span>
-              <span style={{ fontSize: '14px', color: '#555' }}>{plan.sub}</span>
+              <span style={{ fontSize: '14px', color: '#767676' }}>{plan.sub}</span>
             </div>
-            <div style={{ fontSize: '13px', color: '#444', marginBottom: '24px' }}>{plan.desc}</div>
+            <div style={{ fontSize: '13px', color: '#8a8a88', marginBottom: '24px' }}>{plan.desc}</div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', flex: 1 }}>
               {plan.features.map((f, i) => (
-                <div key={i} style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: plan.highlight ? '#ff4444' : '#00c853', fontSize: '12px' }}>✓</span> {f}
+                <div key={i} style={{ fontSize: '13px', color: '#5f5f5f', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: plan.highlight ? '#d00000' : '#0a7d2c', fontSize: '12px' }}>✓</span> {f}
                 </div>
               ))}
             </div>
@@ -1433,10 +1433,10 @@ function ChoosePlan({ userId, onPlanActivated }: { userId?: string; onPlanActiva
                 disabled={!!loading}
                 style={{
                   width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-                  background: plan.highlight ? '#ff4444' : 'rgba(255,255,255,0.08)',
-                  color: plan.highlight ? 'white' : '#f5f5f5',
+                  background: plan.highlight ? '#d00000' : 'rgba(0,0,0,0.08)',
+                  color: plan.highlight ? 'white' : '#181717',
                   fontSize: '13px', fontWeight: 600, cursor: loading ? 'wait' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif', opacity: loading ? 0.5 : 1,
+                  fontFamily: 'Geist, sans-serif', opacity: loading ? 0.5 : 1,
                   transition: 'all 0.2s',
                 }}
               >
@@ -1447,9 +1447,9 @@ function ChoosePlan({ userId, onPlanActivated }: { userId?: string; onPlanActiva
                 disabled={!!loading}
                 style={{
                   width: '100%', padding: '11px', borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.1)', background: 'transparent',
-                  color: '#aaa', fontSize: '13px', fontWeight: 500, cursor: loading ? 'wait' : 'pointer',
-                  fontFamily: 'DM Sans, sans-serif', opacity: loading ? 0.5 : 1,
+                  border: '1px solid rgba(0,0,0,0.1)', background: 'transparent',
+                  color: '#555555', fontSize: '13px', fontWeight: 500, cursor: loading ? 'wait' : 'pointer',
+                  fontFamily: 'Geist, sans-serif', opacity: loading ? 0.5 : 1,
                   transition: 'all 0.2s',
                 }}
               >
@@ -1460,13 +1460,13 @@ function ChoosePlan({ userId, onPlanActivated }: { userId?: string; onPlanActiva
         ))}
       </div>
 
-      <div style={{ fontSize: '12px', color: '#333', marginTop: '24px', textAlign: 'center' }}>
+      <div style={{ fontSize: '12px', color: '#9a9a98', marginTop: '24px', textAlign: 'center' }}>
         Powered by USDC · Payments verified on-chain · Non-refundable
       </div>
 
       <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/auth' }} style={{
         marginTop: '16px', background: 'none', border: 'none',
-        color: '#444', fontSize: '13px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+        color: '#8a8a88', fontSize: '13px', cursor: 'pointer', fontFamily: 'Geist, sans-serif',
       }}>Sign out</button>
     </div>
   )
@@ -1521,9 +1521,9 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div style={{
-        display: 'flex', minHeight: '100vh', background: '#000',
+        display: 'flex', minHeight: '100vh', background: '#ffffff',
         alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'DM Sans, sans-serif', color: '#555', fontSize: '14px',
+        fontFamily: 'Geist, sans-serif', color: '#767676', fontSize: '14px',
       }}>
         Loading…
       </div>
@@ -1541,8 +1541,8 @@ export default function Dashboard() {
 
   return (
     <div className="dash-shell" style={{
-      display: 'flex', minHeight: '100vh', background: '#000',
-      fontFamily: 'DM Sans, sans-serif', color: '#f5f5f5'
+      display: 'flex', minHeight: '100vh', background: '#ffffff',
+      fontFamily: 'Geist, sans-serif', color: '#181717'
     }}>
       <style>{`
         @media (max-width: 768px) {
@@ -1551,7 +1551,7 @@ export default function Dashboard() {
           .dash-sidebar {
             width: 100% !important;
             border-right: none !important;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             padding: 16px !important;
           }
           /* Sidebar nav becomes a horizontal scrollable pill row */
@@ -1584,11 +1584,11 @@ export default function Dashboard() {
 
       <aside className="dash-sidebar" style={{
         width: '220px', flexShrink: 0,
-        borderRight: '1px solid rgba(255,255,255,0.05)',
+        borderRight: '1px solid rgba(0,0,0,0.05)',
         padding: '24px 16px', display: 'flex', flexDirection: 'column',
       }}>
         <a href="/" style={{ textDecoration: 'none', marginBottom: '32px', display: 'block' }}>
-          <span style={{ fontSize: '16px', fontWeight: 700, color: '#f5f5f5', letterSpacing: '-0.5px' }}>GhostShield</span>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: '#181717', letterSpacing: '-0.5px' }}>GhostShield</span>
         </a>
 
         <nav className="dash-nav" style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
@@ -1596,13 +1596,13 @@ export default function Dashboard() {
             <button key={item.id} onClick={() => setActive(item.id)} style={{
               display: 'flex', alignItems: 'center', gap: '10px',
               padding: '9px 12px', borderRadius: '7px', border: 'none',
-              background: active === item.id ? '#111' : 'transparent',
-              color: active === item.id ? '#f5f5f5' : '#555',
+              background: active === item.id ? '#f2f2f2' : 'transparent',
+              color: active === item.id ? '#181717' : '#767676',
               fontSize: '14px', cursor: 'pointer', textAlign: 'left',
-              fontFamily: 'DM Sans, sans-serif', transition: 'all 0.15s', width: '100%',
+              fontFamily: 'Geist, sans-serif', transition: 'all 0.15s', width: '100%',
             }}
-              onMouseEnter={e => { if (active !== item.id) e.currentTarget.style.color = '#888' }}
-              onMouseLeave={e => { if (active !== item.id) e.currentTarget.style.color = '#555' }}
+              onMouseEnter={e => { if (active !== item.id) e.currentTarget.style.color = '#5f5f5f' }}
+              onMouseLeave={e => { if (active !== item.id) e.currentTarget.style.color = '#767676' }}
             >
               <span style={{ fontSize: '14px', width: '16px' }}>{item.icon}</span>
               {item.label}
@@ -1612,35 +1612,35 @@ export default function Dashboard() {
 
         {/* Sidebar usage */}
         <div style={{
-          padding: '14px', background: '#0d0d0d',
-          border: `1px solid ${scansUsed >= scanLimit && !isPaid ? 'rgba(255,68,68,0.2)' : 'rgba(255,255,255,0.05)'}`,
+          padding: '14px', background: '#f7f7f7',
+          border: `1px solid ${scansUsed >= scanLimit && !isPaid ? 'rgba(208,0,0,0.2)' : 'rgba(0,0,0,0.05)'}`,
           borderRadius: '8px',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div style={{ fontSize: '11px', color: '#555' }}>Scans this month</div>
+            <div style={{ fontSize: '11px', color: '#767676' }}>Scans this month</div>
             <div style={{
               fontSize: '10px', padding: '2px 6px', borderRadius: '4px',
-              background: 'rgba(255,255,255,0.04)', color: '#555', fontFamily: 'DM Mono',
+              background: 'rgba(0,0,0,0.04)', color: '#767676', fontFamily: 'Geist Mono',
             }}>{planInfo.label}</div>
           </div>
-          <div style={{ height: '3px', background: '#1a1a1a', borderRadius: '2px', marginBottom: '6px' }}>
+          <div style={{ height: '3px', background: '#ebebeb', borderRadius: '2px', marginBottom: '6px' }}>
             <div style={{
               height: '100%',
               width: isPaid ? '0%' : `${Math.min((scansUsed / scanLimit) * 100, 100)}%`,
-              background: scansUsed >= scanLimit ? '#ff4444' : '#00c853', borderRadius: '2px',
+              background: scansUsed >= scanLimit ? '#d00000' : '#0a7d2c', borderRadius: '2px',
               transition: 'width 0.3s',
             }} />
           </div>
-          <div style={{ fontSize: '11px', color: scansUsed >= scanLimit && !isPaid ? '#ff4444' : '#444', fontFamily: 'DM Mono' }}>
+          <div style={{ fontSize: '11px', color: scansUsed >= scanLimit && !isPaid ? '#d00000' : '#8a8a88', fontFamily: 'Geist Mono' }}>
             {isPaid ? `${scansUsed} / 1000 used` : `${scansUsed} / ${scanLimit} used`}
           </div>
           {scansUsed >= scanLimit && !isPaid && (
             <a href="/#pricing" style={{
               display: 'block', textAlign: 'center', marginTop: '8px',
-              padding: '5px 10px', background: 'rgba(255,68,68,0.1)',
-              border: '1px solid rgba(255,68,68,0.2)', borderRadius: '6px',
-              color: '#ff6666', fontSize: '11px', textDecoration: 'none',
-              fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
+              padding: '5px 10px', background: 'rgba(208,0,0,0.1)',
+              border: '1px solid rgba(208,0,0,0.2)', borderRadius: '6px',
+              color: '#e04b4b', fontSize: '11px', textDecoration: 'none',
+              fontWeight: 600, fontFamily: 'Geist, sans-serif',
             }}>Upgrade →</a>
           )}
         </div>

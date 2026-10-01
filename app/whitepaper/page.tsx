@@ -128,13 +128,13 @@ function AnimatedSection({ section, index }: { section: typeof SECTIONS[0]; inde
     >
       {/* Section eyebrow */}
       <div style={{
-        fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444',
+        fontSize: '11px', fontFamily: 'Geist Mono', color: '#d00000',
         letterSpacing: '2px', marginBottom: '12px',
         display: 'flex', alignItems: 'center', gap: '10px',
         opacity: visible ? 1 : 0,
         transition: `opacity 0.6s ease ${index * 80 + 200}ms`,
       }}>
-        <span style={{ color: '#2a2a2a' }}>{String(index + 1).padStart(2, '0')} ──</span>
+        <span style={{ color: '#e0e0e0' }}>{String(index + 1).padStart(2, '0')} ──</span>
         {section.label.toUpperCase()}
       </div>
 
@@ -148,7 +148,7 @@ function AnimatedSection({ section, index }: { section: typeof SECTIONS[0]; inde
         <div style={{
           position: 'absolute', bottom: '-4px', left: 0,
           height: '1px',
-          background: 'linear-gradient(to right, #ff4444, transparent)',
+          background: 'linear-gradient(to right, #d00000, transparent)',
           width: visible ? '100%' : '0%',
           transition: `width 0.8s cubic-bezier(0.16,1,0.3,1) ${index * 80 + 400}ms`,
         }} />
@@ -162,13 +162,13 @@ function AnimatedSection({ section, index }: { section: typeof SECTIONS[0]; inde
             <div key={j} style={{
               margin: '20px 0',
               padding: '20px 24px',
-              background: '#080808',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderLeft: '2px solid rgba(255,68,68,0.4)',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.06)',
+              borderLeft: '2px solid rgba(208,0,0,0.4)',
               borderRadius: '8px',
-              fontFamily: 'DM Mono',
+              fontFamily: 'Geist Mono',
               fontSize: '13px',
-              color: '#666',
+              color: '#6b6b6b',
               lineHeight: 2,
               whiteSpace: 'pre-line',
               opacity: visible ? 1 : 0,
@@ -182,7 +182,7 @@ function AnimatedSection({ section, index }: { section: typeof SECTIONS[0]; inde
                 position: 'absolute', top: 0, left: 0,
                 width: visible ? '100%' : '0%',
                 height: '1px',
-                background: 'linear-gradient(to right, transparent, rgba(255,68,68,0.3), transparent)',
+                background: 'linear-gradient(to right, transparent, rgba(208,0,0,0.3), transparent)',
                 transition: `width 1s ease ${index * 80 + 500}ms`,
               }} />
               {para}
@@ -191,7 +191,7 @@ function AnimatedSection({ section, index }: { section: typeof SECTIONS[0]; inde
         }
         return (
           <p key={j} style={{
-            fontSize: '15px', color: '#555', lineHeight: 1.9, marginBottom: '20px',
+            fontSize: '15px', color: '#767676', lineHeight: 1.9, marginBottom: '20px',
             opacity: visible ? 1 : 0,
             transition: `opacity 0.7s ease ${index * 80 + j * 100 + 200}ms`,
           }}>
@@ -223,8 +223,8 @@ function HeroCounter({ value, label }: { value: string; label: string }) {
 
   return (
     <div>
-      <div style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>{displayed}</div>
-      <div style={{ fontSize: '11px', color: '#444', marginTop: '2px' }}>{label}</div>
+      <div style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'Geist Mono', color: '#181717' }}>{displayed}</div>
+      <div style={{ fontSize: '11px', color: '#8a8a88', marginTop: '2px' }}>{label}</div>
     </div>
   )
 }
@@ -258,7 +258,7 @@ export default function WhitepaperPage() {
   }, [])
 
   return (
-    <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
+    <div style={{ background: 'transparent', minHeight: '100vh', color: '#181717', fontFamily: 'Geist, sans-serif' }}>
 
       <style>{`
         @media (max-width: 768px) {
@@ -277,12 +277,12 @@ export default function WhitepaperPage() {
       {/* Reading progress bar */}
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        height: '2px', background: 'rgba(255,255,255,0.05)',
+        height: '2px', background: 'rgba(0,0,0,0.05)',
       }}>
         <div style={{
           height: '100%',
           width: `${scrollProgress}%`,
-          background: 'linear-gradient(to right, #ff4444, #ff8800)',
+          background: 'linear-gradient(to right, #d00000, #c86a00)',
           transition: 'width 0.1s linear',
         }} />
       </div>
@@ -299,11 +299,11 @@ export default function WhitepaperPage() {
           transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
           transition: 'opacity 0.8s ease, transform 0.8s ease',
         }}>
-          <span style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', letterSpacing: '2px' }}>Whitepaper</span>
-          <span style={{ color: '#222' }}>·</span>
-          <span style={{ fontSize: '12px', color: '#333', fontFamily: 'DM Mono' }}>January 20, 2026</span>
-          <span style={{ color: '#222' }}>·</span>
-          <span style={{ fontSize: '12px', color: '#333', fontFamily: 'DM Mono' }}>12 min read</span>
+          <span style={{ fontSize: '11px', fontFamily: 'Geist Mono', color: '#d00000', letterSpacing: '2px' }}>Whitepaper</span>
+          <span style={{ color: '#e4e4e4' }}>·</span>
+          <span style={{ fontSize: '12px', color: '#9a9a98', fontFamily: 'Geist Mono' }}>January 20, 2026</span>
+          <span style={{ color: '#e4e4e4' }}>·</span>
+          <span style={{ fontSize: '12px', color: '#9a9a98', fontFamily: 'Geist Mono' }}>12 min read</span>
         </div>
 
         {/* Title */}
@@ -315,13 +315,13 @@ export default function WhitepaperPage() {
           transition: 'opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s, transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s',
         }}>
           GhostShield Security Research:<br />
-          <span style={{ color: '#333' }}>Securing AI Systems Against</span><br />
+          <span style={{ color: '#9a9a98' }}>Securing AI Systems Against</span><br />
           Prompt Extraction
         </h1>
 
         {/* Subtitle */}
         <p className="wp-subtitle" style={{
-          fontSize: '18px', color: '#555', lineHeight: 1.75, maxWidth: '680px',
+          fontSize: '18px', color: '#767676', lineHeight: 1.75, maxWidth: '680px',
           opacity: heroVisible ? 1 : 0,
           transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
           transition: 'opacity 0.9s ease 0.25s, transform 0.9s ease 0.25s',
@@ -333,7 +333,7 @@ export default function WhitepaperPage() {
         {/* Meta bar */}
         <div style={{
           display: 'flex', gap: '24px', marginTop: '48px', paddingTop: '32px',
-          borderTop: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap',
+          borderTop: '1px solid rgba(0,0,0,0.06)', flexWrap: 'wrap',
           opacity: heroVisible ? 1 : 0,
           transition: 'opacity 0.9s ease 0.4s',
         }}>
@@ -363,7 +363,7 @@ export default function WhitepaperPage() {
         {/* Left — sticky nav */}
         <nav className="wp-nav" style={{ position: 'sticky', top: '80px', paddingTop: '8px' }}>
           <div style={{
-            fontSize: '11px', color: '#333', fontFamily: 'DM Mono',
+            fontSize: '11px', color: '#9a9a98', fontFamily: 'Geist Mono',
             letterSpacing: '1px', marginBottom: '16px',
           }}>CONTENTS</div>
 
@@ -373,18 +373,18 @@ export default function WhitepaperPage() {
               <a key={s.id} href={`#${s.id}`} style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
                 fontSize: '13px',
-                color: isActive ? '#f5f5f5' : '#444',
+                color: isActive ? '#181717' : '#8a8a88',
                 textDecoration: 'none', padding: '5px 0',
                 transition: 'color 0.2s',
-                borderLeft: `2px solid ${isActive ? '#ff4444' : 'transparent'}`,
+                borderLeft: `2px solid ${isActive ? '#d00000' : 'transparent'}`,
                 paddingLeft: '10px', marginLeft: '-10px',
               }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#888' }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#444' }}
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#5f5f5f' }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#8a8a88' }}
               >
                 <span style={{
-                  fontFamily: 'DM Mono', fontSize: '10px',
-                  color: isActive ? '#ff4444' : '#333',
+                  fontFamily: 'Geist Mono', fontSize: '10px',
+                  color: isActive ? '#d00000' : '#9a9a98',
                   transition: 'color 0.2s',
                 }}>
                   {String(i + 1).padStart(2, '0')}
@@ -394,10 +394,10 @@ export default function WhitepaperPage() {
             )
           })}
 
-          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
             <a href="/dashboard" style={{
               display: 'block', fontSize: '12px',
-              background: '#ff4444', color: 'white',
+              background: '#d00000', color: 'white',
               padding: '9px 14px', borderRadius: '6px',
               textDecoration: 'none', textAlign: 'center', fontWeight: 500,
               transition: 'opacity 0.2s',
@@ -417,8 +417,8 @@ export default function WhitepaperPage() {
           {/* Final CTA */}
           <div style={{
             marginTop: '24px', padding: '32px 36px',
-            background: 'rgba(255,68,68,0.04)',
-            border: '1px solid rgba(255,68,68,0.14)',
+            background: 'rgba(208,0,0,0.04)',
+            border: '1px solid rgba(208,0,0,0.14)',
             borderRadius: '12px',
             position: 'relative', overflow: 'hidden',
           }}>
@@ -426,19 +426,19 @@ export default function WhitepaperPage() {
             <div style={{
               position: 'absolute', top: 0, right: 0,
               width: '120px', height: '120px',
-              background: 'radial-gradient(circle at top right, rgba(255,68,68,0.08), transparent 70%)',
+              background: 'radial-gradient(circle at top right, rgba(208,0,0,0.08), transparent 70%)',
               pointerEvents: 'none',
             }} />
             <div style={{ fontSize: '18px', fontWeight: 700, marginBottom: '10px', letterSpacing: '-0.3px' }}>
               Test your system prompt now.
             </div>
-            <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.7, marginBottom: '20px' }}>
+            <p style={{ fontSize: '14px', color: '#767676', lineHeight: 1.7, marginBottom: '20px' }}>
               GhostShield runs all 88 probes in under 10 minutes and delivers a scored report
               with evidence and actionable fixes. No setup required.
             </p>
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <a href="/dashboard" style={{
-                padding: '10px 22px', background: '#ff4444', color: 'white',
+                padding: '10px 22px', background: '#d00000', color: 'white',
                 borderRadius: '7px', textDecoration: 'none', fontSize: '14px',
                 fontWeight: 500, transition: 'opacity 0.2s, transform 0.2s',
               }}
@@ -446,13 +446,13 @@ export default function WhitepaperPage() {
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
               >Start Free Scan →</a>
               <a href="/contact" style={{
-                padding: '10px 22px', color: '#666',
-                border: '1px solid rgba(255,255,255,0.1)',
+                padding: '10px 22px', color: '#6b6b6b',
+                border: '1px solid rgba(0,0,0,0.1)',
                 borderRadius: '7px', textDecoration: 'none', fontSize: '14px',
                 transition: 'all 0.2s',
               }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#f5f5f5'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#181717'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.25)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#6b6b6b'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.1)' }}
               >Contact Sales</a>
             </div>
           </div>

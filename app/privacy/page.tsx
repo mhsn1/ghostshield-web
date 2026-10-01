@@ -50,7 +50,7 @@ const SECTIONS = [
 
 export default function PrivacyPage() {
   return (
-    <div style={{ background: '#000', minHeight: '100vh', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' }}>
+    <div style={{ background: '#ffffff', minHeight: '100vh', color: '#181717', fontFamily: 'Geist, sans-serif' }}>
       <Navbar />
       <style>{`
         @media (max-width: 768px) {
@@ -61,24 +61,24 @@ export default function PrivacyPage() {
       <div className="legal-wrap" style={{ maxWidth: '780px', margin: '0 auto', padding: '140px 80px 120px' }}>
         {/* Header */}
         <div style={{ marginBottom: '64px' }}>
-          <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', letterSpacing: '2px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '11px', fontFamily: 'Geist Mono', color: '#d00000', letterSpacing: '2px', marginBottom: '16px' }}>
             LEGAL
           </div>
           <h1 style={{ fontSize: '48px', fontWeight: 700, letterSpacing: '-1.5px', marginBottom: '16px' }}>
             Privacy Policy
           </h1>
-          <p style={{ fontSize: '14px', color: '#444', fontFamily: 'DM Mono' }}>
+          <p style={{ fontSize: '14px', color: '#8a8a88', fontFamily: 'Geist Mono' }}>
             Last updated: January 20, 2026
           </p>
         </div>
 
         {/* Commitment box */}
         <div style={{
-          padding: '20px 24px', background: 'rgba(0,200,83,0.04)',
-          border: '1px solid rgba(0,200,83,0.12)', borderRadius: '8px', marginBottom: '56px',
+          padding: '20px 24px', background: 'rgba(10,125,44,0.04)',
+          border: '1px solid rgba(10,125,44,0.12)', borderRadius: '8px', marginBottom: '56px',
         }}>
-          <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.8, margin: 0 }}>
-            <span style={{ color: '#00c853', fontWeight: 600 }}>Our core commitment:</span>{' '}
+          <p style={{ fontSize: '14px', color: '#767676', lineHeight: 1.8, margin: 0 }}>
+            <span style={{ color: '#0a7d2c', fontWeight: 600 }}>Our core commitment:</span>{' '}
             Your system prompts are never stored. Scan results are private to your account.
             We do not sell data. We do not use your content to train models.
           </p>
@@ -92,19 +92,19 @@ export default function PrivacyPage() {
               <section key={s.title}>
                 <h2 style={{
                   fontSize: '16px', fontWeight: 600, marginBottom: '12px',
-                  color: '#f5f5f5', letterSpacing: '-0.2px',
+                  color: '#181717', letterSpacing: '-0.2px',
                 }}>{s.title}</h2>
                 {hasBlock ? (
                   <div className="legal-block" style={{
-                    padding: '16px 20px', background: '#080808',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    borderLeft: '3px solid rgba(255,68,68,0.2)',
-                    borderRadius: '8px', fontFamily: 'DM Mono',
-                    fontSize: '13px', color: '#555', lineHeight: 2,
+                    padding: '16px 20px', background: '#ffffff',
+                    border: '1px solid rgba(0,0,0,0.06)',
+                    borderLeft: '3px solid rgba(208,0,0,0.2)',
+                    borderRadius: '8px', fontFamily: 'Geist Mono',
+                    fontSize: '13px', color: '#767676', lineHeight: 2,
                     whiteSpace: 'pre-line',
                   }}>{s.body}</div>
                 ) : (
-                  <p style={{ fontSize: '14px', color: '#555', lineHeight: 1.9, margin: 0 }}>{s.body}</p>
+                  <p style={{ fontSize: '14px', color: '#767676', lineHeight: 1.9, margin: 0 }}>{s.body}</p>
                 )}
               </section>
             )

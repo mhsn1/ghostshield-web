@@ -5,48 +5,9 @@ import { useEffect, useRef, useState } from 'react'
  * Soft red spotlight that follows the cursor (desktop / fine-pointer only).
  * Uses `mix-blend-mode: screen` so it only *adds* light — never muddies text.
  */
+// Removed for the clean light theme — kept as a no-op so existing imports work.
 export function SpotlightCursor() {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return // skip on touch
-    const el = ref.current
-    if (!el) return
-    let raf = 0
-    const move = (e: MouseEvent) => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        el.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
-        el.style.opacity = '1'
-      })
-    }
-    const leave = () => { el.style.opacity = '0' }
-    window.addEventListener('mousemove', move)
-    document.addEventListener('mouseleave', leave)
-    return () => {
-      window.removeEventListener('mousemove', move)
-      document.removeEventListener('mouseleave', leave)
-      cancelAnimationFrame(raf)
-    }
-  }, [])
-
-  return (
-    <div
-      ref={ref}
-      aria-hidden
-      style={{
-        position: 'fixed', top: 0, left: 0, width: 0, height: 0, zIndex: 40,
-        pointerEvents: 'none', opacity: 0, transition: 'opacity 0.3s ease',
-        willChange: 'transform',
-      }}
-    >
-      <div style={{
-        position: 'absolute', width: '540px', height: '540px',
-        left: '-270px', top: '-270px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,68,68,0.12) 0%, rgba(255,68,68,0.045) 32%, transparent 66%)',
-        mixBlendMode: 'screen',
-      }} />
-    </div>
-  )
+  return null
 }
 
 /**
@@ -113,59 +74,13 @@ export function ScrollProgress() {
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '2px', zIndex: 200, pointerEvents: 'none' }}>
       <div ref={ref} style={{
         height: '100%', width: '100%', transformOrigin: '0 50%', transform: 'scaleX(0)',
-        background: 'linear-gradient(90deg, #ff4444, #ff8800)',
-        boxShadow: '0 0 10px rgba(255,68,68,0.6)',
+        background: '#d00000',
       }} />
     </div>
   )
 }
 
-/** Subtle animated "constellation" particle network for the hero background. */
+// Removed for the clean light theme — kept as a no-op so existing imports work.
 export function HeroParticles() {
-  const ref = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
-    const canvas = ref.current
-    if (!canvas) return
-    if (window.matchMedia('(pointer: coarse)').matches) return // skip heavy anim on phones
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    let raf = 0, w = 0, h = 0
-    const dots: { x: number; y: number; vx: number; vy: number }[] = []
-    const resize = () => {
-      const p = canvas.parentElement
-      w = canvas.width = p ? p.clientWidth : window.innerWidth
-      h = canvas.height = p ? p.clientHeight : window.innerHeight
-    }
-    resize()
-    const COUNT = Math.max(24, Math.min(64, Math.floor(w / 22)))
-    for (let i = 0; i < COUNT; i++) {
-      dots.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.28 })
-    }
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h)
-      for (const d of dots) {
-        d.x += d.vx; d.y += d.vy
-        if (d.x < 0) d.x = w; if (d.x > w) d.x = 0
-        if (d.y < 0) d.y = h; if (d.y > h) d.y = 0
-        ctx.beginPath(); ctx.arc(d.x, d.y, 1.2, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(255,68,68,0.35)'; ctx.fill()
-      }
-      for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
-          const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < 120) {
-            ctx.strokeStyle = `rgba(255,68,68,${0.12 * (1 - dist / 120)})`
-            ctx.lineWidth = 1
-            ctx.beginPath(); ctx.moveTo(dots[i].x, dots[i].y); ctx.lineTo(dots[j].x, dots[j].y); ctx.stroke()
-          }
-        }
-      }
-      raf = requestAnimationFrame(draw)
-    }
-    draw()
-    window.addEventListener('resize', resize)
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
-  }, [])
-  return <canvas ref={ref} aria-hidden style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.55 }} />
+  return null
 }

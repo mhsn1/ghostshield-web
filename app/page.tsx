@@ -41,10 +41,10 @@ const CATEGORIES = [
 ]
 
 const SEVERITY_COLOR: Record<string, string> = {
-  critical: '#ff4444',
-  high: '#ff8800',
-  medium: '#ffab00',
-  low: '#00c853',
+  critical: '#d00000',
+  high: '#c86a00',
+  medium: '#b26b00',
+  low: '#0a7d2c',
 }
 
 interface PricingPlan {
@@ -92,14 +92,14 @@ const TERMINAL_LINES = [
   { text: '', delay: 1400 },
   { text: '  ━━━━━━━━━━━━━━━━━━━━━━━━━━  Running probes  ━━━', delay: 1600, dim: true },
   { text: '', delay: 1900 },
-  { text: '  ● [PERSONA]      ████████████████░░░░  testing...', delay: 2200, color: '#ff4444' },
-  { text: '  ● [ENCODING]     ████████████░░░░░░░░  testing...', delay: 2700, color: '#ff8800' },
-  { text: '  ● [TECHNICAL]    ██████████░░░░░░░░░░  testing...', delay: 3100, color: '#ff8800' },
-  { text: '  ● [MULTILINGUAL] ███████░░░░░░░░░░░░░  testing...', delay: 3500, color: '#ffab00' },
+  { text: '  ● [PERSONA]      ████████████████░░░░  testing...', delay: 2200, color: '#d00000' },
+  { text: '  ● [ENCODING]     ████████████░░░░░░░░  testing...', delay: 2700, color: '#c86a00' },
+  { text: '  ● [TECHNICAL]    ██████████░░░░░░░░░░  testing...', delay: 3100, color: '#c86a00' },
+  { text: '  ● [MULTILINGUAL] ███████░░░░░░░░░░░░░  testing...', delay: 3500, color: '#b26b00' },
   { text: '', delay: 3900 },
   { text: '  Evaluator LLM reviewing responses...', delay: 4200, dim: true },
   { text: '', delay: 4600 },
-  { text: '  ✓ Scan complete. Results saved to report.json', delay: 5000, color: '#00c853' },
+  { text: '  ✓ Scan complete. Results saved to report.json', delay: 5000, color: '#0a7d2c' },
 ]
 
 // ── MetaMask Payment ──────────────────────────────────────────────────────────
@@ -258,20 +258,20 @@ function PayButton({ amount, highlight }: { amount: number; highlight: boolean }
         onClick={() => setShowModal(true)}
         style={{
           display: 'block', width: '100%', textAlign: 'center', padding: '11px',
-          background: highlight ? '#ff4444' : 'transparent',
-          color: highlight ? 'white' : '#888',
-          border: highlight ? 'none' : '1px solid rgba(255,255,255,0.1)',
+          background: highlight ? '#d00000' : 'transparent',
+          color: highlight ? 'white' : '#5f5f5f',
+          border: highlight ? 'none' : '1px solid rgba(0,0,0,0.1)',
           borderRadius: '6px', fontSize: '14px', fontWeight: 500,
           cursor: 'pointer', transition: 'all 0.2s',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Geist, sans-serif',
         }}
         onMouseEnter={e => {
           if (highlight) e.currentTarget.style.opacity = '0.85'
-          else { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.color = '#f5f5f5' }
+          else { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = '#181717' }
         }}
         onMouseLeave={e => {
           e.currentTarget.style.opacity = '1'
-          if (!highlight) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#888' }
+          if (!highlight) { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.1)'; e.currentTarget.style.color = '#5f5f5f' }
         }}
       >
         Pay {amount} USDC →
@@ -283,7 +283,7 @@ function PayButton({ amount, highlight }: { amount: number; highlight: boolean }
           onClick={() => setShowModal(false)}
           style={{
             position: 'fixed', inset: 0, zIndex: 1000,
-            background: 'rgba(0,0,0,0.8)',
+            background: '#eef0f1',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             backdropFilter: 'blur(4px)',
           }}
@@ -292,29 +292,29 @@ function PayButton({ amount, highlight }: { amount: number; highlight: boolean }
           <div
             onClick={e => e.stopPropagation()}
             style={{
-              background: '#111', border: '1px solid rgba(255,255,255,0.1)',
+              background: '#f2f2f2', border: '1px solid rgba(0,0,0,0.1)',
               borderRadius: '16px', padding: '32px', width: '420px',
-              boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+              boxShadow: '0 24px 80px #eef0f1',
             }}
           >
             {/* Header */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#f5f5f5', margin: 0 }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#181717', margin: 0 }}>
                   Pay with USDC
                 </h3>
                 <button
                   onClick={() => setShowModal(false)}
-                  style={{ background: 'none', border: 'none', color: '#555', fontSize: '20px', cursor: 'pointer', lineHeight: 1 }}
+                  style={{ background: 'none', border: 'none', color: '#767676', fontSize: '20px', cursor: 'pointer', lineHeight: 1 }}
                 >×</button>
               </div>
-              <p style={{ fontSize: '14px', color: '#555', margin: 0, fontFamily: 'DM Mono' }}>
+              <p style={{ fontSize: '14px', color: '#767676', margin: 0, fontFamily: 'Geist Mono' }}>
                 {amount} USDC / month
               </p>
             </div>
 
             {/* Network label */}
-            <p style={{ fontSize: '13px', color: '#666', marginBottom: '16px' }}>
+            <p style={{ fontSize: '13px', color: '#6b6b6b', marginBottom: '16px' }}>
               Select a network to pay on:
             </p>
 
@@ -325,21 +325,21 @@ function PayButton({ amount, highlight }: { amount: number; highlight: boolean }
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 width: '100%', padding: '16px 20px', marginBottom: '10px',
-                background: loading === 'eth' ? 'rgba(98,126,234,0.1)' : '#0d0d0d',
+                background: loading === 'eth' ? 'rgba(98,126,234,0.1)' : '#f7f7f7',
                 border: '1px solid rgba(98,126,234,0.3)',
                 borderRadius: '10px', cursor: loading ? 'wait' : 'pointer',
-                transition: 'all 0.2s', fontFamily: 'DM Sans, sans-serif',
+                transition: 'all 0.2s', fontFamily: 'Geist, sans-serif',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(98,126,234,0.1)'}
-              onMouseLeave={e => { if (loading !== 'eth') e.currentTarget.style.background = '#0d0d0d' }}
+              onMouseLeave={e => { if (loading !== 'eth') e.currentTarget.style.background = '#f7f7f7' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ width: 36, height: 36, borderRadius: '8px', background: 'rgba(98,126,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>⟠</div>
-                <span style={{ fontSize: '15px', fontWeight: 500, color: '#f5f5f5' }}>
+                <span style={{ fontSize: '15px', fontWeight: 500, color: '#181717' }}>
                   {loading === 'eth' ? 'Opening MetaMask...' : 'Ethereum'}
                 </span>
               </div>
-              <span style={{ fontSize: '14px', color: '#888', fontFamily: 'DM Mono' }}>{amount} USDC</span>
+              <span style={{ fontSize: '14px', color: '#5f5f5f', fontFamily: 'Geist Mono' }}>{amount} USDC</span>
             </button>
 
             {/* Base */}
@@ -349,21 +349,21 @@ function PayButton({ amount, highlight }: { amount: number; highlight: boolean }
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 width: '100%', padding: '16px 20px', marginBottom: '10px',
-                background: loading === 'base' ? 'rgba(0,82,255,0.1)' : '#0d0d0d',
+                background: loading === 'base' ? 'rgba(0,82,255,0.1)' : '#f7f7f7',
                 border: '1px solid rgba(0,82,255,0.3)',
                 borderRadius: '10px', cursor: loading ? 'wait' : 'pointer',
-                transition: 'all 0.2s', fontFamily: 'DM Sans, sans-serif',
+                transition: 'all 0.2s', fontFamily: 'Geist, sans-serif',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,82,255,0.1)'}
-              onMouseLeave={e => { if (loading !== 'base') e.currentTarget.style.background = '#0d0d0d' }}
+              onMouseLeave={e => { if (loading !== 'base') e.currentTarget.style.background = '#f7f7f7' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ width: 36, height: 36, borderRadius: '8px', background: 'rgba(0,82,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>🔵</div>
-                <span style={{ fontSize: '15px', fontWeight: 500, color: '#f5f5f5' }}>
+                <span style={{ fontSize: '15px', fontWeight: 500, color: '#181717' }}>
                   {loading === 'base' ? 'Opening MetaMask...' : 'Base'}
                 </span>
               </div>
-              <span style={{ fontSize: '14px', color: '#888', fontFamily: 'DM Mono' }}>{amount} USDC</span>
+              <span style={{ fontSize: '14px', color: '#5f5f5f', fontFamily: 'Geist Mono' }}>{amount} USDC</span>
             </button>
 
             {/* Solana */}
@@ -373,25 +373,25 @@ function PayButton({ amount, highlight }: { amount: number; highlight: boolean }
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 width: '100%', padding: '16px 20px', marginBottom: '10px',
-                background: loading === 'sol' ? 'rgba(153,69,255,0.1)' : '#0d0d0d',
+                background: loading === 'sol' ? 'rgba(153,69,255,0.1)' : '#f7f7f7',
                 border: '1px solid rgba(153,69,255,0.3)',
                 borderRadius: '10px', cursor: loading ? 'wait' : 'pointer',
-                transition: 'all 0.2s', fontFamily: 'DM Sans, sans-serif',
+                transition: 'all 0.2s', fontFamily: 'Geist, sans-serif',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(153,69,255,0.1)'}
-              onMouseLeave={e => { if (loading !== 'sol') e.currentTarget.style.background = '#0d0d0d' }}
+              onMouseLeave={e => { if (loading !== 'sol') e.currentTarget.style.background = '#f7f7f7' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ width: 36, height: 36, borderRadius: '8px', background: 'rgba(153,69,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>◎</div>
-                <span style={{ fontSize: '15px', fontWeight: 500, color: '#f5f5f5' }}>
+                <span style={{ fontSize: '15px', fontWeight: 500, color: '#181717' }}>
                   {loading === 'sol' ? 'Opening Phantom...' : 'Solana'}
                 </span>
               </div>
-              <span style={{ fontSize: '14px', color: '#888', fontFamily: 'DM Mono' }}>{amount} USDC</span>
+              <span style={{ fontSize: '14px', color: '#5f5f5f', fontFamily: 'Geist Mono' }}>{amount} USDC</span>
             </button>
 
             {/* Footer note */}
-            <p style={{ fontSize: '12px', color: '#333', textAlign: 'center', marginTop: '16px', marginBottom: 0 }}>
+            <p style={{ fontSize: '12px', color: '#9a9a98', textAlign: 'center', marginTop: '16px', marginBottom: 0 }}>
               Powered by USDC · Payments are non-refundable
             </p>
           </div>
@@ -408,7 +408,7 @@ function USDCBadge() {
       background: 'rgba(99,102,241,0.12)',
       border: '1px solid rgba(99,102,241,0.25)',
       borderRadius: '4px', padding: '2px 7px',
-      fontSize: '10px', fontFamily: 'DM Mono',
+      fontSize: '10px', fontFamily: 'Geist Mono',
       color: '#818cf8', letterSpacing: '0.5px',
     }}>
       ◎ USDC · ETH
@@ -434,10 +434,10 @@ function Terminal() {
 
   return (
     <div style={{
-      background: 'rgba(0,0,0,0.6)',
-      border: '1px solid rgba(255,255,255,0.08)',
+      background: '#eef0f1',
+      border: '1px solid rgba(0,0,0,0.08)',
       borderRadius: '12px', padding: '24px',
-      fontFamily: 'DM Mono, monospace', fontSize: '13px',
+      fontFamily: 'Geist Mono, monospace', fontSize: '13px',
       lineHeight: '1.8', minHeight: '320px',
     }}>
       <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
@@ -449,7 +449,7 @@ function Terminal() {
         <div key={i} style={{
           opacity: visible.includes(i) ? 1 : 0,
           transition: 'opacity 0.4s',
-          color: line.color || (line.dim ? '#444' : '#bbb'),
+          color: line.color || (line.dim ? '#8a8a88' : '#3a3a3a'),
           minHeight: '1.8em',
         }}>
           {line.text}
@@ -509,7 +509,7 @@ const RESULT_MODELS: ResultModel[] = [
     model: 'GPT-4o',
     provider: 'OpenAI',
     badge: 'SECURE' as const,
-    color: '#00c853',
+    color: '#0a7d2c',
     vulns: 0,
     score: 100,
     critical: 0,
@@ -522,7 +522,7 @@ const RESULT_MODELS: ResultModel[] = [
     model: 'Claude 3.5 Sonnet',
     provider: 'Anthropic',
     badge: 'CRITICAL' as const,
-    color: '#ff4444',
+    color: '#d00000',
     vulns: 23,
     score: 74,
     critical: 7,
@@ -535,7 +535,7 @@ const RESULT_MODELS: ResultModel[] = [
     model: 'Gemini 1.5 Pro',
     provider: 'Google DeepMind',
     badge: 'WARNING' as const,
-    color: '#ff8800',
+    color: '#c86a00',
     vulns: 15,
     score: 83,
     critical: 0,
@@ -581,7 +581,7 @@ function ScoreRing({ score, color, size = 64 }: { score: number; color: string; 
     // Track
     ctx.beginPath()
     ctx.arc(cx, cy, r, 0, Math.PI * 2)
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)'
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)'
     ctx.lineWidth = 4
     ctx.stroke()
     // Fill
@@ -595,8 +595,8 @@ function ScoreRing({ score, color, size = 64 }: { score: number; color: string; 
       ctx.stroke()
     }
     // Label
-    ctx.fillStyle = score > 0 ? color : 'rgba(255,255,255,0.15)'
-    ctx.font = `700 13px "DM Mono", monospace`
+    ctx.fillStyle = score > 0 ? color : 'rgba(0,0,0,0.15)'
+    ctx.font = `700 13px "Geist Mono", monospace`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(score > 0 ? String(score) : '—', cx, cy)
@@ -623,12 +623,12 @@ function AnimatedResultCard({
   const [hovered, setHovered] = useState(false)
 
   const rgb =
-    m.color === '#00c853' ? '0,200,83' :
-      m.color === '#ff4444' ? '255,68,68' : '255,136,0'
+    m.color === '#0a7d2c' ? '0,200,83' :
+      m.color === '#d00000' ? '255,68,68' : '255,136,0'
 
   const badgeColor =
-    m.badge === 'SECURE' ? '#00c853' :
-      m.badge === 'CRITICAL' ? '#ff4444' : '#ff8800'
+    m.badge === 'SECURE' ? '#0a7d2c' :
+      m.badge === 'CRITICAL' ? '#d00000' : '#c86a00'
 
   return (
     <div
@@ -640,7 +640,7 @@ function AnimatedResultCard({
         borderRadius: '12px',
         border: `1px solid ${accentLit ? m.color + '44' :
           hovered ? m.color + '22' :
-            'rgba(255,255,255,0.05)'
+            'rgba(0,0,0,0.05)'
           }`,
         background: accentLit
           ? `rgba(${rgb},0.05)`
@@ -670,11 +670,11 @@ function AnimatedResultCard({
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px', position: 'relative' }}>
         <div>
-          <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'DM Mono', marginBottom: '2px', color: '#d0d0d0' }}>{m.model}</div>
-          <div style={{ fontSize: '10px', color: '#444' }}>{m.provider}</div>
+          <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'Geist Mono', marginBottom: '2px', color: '#d0d0d0' }}>{m.model}</div>
+          <div style={{ fontSize: '10px', color: '#8a8a88' }}>{m.provider}</div>
         </div>
         <div style={{
-          fontSize: '8px', fontFamily: 'DM Mono', fontWeight: 700,
+          fontSize: '8px', fontFamily: 'Geist Mono', fontWeight: 700,
           padding: '2px 7px', borderRadius: '3px',
           background: badgeColor + '12',
           border: `1px solid ${badgeColor}${accentLit ? '55' : '25'}`,
@@ -692,13 +692,13 @@ function AnimatedResultCard({
           <ScoreRing score={accentLit ? scoreCount : 0} color={m.color} size={64} />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', flex: 1 }}>
-          <div style={{ padding: '6px 8px', background: '#0f0f0f', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)' }}>
-            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: m.color }}>{vulnCount}</div>
-            <div style={{ fontSize: '9px', color: '#444', marginTop: '1px' }}>Vulns</div>
+          <div style={{ padding: '6px 8px', background: '#f5f5f5', borderRadius: '6px', border: '1px solid rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'Geist Mono', color: m.color }}>{vulnCount}</div>
+            <div style={{ fontSize: '9px', color: '#8a8a88', marginTop: '1px' }}>Vulns</div>
           </div>
-          <div style={{ padding: '6px 8px', background: '#0f0f0f', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)' }}>
-            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5' }}>88</div>
-            <div style={{ fontSize: '9px', color: '#444', marginTop: '1px' }}>Probes</div>
+          <div style={{ padding: '6px 8px', background: '#f5f5f5', borderRadius: '6px', border: '1px solid rgba(0,0,0,0.04)' }}>
+            <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'Geist Mono', color: '#181717' }}>88</div>
+            <div style={{ fontSize: '9px', color: '#8a8a88', marginTop: '1px' }}>Probes</div>
           </div>
         </div>
       </div>
@@ -709,32 +709,32 @@ function AnimatedResultCard({
           {m.critical > 0 && (
             <div style={{
               width: accentLit ? `${(m.critical / 88) * 100}%` : '0%',
-              background: '#ff4444', borderRadius: '1px',
+              background: '#d00000', borderRadius: '1px',
               transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 200ms',
             }} />
           )}
           <div style={{
             width: accentLit ? `${(m.high / 88) * 100}%` : '0%',
-            background: '#ff8800', borderRadius: '1px',
+            background: '#c86a00', borderRadius: '1px',
             transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 300ms',
           }} />
           <div style={{
             width: accentLit ? `${(m.medium / 88) * 100}%` : '0%',
-            background: '#ffab00', borderRadius: '1px',
+            background: '#b26b00', borderRadius: '1px',
             transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 400ms',
           }} />
           <div style={{
             width: accentLit ? `${(m.low / 88) * 100}%` : '0%',
-            background: '#00c853', borderRadius: '1px',
+            background: '#0a7d2c', borderRadius: '1px',
             transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 500ms',
           }} />
-          <div style={{ flex: 1, background: '#1a1a1a', borderRadius: '1px' }} />
+          <div style={{ flex: 1, background: '#ebebeb', borderRadius: '1px' }} />
         </div>
-        <div style={{ display: 'flex', gap: '8px', fontSize: '9px', fontFamily: 'DM Mono' }}>
-          {m.critical > 0 && <span style={{ color: '#ff4444' }}>{m.critical} crit</span>}
-          <span style={{ color: '#ff8800' }}>{m.high} high</span>
-          <span style={{ color: '#ffab00' }}>{m.medium} med</span>
-          <span style={{ color: '#00c853' }}>{m.low} low</span>
+        <div style={{ display: 'flex', gap: '8px', fontSize: '9px', fontFamily: 'Geist Mono' }}>
+          {m.critical > 0 && <span style={{ color: '#d00000' }}>{m.critical} crit</span>}
+          <span style={{ color: '#c86a00' }}>{m.high} high</span>
+          <span style={{ color: '#b26b00' }}>{m.medium} med</span>
+          <span style={{ color: '#0a7d2c' }}>{m.low} low</span>
         </div>
       </div>
 
@@ -750,14 +750,14 @@ function AnimatedResultCard({
       {/* Finding */}
       <div style={{
         padding: '7px 9px',
-        background: 'rgba(255,68,68,0.04)',
-        border: '1px solid rgba(255,68,68,0.08)',
-        borderLeft: '2px solid #ff444455',
+        background: 'rgba(208,0,0,0.04)',
+        border: '1px solid rgba(208,0,0,0.08)',
+        borderLeft: '2px solid #d0000055',
         borderRadius: '4px',
-        fontFamily: 'DM Mono', fontSize: '9px', color: '#ff6666', lineHeight: 1.6,
+        fontFamily: 'Geist Mono', fontSize: '9px', color: '#e04b4b', lineHeight: 1.6,
         position: 'relative',
       }}>
-        <span style={{ color: '#ff4444', marginRight: '5px' }}>●</span>
+        <span style={{ color: '#d00000', marginRight: '5px' }}>●</span>
         {m.finding}
       </div>
     </div>
@@ -834,33 +834,33 @@ function AnimatedResults() {
   const srcIcons = [
     // Social engineering — person icon
     <svg key="social" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
-      <circle cx="8" cy="5" r="3" stroke="#00c853" strokeWidth="1.2" />
-      <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" stroke="#00c853" strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="8" cy="5" r="3" stroke="#0a7d2c" strokeWidth="1.2" />
+      <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" stroke="#0a7d2c" strokeWidth="1.2" strokeLinecap="round" />
     </svg>,
     // Technical — terminal/monitor icon
     <svg key="tech" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
-      <rect x="2" y="3" width="12" height="8" rx="2" stroke="#00c853" strokeWidth="1.2" />
-      <path d="M5 14h6M8 11v3" stroke="#00c853" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M5 7h2M9 7h2" stroke="#00c853" strokeWidth="1.2" strokeLinecap="round" />
+      <rect x="2" y="3" width="12" height="8" rx="2" stroke="#0a7d2c" strokeWidth="1.2" />
+      <path d="M5 14h6M8 11v3" stroke="#0a7d2c" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M5 7h2M9 7h2" stroke="#0a7d2c" strokeWidth="1.2" strokeLinecap="round" />
     </svg>,
     // Persona — star/actor icon
     <svg key="persona" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
       <path d="M8 2L10 6H14L11 9L12.5 13L8 10.5L3.5 13L5 9L2 6H6L8 2Z"
-        stroke="#00c853" strokeWidth="1.2" strokeLinejoin="round" />
+        stroke="#0a7d2c" strokeWidth="1.2" strokeLinejoin="round" />
     </svg>,
   ]
 
   const srcLabels = ['Social Eng.', 'Technical', 'Persona']
   const srcStats = ['24 probes · 3 failed', '38 probes · 12 failed', '26 probes · 8 failed']
 
-  const cardColors = ['#00c853', '#ff4444', '#ff8800']
+  const cardColors = ['#0a7d2c', '#d00000', '#c86a00']
 
   return (
     <section
       ref={sectionRef}
       style={{
         padding: '100px 80px',
-        borderTop: '1px solid rgba(255,255,255,0.04)',
+        borderTop: '1px solid rgba(0,0,0,0.04)',
         background: 'transparent',
         position: 'relative',
         overflow: 'hidden',
@@ -871,7 +871,7 @@ function AnimatedResults() {
         position: 'absolute', top: '50%', left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '900px', height: '500px',
-        background: 'radial-gradient(ellipse, rgba(255,68,68,0.03), transparent 70%)',
+        background: 'radial-gradient(ellipse, rgba(208,0,0,0.03), transparent 70%)',
         pointerEvents: 'none',
       }} />
 
@@ -886,12 +886,12 @@ function AnimatedResults() {
         }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
-            fontSize: '11px', fontFamily: 'DM Mono', color: '#555',
+            fontSize: '11px', fontFamily: 'Geist Mono', color: '#767676',
             letterSpacing: '2px', marginBottom: '16px',
           }}>
             <span style={{
               display: 'inline-block', width: '6px', height: '6px',
-              borderRadius: '50%', background: '#ff4444',
+              borderRadius: '50%', background: '#d00000',
               animation: isVisible ? 'pulse 2s ease-in-out infinite' : 'none',
             }} />
             VERIFIED RESULTS
@@ -899,9 +899,9 @@ function AnimatedResults() {
           <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '14px' }}>
             Real scans. Real vulnerabilities.
           </h2>
-          <p style={{ fontSize: '15px', color: '#555', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7 }}>
+          <p style={{ fontSize: '15px', color: '#767676', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7 }}>
             Every score computed live —{' '}
-            <span style={{ color: '#888', fontFamily: 'DM Mono', fontSize: '13px' }}>
+            <span style={{ color: '#5f5f5f', fontFamily: 'Geist Mono', fontSize: '13px' }}>
               score = 100 − (vulns ÷ 88) × 100
             </span>
           </p>
@@ -934,24 +934,24 @@ function AnimatedResults() {
                 display: 'flex', alignItems: 'center', gap: '8px',
                 padding: '7px 9px',
                 borderRadius: '8px',
-                border: `1px solid ${isLit(`src${i}`) ? '#00c853' : 'rgba(255,255,255,0.06)'}`,
-                background: isLit(`src${i}`) ? 'rgba(0,200,83,0.07)' : 'rgba(255,255,255,0.02)',
-                boxShadow: isLit(`src${i}`) ? '0 0 12px rgba(0,200,83,0.18)' : 'none',
+                border: `1px solid ${isLit(`src${i}`) ? '#0a7d2c' : 'rgba(0,0,0,0.06)'}`,
+                background: isLit(`src${i}`) ? 'rgba(10,125,44,0.07)' : 'rgba(0,0,0,0.02)',
+                boxShadow: isLit(`src${i}`) ? '0 0 12px rgba(10,125,44,0.18)' : 'none',
                 transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
               }}>
                 <div style={{
                   width: '26px', height: '26px', borderRadius: '5px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'rgba(0,200,83,0.05)',
-                  border: '1px solid rgba(0,200,83,0.12)',
+                  background: 'rgba(10,125,44,0.05)',
+                  border: '1px solid rgba(10,125,44,0.12)',
                   flexShrink: 0,
                 }}>
                   {icon}
                 </div>
                 <div>
                   <div style={{
-                    fontSize: '10px', fontWeight: 600, fontFamily: 'DM Mono',
-                    color: isLit(`src${i}`) ? '#00c853' : '#ccc',
+                    fontSize: '10px', fontWeight: 600, fontFamily: 'Geist Mono',
+                    color: isLit(`src${i}`) ? '#0a7d2c' : '#333333',
                     letterSpacing: '0.5px', marginBottom: '2px',
                     transition: 'color 0.4s',
                   }}>
@@ -959,7 +959,7 @@ function AnimatedResults() {
                   </div>
                   <div style={{
                     fontSize: '9px',
-                    color: isLit(`src${i}`) ? 'rgba(0,200,83,0.55)' : '#555',
+                    color: isLit(`src${i}`) ? 'rgba(10,125,44,0.55)' : '#767676',
                     transition: 'color 0.4s',
                   }}>
                     {srcStats[i]}
@@ -974,8 +974,8 @@ function AnimatedResults() {
             <div style={{
               width: '100%', height: '1px',
               background: srcArrowLit
-                ? 'linear-gradient(to right, rgba(0,200,83,0.4), #00c853)'
-                : 'rgba(255,255,255,0.06)',
+                ? 'linear-gradient(to right, rgba(10,125,44,0.4), #0a7d2c)'
+                : 'rgba(0,0,0,0.06)',
               position: 'relative',
               transition: 'background 0.4s',
             }}>
@@ -983,7 +983,7 @@ function AnimatedResults() {
                 position: 'absolute', right: '-5px', top: '-3.5px',
                 borderTop: '4px solid transparent',
                 borderBottom: '4px solid transparent',
-                borderLeft: `6px solid ${srcArrowLit ? '#00c853' : 'rgba(255,255,255,0.1)'}`,
+                borderLeft: `6px solid ${srcArrowLit ? '#0a7d2c' : 'rgba(0,0,0,0.1)'}`,
                 transition: 'border-left-color 0.4s',
               }} />
             </div>
@@ -997,7 +997,7 @@ function AnimatedResults() {
                 width: `${size}px`, height: `${size}px`,
                 top: `${(56 - size) / 2}px`, left: `${(56 - size) / 2}px`,
                 borderRadius: '50%',
-                border: `1px dashed ${isLit('star') ? 'rgba(0,200,83,0.2)' : 'rgba(30,42,30,0.13)'}`,
+                border: `1px dashed ${isLit('star') ? 'rgba(10,125,44,0.2)' : 'rgba(30,42,30,0.13)'}`,
                 animation: `${ri === 0 ? 'spinCw' : 'spinCcw'} ${ri === 0 ? 9 : 14}s linear infinite`,
                 transition: 'border-color 0.4s',
                 pointerEvents: 'none',
@@ -1005,19 +1005,19 @@ function AnimatedResults() {
             ))}
             <div style={{
               width: '56px', height: '56px', borderRadius: '50%',
-              background: isLit('star') ? 'rgba(0,200,83,0.1)' : 'rgba(5,12,5,0.9)',
-              border: `2px solid ${isLit('star') ? '#00c853' : '#1e3a1e'}`,
+              background: isLit('star') ? 'rgba(10,125,44,0.1)' : 'rgba(5,12,5,0.9)',
+              border: `2px solid ${isLit('star') ? '#0a7d2c' : '#1e3a1e'}`,
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center',
               gap: '1px',
-              boxShadow: isLit('star') ? '0 0 24px rgba(0,200,83,0.33), 0 0 48px rgba(0,200,83,0.13)' : 'none',
+              boxShadow: isLit('star') ? '0 0 24px rgba(10,125,44,0.33), 0 0 48px rgba(10,125,44,0.13)' : 'none',
               transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
               position: 'relative', zIndex: 1,
             }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'DM Mono', color: '#00c853', lineHeight: 1 }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'Geist Mono', color: '#0a7d2c', lineHeight: 1 }}>
                 88
               </div>
-              <div style={{ fontSize: '7px', color: isLit('star') ? 'rgba(0,200,83,0.55)' : '#555', letterSpacing: '0.5px', transition: 'color 0.4s' }}>
+              <div style={{ fontSize: '7px', color: isLit('star') ? 'rgba(10,125,44,0.55)' : '#767676', letterSpacing: '0.5px', transition: 'color 0.4s' }}>
                 probes
               </div>
             </div>
@@ -1028,8 +1028,8 @@ function AnimatedResults() {
             <div style={{
               width: '100%', height: '1px',
               background: hubArrowLit
-                ? 'linear-gradient(to right, rgba(255,171,0,0.4), #ffab00)'
-                : 'rgba(255,255,255,0.06)',
+                ? 'linear-gradient(to right, rgba(178,107,0,0.4), #b26b00)'
+                : 'rgba(0,0,0,0.06)',
               position: 'relative',
               transition: 'background 0.4s',
             }}>
@@ -1037,7 +1037,7 @@ function AnimatedResults() {
                 position: 'absolute', right: '-5px', top: '-3.5px',
                 borderTop: '4px solid transparent',
                 borderBottom: '4px solid transparent',
-                borderLeft: `6px solid ${hubArrowLit ? '#ffab00' : 'rgba(255,255,255,0.1)'}`,
+                borderLeft: `6px solid ${hubArrowLit ? '#b26b00' : 'rgba(0,0,0,0.1)'}`,
                 transition: 'border-left-color 0.4s',
               }} />
             </div>
@@ -1046,18 +1046,18 @@ function AnimatedResults() {
           {/* ── Hub node ── */}
           <div style={{
             width: '46px', height: '46px', borderRadius: '50%', flexShrink: 0, alignSelf: 'center',
-            background: isLit('hub') ? 'rgba(255,171,0,0.1)' : 'rgba(10,10,5,0.9)',
-            border: `1.5px solid ${isLit('hub') ? '#ffab00' : '#2a2a10'}`,
+            background: isLit('hub') ? 'rgba(178,107,0,0.1)' : 'rgba(10,10,5,0.9)',
+            border: `1.5px solid ${isLit('hub') ? '#b26b00' : '#edecdf'}`,
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
             gap: '1px',
-            boxShadow: isLit('hub') ? '0 0 16px rgba(255,171,0,0.27)' : 'none',
+            boxShadow: isLit('hub') ? '0 0 16px rgba(178,107,0,0.27)' : 'none',
             transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
           }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'DM Mono', color: '#ffab00', lineHeight: 1 }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'Geist Mono', color: '#b26b00', lineHeight: 1 }}>
               15
             </div>
-            <div style={{ fontSize: '6px', color: isLit('hub') ? 'rgba(255,171,0,0.55)' : '#555', transition: 'color 0.4s' }}>
+            <div style={{ fontSize: '6px', color: isLit('hub') ? 'rgba(178,107,0,0.55)' : '#767676', transition: 'color 0.4s' }}>
               cat.
             </div>
           </div>
@@ -1073,12 +1073,12 @@ function AnimatedResults() {
                   <div style={{ display: 'flex', alignItems: 'center', width: '44px', flexShrink: 0 }}>
                     <div style={{
                       flex: 1, height: '1px',
-                      background: lineLit ? lineColor : 'rgba(255,255,255,0.06)',
+                      background: lineLit ? lineColor : 'rgba(0,0,0,0.06)',
                       transition: 'background 0.4s',
                     }} />
                     <div style={{
                       width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                      background: lineLit ? lineColor : '#1a1a1a',
+                      background: lineLit ? lineColor : '#ebebeb',
                       boxShadow: lineLit ? `0 0 10px ${lineColor}` : 'none',
                       transition: 'all 0.4s',
                       marginLeft: '-1px',
@@ -1100,10 +1100,10 @@ function AnimatedResults() {
         {/* Footer note */}
         <div style={{
           textAlign: 'center', padding: '14px 24px', marginTop: '28px',
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.05)',
+          background: 'rgba(0,0,0,0.02)',
+          border: '1px solid rgba(0,0,0,0.05)',
           borderRadius: '8px',
-          fontSize: '11px', color: '#444', fontFamily: 'DM Mono',
+          fontSize: '11px', color: '#8a8a88', fontFamily: 'Geist Mono',
           opacity: isVisible ? 1 : 0,
           transition: 'opacity 1s ease 1.2s',
         }}>
@@ -1167,14 +1167,14 @@ function FAQ() {
   return (
     <section style={{
       padding: '120px 80px',
-      borderTop: '1px solid rgba(255,255,255,0.04)',
+      borderTop: '1px solid rgba(0,0,0,0.04)',
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Background glow */}
       <div style={{
         position: 'absolute', bottom: '0', left: '50%', transform: 'translateX(-50%)',
         width: '700px', height: '400px',
-        background: 'radial-gradient(ellipse, rgba(255,68,68,0.03) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse, rgba(208,0,0,0.03) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
@@ -1185,7 +1185,7 @@ function FAQ() {
           {/* LEFT — sticky header */}
           <div className="faq-left" style={{ position: 'sticky', top: '80px' }}>
             <div style={{
-              fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444',
+              fontSize: '11px', fontFamily: 'Geist Mono', color: '#d00000',
               letterSpacing: '3px', marginBottom: '20px',
             }}>FAQ</div>
             <h2 style={{
@@ -1193,10 +1193,10 @@ function FAQ() {
               lineHeight: 1.05, marginBottom: '20px',
             }}>
               Frequently<br />
-              <span style={{ color: '#333' }}>Asked</span><br />
+              <span style={{ color: '#9a9a98' }}>Asked</span><br />
               Questions
             </h2>
-            <p style={{ fontSize: '14px', color: '#444', lineHeight: 1.8, marginBottom: '32px' }}>
+            <p style={{ fontSize: '14px', color: '#8a8a88', lineHeight: 1.8, marginBottom: '32px' }}>
               Everything you need to know about GhostShield. Can&apos;t find your answer?
             </p>
             <a
@@ -1204,19 +1204,19 @@ function FAQ() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
                 padding: '10px 18px',
-                background: 'rgba(255,68,68,0.06)',
-                border: '1px solid rgba(255,68,68,0.2)',
+                background: 'rgba(208,0,0,0.06)',
+                border: '1px solid rgba(208,0,0,0.2)',
                 borderRadius: '8px', textDecoration: 'none',
-                fontSize: '13px', color: '#ff6666',
+                fontSize: '13px', color: '#e04b4b',
                 transition: 'all 0.2s',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(255,68,68,0.12)'
-                e.currentTarget.style.borderColor = 'rgba(255,68,68,0.35)'
+                e.currentTarget.style.background = 'rgba(208,0,0,0.12)'
+                e.currentTarget.style.borderColor = 'rgba(208,0,0,0.35)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(255,68,68,0.06)'
-                e.currentTarget.style.borderColor = 'rgba(255,68,68,0.2)'
+                e.currentTarget.style.background = 'rgba(208,0,0,0.06)'
+                e.currentTarget.style.borderColor = 'rgba(208,0,0,0.2)'
               }}
             >
               Email us →
@@ -1233,9 +1233,9 @@ function FAQ() {
                   onMouseEnter={() => setHover(i)}
                   onMouseLeave={() => setHover(null)}
                   style={{
-                    background: isOpen ? 'rgba(255,255,255,0.025)' : (hover === i ? 'rgba(255,255,255,0.015)' : 'transparent'),
-                    border: `1px solid ${isOpen ? 'rgba(255,68,68,0.18)' : (hover === i ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)')}`,
-                    borderLeft: `3px solid ${isOpen ? '#ff4444' : (hover === i ? 'rgba(255,68,68,0.45)' : 'rgba(255,255,255,0.05)')}`,
+                    background: isOpen ? 'rgba(0,0,0,0.025)' : (hover === i ? 'rgba(0,0,0,0.015)' : 'transparent'),
+                    border: `1px solid ${isOpen ? 'rgba(208,0,0,0.18)' : (hover === i ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)')}`,
+                    borderLeft: `3px solid ${isOpen ? '#d00000' : (hover === i ? 'rgba(208,0,0,0.45)' : 'rgba(0,0,0,0.05)')}`,
                     borderRadius: '8px',
                     transition: 'background 0.25s ease, border-color 0.25s ease',
                     overflow: 'hidden',
@@ -1247,20 +1247,20 @@ function FAQ() {
                       width: '100%', background: 'none', border: 'none',
                       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                       padding: '20px 24px', cursor: 'pointer', textAlign: 'left',
-                      fontFamily: 'DM Sans, sans-serif', gap: '16px',
+                      fontFamily: 'Geist, sans-serif', gap: '16px',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
                       <span style={{
-                        fontSize: '11px', fontFamily: 'DM Mono',
-                        color: isOpen ? '#ff4444' : '#333',
+                        fontSize: '11px', fontFamily: 'Geist Mono',
+                        color: isOpen ? '#d00000' : '#9a9a98',
                         minWidth: '24px', transition: 'color 0.2s',
                       }}>
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <span style={{
                         fontSize: '15px', fontWeight: 500,
-                        color: isOpen ? '#f5f5f5' : (hover === i ? '#ccc' : '#888'),
+                        color: isOpen ? '#181717' : (hover === i ? '#333333' : '#5f5f5f'),
                         transition: 'color 0.2s',
                       }}>
                         {faq.q}
@@ -1268,11 +1268,11 @@ function FAQ() {
                     </div>
                     <div style={{
                       width: 24, height: 24, borderRadius: '50%', flexShrink: 0,
-                      border: `1px solid ${isOpen ? 'rgba(255,68,68,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                      border: `1px solid ${isOpen ? 'rgba(208,0,0,0.4)' : 'rgba(0,0,0,0.1)'}`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
                       transition: 'all 0.25s',
-                      color: isOpen ? '#ff4444' : '#444',
+                      color: isOpen ? '#d00000' : '#8a8a88',
                       fontSize: '16px', lineHeight: 1,
                     }}>+</div>
                   </button>
@@ -1290,8 +1290,8 @@ function FAQ() {
                         transition: 'opacity 0.3s ease',
                       }}>
                         <p style={{
-                          fontSize: '14px', color: '#666', lineHeight: 1.85, margin: 0,
-                          borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '16px',
+                          fontSize: '14px', color: '#6b6b6b', lineHeight: 1.85, margin: 0,
+                          borderTop: '1px solid rgba(0,0,0,0.04)', paddingTop: '16px',
                         }}>
                           {faq.a}
                         </p>
@@ -1318,7 +1318,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5' }}>
+    <div style={{ background: 'transparent', minHeight: '100vh', color: '#181717' }}>
 
       <Navbar />
 
@@ -1330,7 +1330,7 @@ export default function Home() {
         <div style={{
           position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)',
           width: '600px', height: '600px',
-          background: 'radial-gradient(circle, rgba(255,68,68,0.05) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(208,0,0,0.05) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
 
@@ -1343,11 +1343,11 @@ export default function Home() {
           <div>
             <div className="hero-badge" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)',
+              background: 'rgba(208,0,0,0.08)', border: '1px solid rgba(208,0,0,0.2)',
               borderRadius: '20px', padding: '4px 12px', marginBottom: '32px',
             }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff4444', animation: 'pulse 2s infinite' }} />
-              <span style={{ fontSize: '12px', color: '#ff4444', fontFamily: 'DM Mono', letterSpacing: '0.5px' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#d00000', animation: 'pulse 2s infinite' }} />
+              <span style={{ fontSize: '12px', color: '#d00000', fontFamily: 'Geist Mono', letterSpacing: '0.5px' }}>
                 FIND THE LEAKS BEFORE ATTACKERS DO
               </span>
             </div>
@@ -1358,17 +1358,17 @@ export default function Home() {
             }}>
               Your AI has<br />
               <span className="gradient-text" style={{ fontWeight: 700 }}>vulnerabilities</span><br />
-              <span style={{ color: '#444' }}>you can&apos;t see.</span>
+              <span style={{ color: '#8a8a88' }}>you can&apos;t see.</span>
             </h1>
 
-            <p className="hero-sub" style={{ fontSize: '17px', color: '#888', lineHeight: 1.7, marginBottom: '40px', maxWidth: '440px' }}>
+            <p className="hero-sub" style={{ fontSize: '17px', color: '#5f5f5f', lineHeight: 1.7, marginBottom: '40px', maxWidth: '440px' }}>
               GhostShield runs 88 real attack probes against your system prompts.
               Not simulations — actual LLM attacks, evaluated by a second AI for accuracy.
             </p>
 
             <div className="hero-cta" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <a href="#pricing" className="btn-primary" style={{
-                background: '#ff4444', color: 'white', padding: '12px 28px',
+                background: '#d00000', color: 'white', padding: '12px 28px',
                 borderRadius: '8px', textDecoration: 'none', fontWeight: 500,
                 fontSize: '15px', transition: 'all 0.3s',
               }}
@@ -1376,23 +1376,23 @@ export default function Home() {
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
               >Get Started</a>
               <a href="https://github.com/mhsn1/ghostshield" target="_blank" style={{
-                color: '#888', padding: '12px 20px', textDecoration: 'none',
+                color: '#5f5f5f', padding: '12px 20px', textDecoration: 'none',
                 fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px',
                 transition: 'color 0.2s',
               }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#f5f5f5')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+                onMouseEnter={e => (e.currentTarget.style.color = '#181717')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#5f5f5f')}
               >View on GitHub →</a>
             </div>
 
             <div className="hero-stats" style={{
               display: 'flex', gap: '32px', marginTop: '56px', paddingTop: '40px',
-              borderTop: '1px solid rgba(255,255,255,0.06)',
+              borderTop: '1px solid rgba(0,0,0,0.06)',
             }}>
               {STATS.map((s, i) => (
                 <div key={s.label} style={{ animationDelay: `${1.2 + i * 0.1}s` }} className="hero-stat-item">
-                  <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'DM Mono', color: '#f5f5f5', marginBottom: '4px' }}><Counter value={s.value} /></div>
-                  <div style={{ fontSize: '12px', color: '#555' }}>{s.label}</div>
+                  <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'Geist Mono', color: '#181717', marginBottom: '4px' }}><Counter value={s.value} /></div>
+                  <div style={{ fontSize: '12px', color: '#767676' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -1405,11 +1405,11 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <ScrollReveal>
             <div style={{ marginBottom: '64px' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>HOW IT WORKS</div>
+              <div style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: '#767676', letterSpacing: '2px', marginBottom: '16px' }}>HOW IT WORKS</div>
               <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Two AIs. One finds the holes.</h2>
             </div>
           </ScrollReveal>
@@ -1421,17 +1421,17 @@ export default function Home() {
             ].map((s, i) => (
               <ScrollReveal key={s.n} delay={i * 150} direction="up">
                 <div className="glass-card" style={{
-                  padding: '40px', background: 'rgba(0,0,0,0.6)',
-                  border: '1px solid rgba(255,255,255,0.04)',
+                  padding: '40px', background: '#eef0f1',
+                  border: '1px solid rgba(0,0,0,0.04)',
                   transition: 'all 0.3s',
                   height: '100%',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,68,68,0.2)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'translateY(0)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(208,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.04)'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
-                  <div style={{ fontSize: '11px', fontFamily: 'DM Mono', color: '#ff4444', marginBottom: '20px' }}>{s.n}</div>
+                  <div style={{ fontSize: '11px', fontFamily: 'Geist Mono', color: '#d00000', marginBottom: '20px' }}>{s.n}</div>
                   <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px' }}>{s.title}</h3>
-                  <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.7 }}>{s.desc}</p>
+                  <p style={{ fontSize: '14px', color: '#6b6b6b', lineHeight: 1.7 }}>{s.desc}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -1440,13 +1440,13 @@ export default function Home() {
       </section>
 
       {/* ATTACK CATEGORIES */}
-      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
           <ScrollReveal direction="left">
             <div>
-              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>ATTACK COVERAGE</div>
+              <div style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: '#767676', letterSpacing: '2px', marginBottom: '16px' }}>ATTACK COVERAGE</div>
               <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '16px' }}>15 categories.<br />88 real attacks.</h2>
-              <p style={{ fontSize: '16px', color: '#666', lineHeight: 1.7, marginBottom: '32px' }}>
+              <p style={{ fontSize: '16px', color: '#6b6b6b', lineHeight: 1.7, marginBottom: '32px' }}>
                 Every probe is a real attack technique documented in security research.
                 No synthetic or made-up attacks — each one has been observed in the wild against production LLM systems.
               </p>
@@ -1454,7 +1454,7 @@ export default function Home() {
                 {Object.entries(SEVERITY_COLOR).map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: v }} />
-                    <span style={{ fontSize: '12px', color: '#555', textTransform: 'capitalize' }}>{k}</span>
+                    <span style={{ fontSize: '12px', color: '#767676', textTransform: 'capitalize' }}>{k}</span>
                   </div>
                 ))}
               </div>
@@ -1468,8 +1468,8 @@ export default function Home() {
                   position: 'relative', overflow: 'hidden',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '12px 16px',
-                  background: activeProbe === i ? '#111' : 'transparent',
-                  border: `1px solid ${activeProbe === i ? 'rgba(255,255,255,0.08)' : 'transparent'}`,
+                  background: activeProbe === i ? '#f2f2f2' : 'transparent',
+                  border: `1px solid ${activeProbe === i ? 'rgba(0,0,0,0.08)' : 'transparent'}`,
                   borderRadius: '6px', transition: 'all 0.3s',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1478,9 +1478,9 @@ export default function Home() {
                       boxShadow: activeProbe === i ? `0 0 8px ${SEVERITY_COLOR[cat.severity]}` : 'none',
                       transition: 'box-shadow 0.3s',
                     }} />
-                    <span style={{ fontSize: '14px', color: activeProbe === i ? '#f5f5f5' : '#666', transition: 'color 0.3s' }}>{cat.name}</span>
+                    <span style={{ fontSize: '14px', color: activeProbe === i ? '#181717' : '#6b6b6b', transition: 'color 0.3s' }}>{cat.name}</span>
                   </div>
-                  <span style={{ fontSize: '12px', fontFamily: 'DM Mono', color: activeProbe === i ? '#888' : '#333', transition: 'color 0.3s' }}>{cat.count} probes</span>
+                  <span style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: activeProbe === i ? '#5f5f5f' : '#9a9a98', transition: 'color 0.3s' }}>{cat.count} probes</span>
                   <div className="cat-bar" style={{
                     position: 'absolute', left: 0, bottom: 0, height: '2px',
                     width: `${Math.min(cat.count / 12, 1) * 100}%`,
@@ -1497,62 +1497,62 @@ export default function Home() {
       <AnimatedResults />
 
       {/* OPEN SOURCE / CLI */}
-      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '100px 80px', borderTop: '1px solid rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
           <ScrollReveal direction="left">
             <div>
-              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>OPEN SOURCE · MIT</div>
+              <div style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: '#767676', letterSpacing: '2px', marginBottom: '16px' }}>OPEN SOURCE · MIT</div>
               <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px', marginBottom: '16px' }}>
                 Prefer to run it <span className="gradient-text" style={{ fontWeight: 700 }}>yourself?</span>
               </h2>
-              <p style={{ fontSize: '16px', color: '#888', lineHeight: 1.75, marginBottom: '28px', maxWidth: '460px' }}>
+              <p style={{ fontSize: '16px', color: '#5f5f5f', lineHeight: 1.75, marginBottom: '28px', maxWidth: '460px' }}>
                 The GhostShield scanner is open source and free to self-host. Clone the repo, add your own Groq or OpenRouter key, and run unlimited scans from your terminal &mdash; no account required. The hosted plans below add a dashboard, saved history, and exportable reports.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
                 {['MIT licensed — free forever', 'Unlimited local scans', 'JSON export for CI pipelines', 'Bring your own Groq / OpenRouter key'].map(f => (
                   <div key={f} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <span style={{ color: '#00c853', fontSize: '14px' }}>✓</span>
-                    <span style={{ fontSize: '14px', color: '#999' }}>{f}</span>
+                    <span style={{ color: '#0a7d2c', fontSize: '14px' }}>✓</span>
+                    <span style={{ fontSize: '14px', color: '#5a5a5a' }}>{f}</span>
                   </div>
                 ))}
               </div>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <a className="btn-primary" href="https://github.com/mhsn1/ghostshield" target="_blank" style={{
-                  background: '#ff4444', color: 'white', padding: '12px 24px', borderRadius: '8px',
+                  background: '#d00000', color: 'white', padding: '12px 24px', borderRadius: '8px',
                   textDecoration: 'none', fontWeight: 500, fontSize: '14px', transition: 'all 0.3s',
                 }}>View on GitHub →</a>
-                <a href="/docs" style={{ color: '#888', padding: '12px 18px', textDecoration: 'none', fontSize: '14px' }}>Read the docs →</a>
+                <a href="/docs" style={{ color: '#5f5f5f', padding: '12px 18px', textDecoration: 'none', fontSize: '14px' }}>Read the docs →</a>
               </div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal direction="right">
             <div className="glass-card" style={{
-              background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '12px', padding: '22px', fontFamily: 'DM Mono, monospace', fontSize: '13px', lineHeight: 1.9,
+              background: '#eef0f1', border: '1px solid rgba(0,0,0,0.08)',
+              borderRadius: '12px', padding: '22px', fontFamily: 'Geist Mono, monospace', fontSize: '13px', lineHeight: 1.9,
             }}>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '18px' }}>
                 {['#ff5f56', '#ffbd2e', '#27c93f'].map(c => (
                   <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
                 ))}
               </div>
-              <div style={{ color: '#bbb' }}><span style={{ color: '#00c853' }}>$</span> {'git clone https://github.com/mhsn1/ghostshield'}</div>
-              <div style={{ color: '#bbb' }}><span style={{ color: '#00c853' }}>$</span> {'cd ghostshield && bun install'}</div>
-              <div style={{ color: '#555' }}>{'# add GROQ_API_KEY / OPENROUTER_API_KEY to .env'}</div>
-              <div style={{ color: '#bbb' }}><span style={{ color: '#00c853' }}>$</span> {'bun run src/cli.ts scan --file ./prompt.txt --output results.json'}</div>
-              <div style={{ color: '#666', marginTop: '6px' }}>{'  running GhostShield probe suite...'}</div>
-              <div style={{ color: '#00c853' }}>{'  ✓ scan complete · results.json'}</div>
+              <div style={{ color: '#3a3a3a' }}><span style={{ color: '#0a7d2c' }}>$</span> {'git clone https://github.com/mhsn1/ghostshield'}</div>
+              <div style={{ color: '#3a3a3a' }}><span style={{ color: '#0a7d2c' }}>$</span> {'cd ghostshield && bun install'}</div>
+              <div style={{ color: '#767676' }}>{'# add GROQ_API_KEY / OPENROUTER_API_KEY to .env'}</div>
+              <div style={{ color: '#3a3a3a' }}><span style={{ color: '#0a7d2c' }}>$</span> {'bun run src/cli.ts scan --file ./prompt.txt --output results.json'}</div>
+              <div style={{ color: '#6b6b6b', marginTop: '6px' }}>{'  running GhostShield probe suite...'}</div>
+              <div style={{ color: '#0a7d2c' }}>{'  ✓ scan complete · results.json'}</div>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
       {/* PRICING */}
-      <section id="pricing" style={{ padding: '100px 80px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <section id="pricing" style={{ padding: '100px 80px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <ScrollReveal>
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <div style={{ fontSize: '12px', fontFamily: 'DM Mono', color: '#555', letterSpacing: '2px', marginBottom: '16px' }}>PRICING</div>
+              <div style={{ fontSize: '12px', fontFamily: 'Geist Mono', color: '#767676', letterSpacing: '2px', marginBottom: '16px' }}>PRICING</div>
               <h2 style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}>Simple, honest pricing.</h2>
             </div>
           </ScrollReveal>
@@ -1563,7 +1563,7 @@ export default function Home() {
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
                 background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)',
                 borderRadius: '20px', padding: '6px 16px',
-                fontSize: '13px', color: '#818cf8', fontFamily: 'DM Mono',
+                fontSize: '13px', color: '#818cf8', fontFamily: 'Geist Mono',
               }}>
                 ◎ Payments accepted in USDC · Ethereum via MetaMask
               </span>
@@ -1575,29 +1575,29 @@ export default function Home() {
               <ScrollReveal key={plan.name} delay={i * 200} direction="scale">
                 <div className={plan.highlight ? 'pricing-pro' : undefined} style={{
                   padding: '40px',
-                  background: plan.highlight ? '#0e0e0e' : '#080808',
-                  border: plan.highlight ? '1px solid rgba(255,68,68,0.25)' : '1px solid rgba(255,255,255,0.04)',
+                  background: plan.highlight ? '#f6f6f6' : '#ffffff',
+                  border: plan.highlight ? '1px solid rgba(208,0,0,0.25)' : '1px solid rgba(0,0,0,0.04)',
                   borderRadius: '2px', position: 'relative',
                   transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(255,68,68,0.4)' }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = plan.highlight ? 'rgba(255,68,68,0.25)' : 'rgba(255,255,255,0.04)' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = 'rgba(208,0,0,0.4)' }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = plan.highlight ? 'rgba(208,0,0,0.25)' : 'rgba(0,0,0,0.04)' }}
                 >
                   {plan.highlight && (
                     <div style={{
                       position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
-                      background: '#ff4444', color: 'white', fontSize: '10px',
-                      fontFamily: 'DM Mono', letterSpacing: '1px', padding: '3px 12px',
+                      background: '#d00000', color: 'white', fontSize: '10px',
+                      fontFamily: 'Geist Mono', letterSpacing: '1px', padding: '3px 12px',
                     }}>MOST POPULAR</div>
                   )}
 
-                  <div style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>{plan.name}</div>
+                  <div style={{ fontSize: '14px', color: '#6b6b6b', marginBottom: '16px' }}>{plan.name}</div>
 
                   <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                     {plan.usdc ? (
                       <>
                         <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}><Counter value={plan.price} /></span>
-                        <span style={{ fontSize: '14px', color: '#555' }}>USDC {plan.sub}</span>
+                        <span style={{ fontSize: '14px', color: '#767676' }}>USDC {plan.sub}</span>
                       </>
                     ) : (
                       <span style={{ fontSize: '40px', fontWeight: 700, letterSpacing: '-1px' }}><Counter value={plan.price} /></span>
@@ -1613,8 +1613,8 @@ export default function Home() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
                     {plan.features.map(f => (
                       <div key={f} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#00c853', fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✓</span>
-                        <span style={{ fontSize: '14px', color: '#888' }}>{f}</span>
+                        <span style={{ color: '#0a7d2c', fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✓</span>
+                        <span style={{ fontSize: '14px', color: '#5f5f5f' }}>{f}</span>
                       </div>
                     ))}
                   </div>
@@ -1624,18 +1624,18 @@ export default function Home() {
                   ) : (
                     <a href={plan.href} target="_blank" style={{
                       display: 'block', textAlign: 'center', padding: '11px',
-                      background: 'transparent', color: '#888',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'transparent', color: '#5f5f5f',
+                      border: '1px solid rgba(0,0,0,0.1)',
                       borderRadius: '6px', textDecoration: 'none', fontSize: '14px',
                       fontWeight: 500, transition: 'all 0.2s',
                     }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'
-                        e.currentTarget.style.color = '#f5f5f5'
+                        e.currentTarget.style.borderColor = 'rgba(0,0,0,0.25)'
+                        e.currentTarget.style.color = '#181717'
                       }}
                       onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
-                        e.currentTarget.style.color = '#888'
+                        e.currentTarget.style.borderColor = 'rgba(0,0,0,0.1)'
+                        e.currentTarget.style.color = '#5f5f5f'
                       }}
                     >{plan.cta}</a>
                   )}
@@ -1648,16 +1648,16 @@ export default function Home() {
           <ScrollReveal delay={500}>
             <div style={{
               marginTop: '48px', textAlign: 'center',
-              padding: '24px', background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px',
+              padding: '24px', background: 'rgba(0,0,0,0.02)',
+              border: '1px solid rgba(0,0,0,0.06)', borderRadius: '10px',
             }}>
-              <span style={{ fontSize: '14px', color: '#666' }}>
+              <span style={{ fontSize: '14px', color: '#6b6b6b' }}>
                 Need custom quotas, SSO, or on-premise deployment?{' '}
               </span>
               <a
                 href="/contact"
                 style={{
-                  fontSize: '14px', color: '#ff4444', textDecoration: 'none',
+                  fontSize: '14px', color: '#d00000', textDecoration: 'none',
                   fontWeight: 500, transition: 'opacity 0.2s',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
@@ -1674,17 +1674,17 @@ export default function Home() {
       <FAQ />
 
       {/* FOOTER */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+      <footer style={{ borderTop: '1px solid rgba(0,0,0,0.04)', overflow: 'hidden' }}>
 
         {/* Top row — links */}
         <div className="footer-top" style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '32px 80px',
-          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          borderBottom: '1px solid rgba(0,0,0,0.04)',
         }}>
-          <div style={{ fontSize: '13px', color: '#333' }}>
+          <div style={{ fontSize: '13px', color: '#9a9a98' }}>
             Built by{' '}
-            <a href="https://github.com/mhsn1" target="_blank" style={{ color: '#555', textDecoration: 'none' }}>mhsn1</a>
+            <a href="https://github.com/mhsn1" target="_blank" style={{ color: '#767676', textDecoration: 'none' }}>mhsn1</a>
             {' '}· Open source · MIT License
           </div>
           <div className="footer-links" style={{ display: 'flex', gap: '28px' }}>
@@ -1697,9 +1697,9 @@ export default function Home() {
               { label: 'Contact', href: '/contact' },
             ].map(l => (
               <a key={l.label} href={l.href}
-                style={{ fontSize: '13px', color: '#333', textDecoration: 'none', transition: 'color 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#888')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#333')}
+                style={{ fontSize: '13px', color: '#9a9a98', textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#5f5f5f')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#9a9a98')}
               >{l.label}</a>
             ))}
           </div>
@@ -1711,7 +1711,7 @@ export default function Home() {
           <div style={{
             position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)',
             width: '60%', height: '60%',
-            background: 'radial-gradient(ellipse, rgba(255,68,68,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse, rgba(208,0,0,0.06) 0%, transparent 70%)',
             pointerEvents: 'none',
           }} />
           <div className="footer-brand" style={{
@@ -1719,7 +1719,7 @@ export default function Home() {
             fontWeight: 900,
             letterSpacing: '-4px',
             lineHeight: 0.9,
-            background: 'linear-gradient(180deg, #2a2a2a 0%, #111 60%, #000 100%)',
+            background: 'linear-gradient(180deg, #e0e0e0 0%, #f2f2f2 60%, #ffffff 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -1733,7 +1733,7 @@ export default function Home() {
         {/* Bottom copyright */}
         <div style={{
           textAlign: 'center', padding: '16px 80px 32px',
-          fontSize: '12px', color: '#222', fontFamily: 'DM Mono',
+          fontSize: '12px', color: '#e4e4e4', fontFamily: 'Geist Mono',
         }}>
           © {new Date().getFullYear()} GhostShield · All rights reserved
         </div>

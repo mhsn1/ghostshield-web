@@ -42,20 +42,20 @@ export default function ContactPage() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    background: '#0a0a0a',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: '#ffffff',
+    border: '1px solid rgba(0,0,0,0.08)',
     borderRadius: '8px',
     padding: '12px 16px',
     fontSize: '14px',
-    color: '#f5f5f5',
-    fontFamily: 'DM Sans, sans-serif',
+    color: '#181717',
+    fontFamily: 'Geist, sans-serif',
     outline: 'none',
     transition: 'border-color 0.2s',
     boxSizing: 'border-box',
   }
 
   return (
-    <div style={{ background: 'transparent', minHeight: '100vh', color: '#f5f5f5' }}>
+    <div style={{ background: 'transparent', minHeight: '100vh', color: '#181717' }}>
       <style>{`
         @media (max-width: 768px) {
           .ct-section { padding: 120px 18px 72px !important; }
@@ -72,7 +72,7 @@ export default function ContactPage() {
           {/* Left — copy */}
           <div className="ct-copy">
             <div style={{
-              fontSize: '12px', fontFamily: 'DM Mono', color: '#555',
+              fontSize: '12px', fontFamily: 'Geist Mono', color: '#767676',
               letterSpacing: '2px', marginBottom: '20px',
             }}>
               CONTACT SALES
@@ -82,9 +82,9 @@ export default function ContactPage() {
               letterSpacing: '-1.5px', lineHeight: 1.05, marginBottom: '20px',
             }}>
               Let&apos;s build something<br />
-              <span style={{ color: '#444' }}>secure together.</span>
+              <span style={{ color: '#8a8a88' }}>secure together.</span>
             </h1>
-            <p style={{ fontSize: '16px', color: '#555', lineHeight: 1.8, marginBottom: '48px', maxWidth: '420px' }}>
+            <p style={{ fontSize: '16px', color: '#767676', lineHeight: 1.8, marginBottom: '48px', maxWidth: '420px' }}>
               Need custom quotas, SSO, on-premise deployment, or a tailored security audit?
               Tell us what you need and we&apos;ll get back to you within one business day.
             </p>
@@ -93,14 +93,14 @@ export default function ContactPage() {
 
           {/* Right — form */}
           <div className="ct-form-card" style={{
-            background: '#080808', border: '1px solid rgba(255,255,255,0.06)',
+            background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)',
             borderRadius: '16px', padding: '40px',
           }}>
             {submitted ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: '40px', marginBottom: '16px' }}>✅</div>
                 <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '10px' }}>Message sent!</h2>
-                <p style={{ fontSize: '14px', color: '#555' }}>
+                <p style={{ fontSize: '14px', color: '#767676' }}>
                   We&apos;ll get back to you within one business day.
                 </p>
               </div>
@@ -109,13 +109,13 @@ export default function ContactPage() {
                 <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '6px', letterSpacing: '-0.5px' }}>
                   Get in touch
                 </h2>
-                <p style={{ fontSize: '13px', color: '#444', marginBottom: '8px', marginTop: 0 }}>
+                <p style={{ fontSize: '13px', color: '#8a8a88', marginBottom: '8px', marginTop: 0 }}>
                   We respond within 1 business day.
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div>
-                    <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '6px', fontFamily: 'DM Mono' }}>
+                    <label style={{ fontSize: '12px', color: '#767676', display: 'block', marginBottom: '6px', fontFamily: 'Geist Mono' }}>
                       NAME
                     </label>
                     <input
@@ -124,12 +124,12 @@ export default function ContactPage() {
                       placeholder="Jane Smith"
                       value={form.name}
                       onChange={e => setForm({ ...form, name: e.target.value })}
-                      onFocus={e => (e.currentTarget.style.borderColor = 'rgba(255,68,68,0.35)')}
-                      onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+                      onFocus={e => (e.currentTarget.style.borderColor = 'rgba(208,0,0,0.35)')}
+                      onBlur={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)')}
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '6px', fontFamily: 'DM Mono' }}>
+                    <label style={{ fontSize: '12px', color: '#767676', display: 'block', marginBottom: '6px', fontFamily: 'Geist Mono' }}>
                       COMPANY
                     </label>
                     <input
@@ -137,14 +137,14 @@ export default function ContactPage() {
                       placeholder="Acme Inc."
                       value={form.company}
                       onChange={e => setForm({ ...form, company: e.target.value })}
-                      onFocus={e => (e.currentTarget.style.borderColor = 'rgba(255,68,68,0.35)')}
-                      onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+                      onFocus={e => (e.currentTarget.style.borderColor = 'rgba(208,0,0,0.35)')}
+                      onBlur={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)')}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '6px', fontFamily: 'DM Mono' }}>
+                  <label style={{ fontSize: '12px', color: '#767676', display: 'block', marginBottom: '6px', fontFamily: 'Geist Mono' }}>
                     WORK EMAIL
                   </label>
                   <input
@@ -154,13 +154,13 @@ export default function ContactPage() {
                     placeholder="jane@company.com"
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
-                    onFocus={e => (e.currentTarget.style.borderColor = 'rgba(255,68,68,0.35)')}
-                    onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+                    onFocus={e => (e.currentTarget.style.borderColor = 'rgba(208,0,0,0.35)')}
+                    onBlur={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)')}
                   />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '6px', fontFamily: 'DM Mono' }}>
+                  <label style={{ fontSize: '12px', color: '#767676', display: 'block', marginBottom: '6px', fontFamily: 'Geist Mono' }}>
                     WHAT DO YOU NEED?
                   </label>
                   <textarea
@@ -170,8 +170,8 @@ export default function ContactPage() {
                     placeholder="Describe your use case, quote, or question…"
                     value={form.message}
                     onChange={e => setForm({ ...form, message: e.target.value })}
-                    onFocus={e => (e.currentTarget.style.borderColor = 'rgba(255,68,68,0.35)')}
-                    onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+                    onFocus={e => (e.currentTarget.style.borderColor = 'rgba(208,0,0,0.35)')}
+                    onBlur={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)')}
                   />
                 </div>
 
@@ -180,10 +180,10 @@ export default function ContactPage() {
                   disabled={loading}
                   style={{
                     width: '100%', padding: '13px',
-                    background: loading ? 'rgba(255,68,68,0.5)' : '#ff4444',
+                    background: loading ? 'rgba(208,0,0,0.5)' : '#d00000',
                     color: 'white', border: 'none', borderRadius: '8px',
                     fontSize: '15px', fontWeight: 600, cursor: loading ? 'wait' : 'pointer',
-                    fontFamily: 'DM Sans, sans-serif', transition: 'opacity 0.2s',
+                    fontFamily: 'Geist, sans-serif', transition: 'opacity 0.2s',
                   }}
                   onMouseEnter={e => { if (!loading) e.currentTarget.style.opacity = '0.85' }}
                   onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -192,14 +192,14 @@ export default function ContactPage() {
                 </button>
 
                 {error && (
-                  <p style={{ fontSize: '13px', color: '#ff4444', textAlign: 'center', margin: 0 }}>
+                  <p style={{ fontSize: '13px', color: '#d00000', textAlign: 'center', margin: 0 }}>
                     ⚠ {error}
                   </p>
                 )}
 
-                <p style={{ fontSize: '12px', color: '#333', textAlign: 'center', margin: 0 }}>
+                <p style={{ fontSize: '12px', color: '#9a9a98', textAlign: 'center', margin: 0 }}>
                   Or email directly:{' '}
-                  <a href="mailto:sales@ghostshield.dev" style={{ color: '#555', textDecoration: 'none' }}>
+                  <a href="mailto:sales@ghostshield.dev" style={{ color: '#767676', textDecoration: 'none' }}>
                     sales@ghostshield.dev
                   </a>
                 </p>

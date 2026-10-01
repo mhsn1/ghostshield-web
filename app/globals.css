@@ -1,19 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
+/* FH Lecturis — display face for titles/headings */
+@font-face {
+  font-family: 'FH Lecturis';
+  src: url('/fonts/fhlecturistest-light.otf') format('opentype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'FH Lecturis';
+  src: url('/fonts/fhlecturistest-regular.otf') format('opentype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'FH Lecturis';
+  src: url('/fonts/fhlecturistest-bold.otf') format('opentype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
 :root {
-  --bg: #000000;
-  --surface: #0a0a0a;
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --text: #f5f5f5;
-  --muted: #6b6b6b;
-  --accent: #ff4444;
-  --accent-dim: rgba(255, 68, 68, 0.1);
-  --green: #00c853;
-  --amber: #ffab00;
-  --texture: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.018) 0, rgba(255, 255, 255, 0.018) 1px, transparent 0, transparent 50%), repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.018) 0, rgba(255, 255, 255, 0.018) 1px, transparent 0, transparent 50%);
+  /* Light editorial palette (matches mhsn1-portfolio) */
+  --bg: #ffffff;          /* canvas */
+  --surface: #f2f2f2;     /* cards, panels */
+  --surface-muted: #f1f2f2;
+  --border: #ebebeb;      /* hairline */
+  --border-hover: #dbdbdb;/* emphasis border */
+  --text: #181717;        /* ink */
+  --muted: #4a4b4d;       /* secondary text */
+  --faint: #4f4f4f;       /* labels / metadata */
+  --accent: #d00000;      /* decorative red */
+  --accent-strong: #a20000;
+  --accent-dim: rgba(208, 0, 0, 0.08);
+  --green: #0a7d2c;
+  --amber: #b26b00;
+  --sidebar: #131313;     /* dark surfaces */
+  --font-display: 'FH Lecturis', 'Geist', -apple-system, sans-serif;
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
+  --texture: none;
 }
 
 * {
@@ -27,17 +52,10 @@ html {
 }
 
 body {
-  background-color: #000;
-  /* Layered ambient glow (fixed) + the signature dot grid (scrolls) — adds
-     depth so the flat black reads premium instead of empty. */
-  background-image:
-    radial-gradient(1100px 520px at 50% -8%, rgba(255, 68, 68, 0.08), transparent 62%),
-    radial-gradient(900px 460px at 100% 2%, rgba(90, 120, 255, 0.035), transparent 60%),
-    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 18px 18px;
-  background-attachment: fixed, fixed, scroll;
+  background-color: #ffffff;
+  background-image: none;
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.65;
   letter-spacing: -0.011em;
@@ -60,12 +78,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #222;
+  background: #d4d4d4;
   border-radius: 3px;
 }
 
 .mono {
-  font-family: 'DM Mono', monospace;
+  font-family: var(--font-mono);
 }
 
 /* ============================================================
@@ -80,28 +98,30 @@ a, button {
 
 /* Crisp, on-brand keyboard focus ring (accessibility + polish) */
 :focus-visible {
-  outline: 2px solid rgba(255, 68, 68, 0.55);
+  outline: 2px solid rgba(208, 0, 0, 0.5);
   outline-offset: 3px;
   border-radius: 5px;
 }
 
-/* Tighter, heavier tracking on large headings for an editorial feel */
-h1, h2 {
-  letter-spacing: -0.02em;
+/* Editorial display face + tracking on large headings */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
 /* Refined scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #2c2c2c, #141414);
+  background: linear-gradient(180deg, #d4d4d4, #c2c2c2);
   border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #3a3a3a, #1c1c1c); }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #bcbcbc, #a8a8a8); }
 
 /* Gradient text accent (e.g. the hero word "vulnerabilities") */
 .gradient-text {
-  background: linear-gradient(120deg, #ff7a7a 0%, #ff4444 45%, #f5f5f5 130%);
+  background: linear-gradient(120deg, #d00000 0%, #a20000 55%, #181717 130%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -115,26 +135,26 @@ h1, h2 {
 }
 .glass-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(255, 68, 68, 0.35) !important;
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55), 0 0 26px rgba(255, 68, 68, 0.08);
+  border-color: rgba(208, 0, 0, 0.35) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.10), 0 0 20px rgba(208, 0, 0, 0.06);
 }
 
 /* Primary CTA button — glow on hover */
 .btn-primary:hover {
-  box-shadow: 0 0 26px rgba(255, 68, 68, 0.5), 0 10px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 26px rgba(208,0,0,0.35), 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 /* "Most popular" pricing card — gentle breathing glow */
 @keyframes proGlow {
-  0%, 100% { box-shadow: 0 0 0 rgba(255, 68, 68, 0); }
-  50%      { box-shadow: 0 0 30px rgba(255, 68, 68, 0.16); }
+  0%, 100% { box-shadow: 0 0 0 rgba(208,0,0,0); }
+  50%      { box-shadow: 0 0 30px rgba(208,0,0,0.12); }
 }
 .pricing-pro { animation: proGlow 3s ease-in-out infinite; }
 
 /* Attack-category rows — hover highlight + severity bar grow-in */
 .cat-row:hover {
-  background: #121212 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: #f1f2f2 !important;
+  border-color: rgba(0,0,0,0.12) !important;
 }
 .cat-bar {
   transform-origin: left center;
@@ -248,7 +268,7 @@ h1, h2 {
     position: static !important;
     height: auto !important;
     border-left: none !important;
-    border-top: 1px solid rgba(255,255,255,0.06) !important;
+    border-top: 1px solid rgba(0,0,0,0.08) !important;
   }
   /* Keep the leaderboard in its desktop layout and scroll it sideways
      (overrides the global grid-collapse so the table stays readable). */
@@ -301,7 +321,7 @@ h1, h2 {
     height: auto !important;
     padding: 18px 12px 12px !important;
     border-right: none !important;
-    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08) !important;
     display: flex !important;
     flex-direction: row !important;
     gap: 20px !important;
